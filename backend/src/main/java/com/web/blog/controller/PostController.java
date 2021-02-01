@@ -1,7 +1,9 @@
 package com.web.blog.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +30,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.web.blog.model.ImgDto;
+import com.web.blog.model.MemberDto;
 import com.web.blog.model.PostDto;
 import com.web.blog.model.PostLikeDto;
 import com.web.blog.model.PostParameterDto;
 import com.web.blog.model.service.PostService;
+import com.web.blog.model.service.S3FileUploadService;
 import com.web.blog.util.FileUtil;
 
 import io.swagger.annotations.Api;
@@ -55,6 +59,9 @@ public class PostController {
 
 	@Autowired
 	private FileUtil fileService;
+	
+	@Autowired
+	private S3FileUploadService s3FileUploadService;
 
 	@ApiOperation(value = "글작성", notes = "새로운 게시글 정보를 입력한다. 그리고 DB입력 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PostMapping
@@ -64,17 +71,11 @@ public class PostController {
 		String result = SUCCESS;
 		HttpStatus status = HttpStatus.OK;
 		
-//		List<MultipartFile> files = mtfRequest.getFiles("files");
-//        String content = mtfRequest.getParameter("content");
-//        String email = mtfRequest.getParameter("email");
-//        String title = mtfRequest.getParameter("title");
-		
         System.out.println(postDto);
 		
 		// 게시글 작성 성공 시
 		try {
 			if (postService.write(postDto)) {
-				// 오늘 날짜 디렉토리 생성 여부 확인
 				logger.info("게시글 작성 성공");
 				
 				int postNo = postService.getLastPostNo(postDto.getEmail());
@@ -85,10 +86,13 @@ public class PostController {
 					postNo = postDto.getPostNo();
 					
 					// file 변경 있다면
-					if(postDto.getUnmodified() != null) {
+					List<String> unmodList = postDto.getUnmodified();
+					if(unmodList != null && unmodList.size() > 0) {
 						// 기존 파일 삭제
 						if(!postService.deleteImages(postDto.getUnmodified())) {
 							logger.error("파일 DB 삭제 실패!");
+							result = FAIL;
+							status = HttpStatus.INTERNAL_SERVER_ERROR;
 						}
 					}
 				}
@@ -97,10 +101,32 @@ public class PostController {
 				System.out.println(files.size());
 				
 				if (files != null && files.size() > 0) {
-					if(!postService.saveImages(postNo, files)) {
-						logger.error("파일 저장 실패!");
-						result = FAIL;
-						status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+//					File dir = new File(Paths.get(fileUrl, String.valueOf(postNo)).toString());
+//					// postNo 디렉토리
+//					if (!dir.exists()) {
+//						dir.mkdirs();
+//					}
+					
+					for(MultipartFile file : files) {
+						try {
+							// s3 업로드 후 db 저장
+							String url = s3FileUploadService.upload(file);
+							System.out.println(url);
+
+							ImgDto img = new ImgDto();
+							img.setPostNo(postNo);
+							img.setOriPicName(file.getOriginalFilename());
+							img.setModPicName(url);
+							img.setPicSize(file.getSize());
+							
+							postService.uploadFile(img);
+						} catch (Exception e) {
+							e.printStackTrace();
+							logger.error("파일 저장 실패, " + e.getMessage());
+							result = FAIL;
+							status = HttpStatus.INTERNAL_SERVER_ERROR;
+						}
 					}
 				}
 			} else { // 작성 실패시
@@ -109,8 +135,10 @@ public class PostController {
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("게시글 작성 실패! 오류 : " + e.getMessage());
+			result = FAIL;
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 
 		return new ResponseEntity<String>(result, status);
@@ -168,6 +196,7 @@ public class PostController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 
+	/*
 	@ApiOperation(value = "게시글에 등록된 이미지 파일들의 이름을 가져온다.")
 	@GetMapping("/imgs")
 	public ResponseEntity<List<ImgDto>> getImgs(@RequestParam int postNo, HttpServletRequest request) {
@@ -186,9 +215,10 @@ public class PostController {
 	@ApiOperation(value = "게시글에 등록된 이미지 중 하나를 다운로드한다.")
 	@GetMapping("/imgs/download")
 	public ResponseEntity<Resource> downloadImage(@RequestParam int postNo, @RequestParam String fileName, HttpServletRequest request) {
-		logger.info("file name: " + fileName);
-		String path = Paths.get(fileUrl, String.valueOf(postNo), fileName).toString();
-		Resource resource = fileService.loadFileAsResource(path);
+		logger.info("file url: " + fileName);
+//		String path = Paths.get(fileUrl, String.valueOf(postNo), fileName).toString();
+//		Resource resource = fileService.loadFileAsResource(path);
+		Resource resource = fileService.loadFileAsResource(fileName);
 		String contentType = null;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -202,6 +232,7 @@ public class PostController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
+	*/
 
 	@ApiOperation(value = "글수정 페이지 이동", notes = "글 수정 페이지로 이동하면 해당 게시글의 정보를 반환한다.", response = String.class)
 	@GetMapping(value = "/moveUpdate")
@@ -230,45 +261,69 @@ public class PostController {
 
 	@ApiOperation(value = "글수정", notes = "새로운 게시글 정보를 입력한다. 그리고 DB수정 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PutMapping
-//	public ResponseEntity<String> modify(@ApiParam(value = "수정할 글 정보.", required = false) MultipartHttpServletRequest mtfRequest, @RequestParam(required = false) List<String> unmodified) throws Exception {
 	public ResponseEntity<String> modify(@ApiParam(value = "수정할 글 정보.", required = true) PostDto post) throws Exception {
 				logger.info("modify - 호출");
 
 		String result = SUCCESS;
 		HttpStatus status = HttpStatus.OK;
 		
-//        String content = mtfRequest.getParameter("content");
-//        String title = mtfRequest.getParameter("title");
-//        int postNo = Integer.parseInt(mtfRequest.getParameter("postNo"));
-		
 		System.out.println(post);
 		
-//		PostDto postDto = new PostDto();
-//		postDto.setContent(content);
-//		postDto.setPostNo(postNo);
-//		postDto.setTitle(title);
+		List<MultipartFile> files = post.getFiles();
+		int postNo = post.getPostNo();
 		
 		if (postService.modify(post)) {
 			logger.info("게시글 수정 완료");
 			
 			// 바뀐 파일이 있다면
-			if(post.getFiles() != null && post.getFiles().size() > 0) {
+			if(files != null && files.size() > 0) {
 				
 				if(!postService.deleteImages(post.getUnmodified())) {
 					logger.error("파일 DB 삭제 실패!");
 				}
 				
-				List<MultipartFile> files = post.getFiles();
 				System.out.println(files);
 				
-				if (files != null) {
-					if(!postService.saveImages(post.getPostNo(), files)) {
-						logger.error("파일 저장 실패!");
+				/*
+				if(!postService.saveImages(postNo, files)) {
+					logger.error("파일 저장 실패!");
+					result = FAIL;
+					status = HttpStatus.INTERNAL_SERVER_ERROR;
+				}
+				*/
+//--------------------------------------------------------
+//				File dir = new File(Paths.get(fileUrl, String.valueOf(postNo)).toString());
+//				// postNo 디렉토리
+//				if (!dir.exists()) {
+//					dir.mkdirs();
+//				}
+				
+				for(MultipartFile file : files) {
+					try {
+						// s3 업로드 후 db 저장
+						String url = s3FileUploadService.upload(file);
+						System.out.println(url);
+
+						ImgDto img = new ImgDto();
+						img.setPostNo(postNo);
+						img.setOriPicName(file.getOriginalFilename());
+						img.setModPicName(url);
+						img.setPicSize(file.getSize());
+						
+						postService.uploadFile(img);
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger.error("파일 저장 실패, " + e.getMessage());
 						result = FAIL;
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
 					}
 				}
 			}
+		}
+		else { // 수정 실패시
+			logger.error("글 수정 실패!");
+			result = FAIL;
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		
 		return new ResponseEntity<String>(result, status);

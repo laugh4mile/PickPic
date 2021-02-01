@@ -55,6 +55,7 @@ public interface PostService {
 	
 	/** File 로컬 저장 */
 	public boolean saveImages(int postNo, List<MultipartFile> files) throws Exception;
+	public boolean saveImage(int postNo, MultipartFile file) throws Exception;
 	/** File DB에서 지우기 */
 	public boolean deleteImages(List<String> unmodified) throws Exception;
 	

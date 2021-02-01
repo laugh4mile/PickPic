@@ -53,7 +53,7 @@ public class S3FileUploadService {
 			// 주소 할당
 			url = defaultUrl + saveFileName;
 			// 파일 삭제
-//			file.delete();
+			file.delete();
 		} catch (StringIndexOutOfBoundsException e) {
 			url = null;
 		}
