@@ -52,11 +52,14 @@ public interface PostService {
 	public boolean uploadFile(ImgDto img) throws Exception;
 	/** 게시글의 이미지 가져오기 */
 	public List<ImgDto> getImages(int postNo) throws Exception;
+	/** 사진 정보 */
+	public ImgDto getImageInfo(String picNo) throws Exception;
 	
 	/** File 로컬 저장 */
 	public boolean saveImages(int postNo, List<MultipartFile> files) throws Exception;
 	public boolean saveImage(int postNo, MultipartFile file) throws Exception;
 	/** File DB에서 지우기 */
-	public boolean deleteImages(List<String> unmodified) throws Exception;
+	public boolean deleteImage(String picNo) throws Exception;
+	
 	
 }

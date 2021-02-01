@@ -166,6 +166,11 @@ public class PostServiceImpl implements PostService {
 	public List<ImgDto> getImages(int postNo) throws Exception {
 		return postMapper.getFiles(postNo);
 	}
+	
+	@Override
+	public ImgDto getImageInfo(String picNo) throws Exception {
+		return postMapper.getFileInfo(picNo);
+	}
 
 	@Override
 	public boolean saveImages(int postNo, List<MultipartFile> files) throws Exception {
@@ -238,8 +243,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional
-	public boolean deleteImages(List<String> unmodified) throws Exception {
-		return postMapper.deleteImgs(unmodified) == 1;
+	public boolean deleteImage(String picNo) throws Exception {
+		return postMapper.deleteImg(picNo) == 1;
 	}
 
 }
