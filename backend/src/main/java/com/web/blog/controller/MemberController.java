@@ -55,11 +55,7 @@ public class MemberController {
 	@PostMapping("/upload")
 	public ResponseEntity<Void> updateUserPicture(@RequestParam String email, @RequestParam MultipartFile profileImg) {
 		try {
-			MemberDto dto = new MemberDto();
-			String url = s3FileUploadService.upload(profileImg);
-			dto.setEmail(email);
-			System.out.println(url);
-			dto.setProfileImg(url);
+			MemberDto dto = s3FileUploadService.upload(email, profileImg);
 			memberService.saveImg(dto);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -68,28 +64,44 @@ public class MemberController {
 			e.printStackTrace();
 			System.out.println("sql");
 		}
-
 		return ResponseEntity.ok().build();
 	}
 
-	@ApiOperation(value = "사용자의 이미지를 가져온다")
-	@GetMapping("/download")
-	public ResponseEntity<Resource> getProfileImg(@RequestParam String email, HttpServletRequest request) {
-		String path = memberService.getFilePath(email);
-		Resource resource = fileService.loadFileAsResource(path);
-		String contentType = null;
+	@ApiOperation(value = "사용자의 이미지를 삭제한다")
+	@GetMapping("/delete")
+	public ResponseEntity<Void> deleteProfilePicture(@RequestParam String email) {
+		MemberDto dto = new MemberDto();
 		try {
-			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-		} catch (IOException e) {
+			dto = memberService.findUserInfo(email);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (contentType == null) {
-			contentType = "application/octet-stream";
-		}
-		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-				.body(resource);
+		String fileName = dto.getProfileImgName();
+		System.out.println(fileName);
+		s3FileUploadService.delete(fileName);
+		memberService.deleteImg(email);
+		return ResponseEntity.ok().build();
 	}
+
+//	@ApiOperation(value = "사용자의 이미지를 가져온다")
+//	@GetMapping("/download")
+//	public ResponseEntity<Resource> getProfileImg(@RequestParam String email, HttpServletRequest request) {
+//		String path = memberService.getFilePath(email);
+//		Resource resource = fileService.loadFileAsResource(path);
+//		String contentType = null;
+//		try {
+//			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		if (contentType == null) {
+//			contentType = "application/octet-stream";
+//		}
+//		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+//				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+//				.body(resource);
+//	}
 
 	@PostMapping
 	public ResponseEntity<Boolean> regist(@RequestBody Map<String, String> map) {

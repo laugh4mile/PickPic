@@ -56,9 +56,14 @@
 	
 	<update id="setProfile" parameterType="MemberDto">
 		update member
-		set profileImg = #{profileImg}
+		set profileImg = #{profileImg}, profileImgName=#{profileImgName}
 		where email=#{email}
 	</update>
-	
+
+	<update id="deleteImg" parameterType="string">
+		update member
+		set profileImg = null, profileImgName=null
+		where email=#{email}
+	</update>
 	
 </mapper>

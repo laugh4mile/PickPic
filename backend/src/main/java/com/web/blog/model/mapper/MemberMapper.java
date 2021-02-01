@@ -33,4 +33,6 @@ public interface MemberMapper {
 	public void setProfile(MemberDto memberDto) throws IOException;
 
 	public String getFilePath(String email);
+
+	public void deleteImg(String email);
 }
