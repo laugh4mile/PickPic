@@ -1,5 +1,6 @@
 package com.web.blog.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.springframework.core.io.Resource;
 import com.web.blog.model.MemberDto;
 import com.web.blog.model.service.JwtService;
 import com.web.blog.model.service.MemberService;
+import com.web.blog.model.service.S3FileUploadService;
 import com.web.blog.util.FileUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -46,15 +48,18 @@ public class MemberController {
 	@Autowired
 	private FileUtil fileService;
 
+	@Autowired
+	private S3FileUploadService s3FileUploadService;
+
 	@ApiOperation(value = "사용자의 이미지를 저장한다")
 	@PostMapping("/upload")
 	public ResponseEntity<Void> updateUserPicture(@RequestParam String email, @RequestParam MultipartFile profileImg) {
-		System.out.println(email);
 		try {
 			MemberDto dto = new MemberDto();
+			String url = s3FileUploadService.upload(profileImg);
 			dto.setEmail(email);
-			dto.setProfileImg("C:\\SSAFY\\uploaded\\" + profileImg.getOriginalFilename());
-			memberService.uploadFile(profileImg);
+			System.out.println(url);
+			dto.setProfileImg(url);
 			memberService.saveImg(dto);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,7 +93,6 @@ public class MemberController {
 
 	@PostMapping
 	public ResponseEntity<Boolean> regist(@RequestBody Map<String, String> map) {
-//		System.out.println(map);
 		HttpStatus status = HttpStatus.ACCEPTED;
 		MemberDto dto = new MemberDto();
 		dto.setEmail(map.get("email"));

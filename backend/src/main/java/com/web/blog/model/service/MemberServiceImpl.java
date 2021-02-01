@@ -23,20 +23,18 @@ public class MemberServiceImpl implements MemberService {
 
 	@Transactional
 	public void saveImg(MemberDto dto) throws IOException, SQLException {
-//		System.out.println("bf" + profileImg);
-//		uploadFile(profileImg);
-//		MemberDto user = dao.findUserInfo(email);
-		System.out.println(dto);
 		dao.setProfile(dto);
-//		user.setProfile("profile/" + profileImg.getOriginalFilename());
 	}
 
 	@Override
 	public void uploadFile(MultipartFile file) throws IOException {
 		String originName = file.getOriginalFilename();
+		System.out.println("on " + originName);
 		File dest = new File(IMAGE_DIR + originName);
-//		System.out.println(dest);
+		System.out.println("fileD " + dest);
+		System.out.println(file);
 		file.transferTo(dest);
+		System.out.println("fin");
 	}
 
 	@Override
