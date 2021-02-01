@@ -68,7 +68,7 @@
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialog2" width="500">
-          <template v-slot:activator="{ on, attrs }" @click="dialog2">
+          <template v-slot:activator="{ on, attrs }" >
             <v-btn variant="primary" v-bind="attrs" v-on="on">
               비밀번호변경
             </v-btn>
@@ -258,7 +258,18 @@ export default {
             pwd: this.pwd2,
           })
           .then((response) => {
-            console.log(response);
+            const params = new URLSearchParams();
+            params.append("email", this.getUserEmail);
+            axios
+              .get("http://localhost:3000/sub/member", { params })
+              .then((response) => {
+                this.user = null;
+                this.user = response.data.info;
+              })
+              .catch(() => {
+                // this.$router.push("/Error");
+              });
+            this.dialog2 = false
           })
           .catch((error) => {
             this.$router.push("/Error");
