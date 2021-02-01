@@ -3,13 +3,13 @@
     <div class="row">
       <div class="col-sm-2 col-md-2 selector" width="200">
         <img
-          :src=imgUrl
+          :src=user.profileImg
           alt="프로필 이미지"
         />
       </div>
       <div class="col-sm-10 col-md-10">
         <blockquote>
-          <p>{{ user.name }}</p>
+          <p>{{ user.name }}{{ user.imgUrl}}</p>
           <small
             ><cite title="Source Title">{{ user.email }}</cite></small
           >
@@ -165,12 +165,12 @@ export default {
   },
   computed: {
     ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
-    dataUrl(){
-      return 'data:image/jpeg;base64m' + btoa(
-        new Uint8Array(this.user.profileImg)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-    }
+    // dataUrl(){
+    //   return 'data:image/jpeg;base64m' + btoa(
+    //     new Uint8Array(this.user.profileImg)
+    //     .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    //   );
+    // }
   },
   created() {
     console.log("created");
@@ -181,12 +181,12 @@ export default {
     axios
       .get("http://localhost:3000/sub/member", { params })
       .then((response) => {
-        console.log(response);
+        console.log('리스폰스',response);
         this.user = null;
         this.user = response.data.info;
         console.log(this.user);
         console.log(this.user.email)
-        this.imgUrl = `http://localhost:3000/sub/member/download?email=${this.user.email}`
+        // this.imgUrl = response.data.info.profileImg
       })
       .catch(() => {
         // this.$router.push("/Error");
