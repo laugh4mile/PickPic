@@ -27,6 +27,11 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public void deleteImg(String email) {
+		dao.deleteImg(email);
+	}
+
+	@Override
 	public void uploadFile(MultipartFile file) throws IOException {
 		String originName = file.getOriginalFilename();
 		System.out.println("on " + originName);
