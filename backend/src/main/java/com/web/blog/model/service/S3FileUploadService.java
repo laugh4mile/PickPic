@@ -12,10 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.web.blog.model.MemberDto;
 
 @Service
 public class S3FileUploadService {
@@ -35,7 +39,8 @@ public class S3FileUploadService {
 		this.amazonS3Client = amazonS3Client;
 	}
 
-	public String upload(MultipartFile uploadFile) throws IOException {
+	public MemberDto upload(String email, MultipartFile uploadFile) throws IOException {
+		MemberDto member = new MemberDto();
 		String origName = uploadFile.getOriginalFilename();
 		String url;
 		try {
@@ -52,16 +57,34 @@ public class S3FileUploadService {
 			uploadOnS3(saveFileName, file);
 			// 주소 할당
 			url = defaultUrl + saveFileName;
+			member.setEmail(email);
+			member.setProfileImg(url);
+			member.setProfileImgName(saveFileName);
 			// 파일 삭제
-//			file.delete();
+			file.delete();
 		} catch (StringIndexOutOfBoundsException e) {
 			url = null;
 		}
-		return url;
+		return member;
 	}
 
 	private static String getUuid() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
+	}
+
+	public void delete(String fileName) {
+		try {
+			// Delete 객체 생성
+			DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
+			// Delete
+			this.amazonS3Client.deleteObject(deleteObjectRequest);
+			System.out.println(String.format("[%s] deletion complete", fileName));
+
+		} catch (AmazonServiceException e) {
+			e.printStackTrace();
+		} catch (SdkClientException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void uploadOnS3(final String findName, final File file) {
