@@ -27,6 +27,8 @@ public interface MemberMapper {
 	public boolean updateIntro(MemberDto memberDto) throws SQLException;
 
 	public boolean updatePwd(MemberDto memberDto) throws SQLException;
+	
+	public String findPwd(String email); 
 
 	public MemberDto findUserInfo(String email) throws SQLException;
 
