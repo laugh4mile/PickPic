@@ -11,7 +11,8 @@
 	<select id="login" parameterType="MemberDto" resultType="MemberDto">
 		select email, pwd, name, role 
 		from member 
-		where email=#{email} and pwd = #{pwd}
+		where email=#{email}
+		<!-- and pwd = #{pwd} -->
 	</select>
 	
 	<insert id="join" parameterType="MemberDto">
