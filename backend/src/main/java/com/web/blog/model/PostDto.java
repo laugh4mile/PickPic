@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "PostDto : 게시글 정보", description = "게시글 상세 정보")
 public class PostDto {
 
-	@ApiModelProperty(value = "글번호")
+	@ApiModelProperty(value = "글번호", example = "1")
 	private int postNo;
 	@ApiModelProperty(value = "글제목")
 	private String title;
@@ -20,44 +20,25 @@ public class PostDto {
 	private String uploadDate;
 	@ApiModelProperty(value = "수정일")
 	private String modifyDate;
-	@ApiModelProperty(value = "좋아요")
+	@ApiModelProperty(value = "좋아요", example = "20")
 	private int likeCnt;
 	@ApiModelProperty(value = "작성자 이메일 아이디")
 	private String email;
 	@ApiModelProperty(value = "작성자 이름")
 	private String name;
-	@ApiModelProperty(value = "임시저장용")
+	@ApiModelProperty(value = "임시저장용", example = "1")
 	private int temp;
-	
+	@ApiModelProperty(value = "업로드할 파일들")
 	private List<MultipartFile> files;
-	
+	@ApiModelProperty(value = "바뀐 파일들")
+	private List<String> unmodified;
+
 	@Override
 	public String toString() {
 		return "PostDto [postNo=" + postNo + ", title=" + title + ", content=" + content + ", uploadDate=" + uploadDate
 				+ ", modifyDate=" + modifyDate + ", likeCnt=" + likeCnt + ", email=" + email + ", name=" + name
 				+ ", temp=" + temp + ", files=" + files + ", unmodified=" + unmodified + "]";
 	}
-
-	private List<String> unmodified;
-	
-
-//	public PostDto() {
-//		super();
-//		// TODO Auto-generated constructor stub
-//	}
-//
-//	public PostDto(int postNo, String title, String content, String uploadDate, String modifyDate, int likeCnt,
-//			String email, String name) {
-//		super();
-//		this.postNo = postNo;
-//		this.title = title;
-//		this.content = content;
-//		this.uploadDate = uploadDate;
-//		this.modifyDate = modifyDate;
-//		this.likeCnt = likeCnt;
-//		this.email = email;
-//		this.name = name;
-//	}
 
 	public List<String> getUnmodified() {
 		return unmodified;

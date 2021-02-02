@@ -23,8 +23,10 @@ import com.web.blog.model.ImgDto;
 import com.web.blog.model.PostDto;
 import com.web.blog.model.PostLikeDto;
 import com.web.blog.model.PostParameterDto;
+import com.web.blog.model.PostVoteDto;
 import com.web.blog.model.service.PostService;
 import com.web.blog.model.service.S3FileUploadService;
+import com.web.blog.model.service.VoteService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,17 +41,17 @@ public class PostController {
 	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
-//	private final String fileUrl = Paths.get("C:", "ssafy", "uploaded").toString();
-//	private final String fileUrl = Paths.get("C:", "ssafy", "uploaded").toString(); 
+//	private final String fileUrl = Paths.get("C:", "ssafy", "uploaded").toString();	// windows
+//	private final String fileUrl = "home/ubuntu/uploaded";	// linux
 
 	@Autowired
 	private PostService postService;
 	
 	@Autowired
 	private S3FileUploadService s3FileUploadService;
-
-//	@Autowired
-//	private FileUtil fileService;
+	
+	@Autowired
+	private VoteService voteService;
 
 	@ApiOperation(value = "글작성", notes = "새로운 게시글 정보를 입력한다. 그리고 DB입력 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PostMapping
@@ -84,26 +86,6 @@ public class PostController {
 				// 추가된 파일이 있다면
 				if (files != null && files.size() > 0) {
 					saveFiles(postNo, files);
-//					try {
-//						for(MultipartFile file : files) {
-//							// s3 업로드 후 db 저장
-//							String saveFileName = s3FileUploadService.upload(file);
-//							System.out.println(saveFileName);
-//
-//							ImgDto img = new ImgDto();
-//							img.setPostNo(postNo);
-//							img.setOriPicName(file.getOriginalFilename());
-//							img.setModPicName(saveFileName);
-//							img.setPicSize(file.getSize());
-//							
-//							postService.uploadFile(img);
-//						}
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						logger.error("파일 저장 실패, " + e.getMessage());
-//						result = FAIL;
-//						status = HttpStatus.INTERNAL_SERVER_ERROR;
-//					}
 				}
 			} else { // 작성 실패시
 				logger.error("글 작성 실패!");
@@ -165,6 +147,7 @@ public class PostController {
 				// 이름에 url 붙여주기
 				img.setModPicName(s3FileUploadService.getDefaultUrl() + img.getModPicName());
 			}
+			resultMap.put("voteCount", voteService.getVoteCountofPost(postNo));
 			resultMap.put("fileList", postImgs);
 
 			status = HttpStatus.OK;
@@ -202,26 +185,6 @@ public class PostController {
 			// 바뀐 파일이 있다면
 			if(files != null && files.size() > 0) {
 				saveFiles(postNo, files);
-//				try {
-//					for(MultipartFile file : files) {
-//						// s3 업로드 후 db 저장
-//						String saveFileName = s3FileUploadService.upload(file);
-//						System.out.println(saveFileName);
-//
-//						ImgDto img = new ImgDto();
-//						img.setPostNo(postNo);
-//						img.setOriPicName(file.getOriginalFilename());
-//						img.setModPicName(saveFileName);
-//						img.setPicSize(file.getSize());
-//						
-//						postService.uploadFile(img);
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					logger.error("파일 저장 실패, " + e.getMessage());
-//					result = FAIL;
-//					status = HttpStatus.INTERNAL_SERVER_ERROR;
-//				}
 			}
 		}
 		else { // 수정 실패시
@@ -301,7 +264,7 @@ public class PostController {
 		return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
 	}
 
-	@ApiOperation(value = "like", notes = "글번호에 해당하는 게시글의 좋아요를 토글한다.", response = HashMap.class)
+	@ApiOperation(value = "좋아요", notes = "글번호에 해당하는 게시글의 좋아요를 토글한다.", response = HashMap.class)
 	@PutMapping("/like")
 	public ResponseEntity<Map<String, Object>> like(@RequestParam int postNo, @RequestParam String email) {
 
@@ -355,6 +318,49 @@ public class PostController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 
+	@ApiOperation(value = "투표", notes = "게시글의 이미지 중 하나를 투표한다.", response = HashMap.class)
+	@PostMapping("/vote")
+	public ResponseEntity<Map<String, Object>> vote(PostVoteDto voteInfo) {
+		logger.info("vote - 호출, " + voteInfo);
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.OK;
+
+		try {
+			// 투표했었는지 찾기
+			PostVoteDto voteCheck = voteService.getVoteInfo(voteInfo);
+			
+			// 투표 안했었다면
+			if(voteCheck == null) {
+				logger.info("해당 게시글에 처음 투표함");
+				voteService.insertVotePost(voteInfo);
+			}
+			// 투표 했었다면
+			else {
+				logger.info("해당 게시글에 두번째 이상 투표함");
+				voteInfo.setvNo(voteCheck.getvNo());
+				voteService.updateVotePost(voteInfo);
+			}
+
+			List<ImgDto> imgList = postService.getImages(voteInfo.getPostNo());
+			for(ImgDto img : imgList) {
+				// 이름에 url 붙여주기
+				img.setModPicName(s3FileUploadService.getDefaultUrl() + img.getModPicName());
+			}
+			
+			resultMap.put("voteCount", voteService.getVoteCountofPost(voteInfo.getPostNo()));
+			resultMap.put("fileList", imgList);
+
+			status = HttpStatus.OK;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
 	/*
 	@ApiOperation(value = "게시글에 등록된 이미지 파일들의 이름을 가져온다.")
 	@GetMapping("/imgs")

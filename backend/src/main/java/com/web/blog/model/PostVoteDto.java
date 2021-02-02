@@ -1,24 +1,24 @@
 package com.web.blog.model;
 
 public class PostVoteDto {
-	private String vNo;
-	private String picNo;
+	private int vNo;
+	private int picNo;
 	private String email;
-	private String postNo;
+	private int postNo;
 
-	public String getvNo() {
+	public int getvNo() {
 		return vNo;
 	}
 
-	public void setvNo(String vNo) {
+	public void setvNo(int vNo) {
 		this.vNo = vNo;
 	}
 
-	public String getPicNo() {
+	public int getPicNo() {
 		return picNo;
 	}
 
-	public void setPicNo(String picNo) {
+	public void setPicNo(int picNo) {
 		this.picNo = picNo;
 	}
 
@@ -30,11 +30,11 @@ public class PostVoteDto {
 		this.email = email;
 	}
 
-	public String getPostNo() {
+	public int getPostNo() {
 		return postNo;
 	}
 
-	public void setPostNo(String postNo) {
+	public void setPostNo(int postNo) {
 		this.postNo = postNo;
 	}
 

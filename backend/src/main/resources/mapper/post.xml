@@ -188,8 +188,13 @@
 	
 	<select id="getFiles" parameterType="int" resultType="ImgDto">
 		select picNo, postNo, oriPicName, modPicName,
-			round(picSize/1024, 1) as picSize, 
-			date_format(uploadDate, '%Y%m%d') as uploadDate
+<!-- 			round(picSize/1024, 1) as picSize, -->
+			picSize,
+			date_format(uploadDate, '%Y%m%d') as uploadDate,
+			(	select count(vNo)
+				from post_vote
+    			where post_vote.picNo = post_pics.picNo
+   			) as voteCnt
 		from post_pics
 		where postNo = #{postNo}
 <!-- 			and deleted = 'N' -->
@@ -197,8 +202,13 @@
 	
 	<select id="getFileInfo" parameterType="string" resultType="ImgDto">
 		select picNo, postNo, oriPicName, modPicName,
-			round(picSize/1024, 1) as picSize, 
-			date_format(uploadDate, '%Y%m%d') as uploadDate
+<!-- 			round(picSize/1024, 1) as picSize, -->
+			picSize,
+			date_format(uploadDate, '%Y%m%d') as uploadDate,
+			(	select count(vNo)
+				from post_vote
+    			where post_vote.picNo = post_pics.picNo
+   			) as voteCnt
 		from post_pics
 		where picNo = #{picNo}
 <!-- 			and deleted = 'N' -->
