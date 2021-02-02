@@ -34,7 +34,8 @@ export default {
      axios.get('http://localhost:3000/sub/post', {params})
     .then(response => {
       for(var i=0; i<response.data.fileList.length;i++){
-        this.imgUrl.push('http://localhost:3000/sub/post/imgs/download?fileName=' + response.data.fileList[i].modPicName + '&postNo=' + this.no);
+        // this.imgUrl.push('http://localhost:3000/sub/post/imgs/download?fileName=' + response.data.fileList[i].modPicName + '&postNo=' + this.no);
+        this.imgUrl.push(response.data.fileList[i].modPicName);
       }
       console.log(this.imgUrl);
     })

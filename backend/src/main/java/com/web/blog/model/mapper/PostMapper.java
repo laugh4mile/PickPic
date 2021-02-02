@@ -39,9 +39,10 @@ public interface PostMapper {
 	public int getLastPostNo(String email) throws SQLException;
 	public int uploadFile(ImgDto img) throws SQLException;
 	public List<ImgDto> getFiles(int postNo) throws SQLException;
-	public ImgDto getFileInfo(int picNo) throws SQLException;
+	public ImgDto getFileInfo(String picNo) throws SQLException;
+	
 	public int deleteImgs(List<String> unmodified) throws SQLException;
-	public int deleteImg(int picNo) throws SQLException;
+	public int deleteImg(String picNo) throws SQLException;
 	public int getCountFiles(int postNo) throws SQLException;
 	
 	public int writeTemptoDB(PostDto postDto) throws SQLException;

@@ -2,6 +2,7 @@ package com.web.blog.model.service;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,30 +53,39 @@ public class PostServiceImpl implements PostService {
 	
 	@Override
 	public boolean write(PostDto postDto) throws Exception {
-		if(postDto.getTitle() == null || postDto.getContent() == null) {
-			System.out.println("?");
-			throw new Exception();
+		if(postDto.getTitle() == null || postDto.getContent() == null
+//				|| "".equals(postDto.getTitle()) || "".equals(postDto.getContent())	// 제목, 내용 빈 문자열이면 취소
+				) {
+			throw new Exception("No title or No Content!");
 		}
+		// 임시저장했던 글이라면
 		if(postDto.getPostNo() != -1) {
 			System.out.println("?2");
 			return postMapper.writeTemptoDB(postDto) == 1;
 		}
 		
-		if(postDto.getTemp() == 1) {
-			System.out.println("?3");
-			return postMapper.writeTemp(postDto) == 1;
+//		if(postDto.getTemp() == 1) {
+//			System.out.println("?3");
+//			return postMapper.writeTemp(postDto) == 1;
+//		}
+		if(postDto.getEmail() == null || "".equals(postDto.getEmail())) {
+			throw new Exception("You are not Logged In!!");
 		}
-		System.out.println("?4");
 		return postMapper.write(postDto) == 1;
 	}
 	
 	@Override
 	public boolean writeTemp(PostDto postDto) throws Exception {
-		if(postDto.getTitle() == null || postDto.getContent() == null) {
-			throw new Exception();
+		if(postDto.getTitle() == null || postDto.getContent() == null
+//				|| "".equals(postDto.getTitle()) || "".equals(postDto.getContent())	// 제목, 내용 빈 문자열이면 취소
+				) {
+			throw new Exception("No title or No Content!");
 		}
 		if(postDto.getPostNo() != -1) {
 			return postMapper.modify(postDto) == 1;
+		}
+		if(postDto.getEmail() == null || "".equals(postDto.getEmail())) {
+			throw new Exception("You are not Logged In!!");
 		}
 		return postMapper.writeTemp(postDto) == 1;
 	}
@@ -156,6 +166,11 @@ public class PostServiceImpl implements PostService {
 	public List<ImgDto> getImages(int postNo) throws Exception {
 		return postMapper.getFiles(postNo);
 	}
+	
+	@Override
+	public ImgDto getImageInfo(String picNo) throws Exception {
+		return postMapper.getFileInfo(picNo);
+	}
 
 	@Override
 	public boolean saveImages(int postNo, List<MultipartFile> files) throws Exception {
@@ -180,7 +195,7 @@ public class PostServiceImpl implements PostService {
 			long picSize = file.getSize();
 			// 업로드 경로에 파일 생성
 			File target = new File(Paths.get(fileUrl, String.valueOf(postNo), modPicName).toString());
-//			File target = new File(uploadPath, modPicName);
+			
 			file.transferTo(target);
 
 			// 파일 정보 저장
@@ -197,11 +212,39 @@ public class PostServiceImpl implements PostService {
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean saveImage(int postNo, MultipartFile file) throws Exception {
+		System.out.println(file.getOriginalFilename());
+		
+		String oriPicName = file.getOriginalFilename();
+		String oriPicNameExtension = FilenameUtils.getExtension(oriPicName).toLowerCase();
+		String modPicName = RandomStringUtils.randomAlphanumeric(35-oriPicNameExtension.length()) + "." + oriPicNameExtension;
+		long picSize = file.getSize();
+		// 업로드 경로에 파일 생성
+		File target = new File(Paths.get(fileUrl, String.valueOf(postNo), modPicName).toString());
+		
+		file.transferTo(target);
+
+		// 파일 정보 저장
+		ImgDto img = new ImgDto();
+		img.setPostNo(postNo);
+		img.setOriPicName(oriPicName);
+		img.setModPicName(modPicName);
+		img.setPicSize(picSize);
+
+		// postNo로 파일 저장
+		if(postMapper.uploadFile(img) != 1) {
+			return false;
+		}
+		
+		return true;
+	}
 
 	@Override
 	@Transactional
-	public boolean deleteImages(List<String> unmodified) throws Exception {
-		return postMapper.deleteImgs(unmodified) == 1;
+	public boolean deleteImage(String picNo) throws Exception {
+		return postMapper.deleteImg(picNo) == 1;
 	}
 
 }

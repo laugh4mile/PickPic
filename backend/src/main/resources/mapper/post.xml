@@ -195,7 +195,7 @@
 <!-- 			and deleted = 'N' -->
 	</select>
 	
-	<select id="getFileInfo" parameterType="int" resultType="ImgDto">
+	<select id="getFileInfo" parameterType="string" resultType="ImgDto">
 		select picNo, postNo, oriPicName, modPicName,
 			round(picSize/1024, 1) as picSize, 
 			date_format(uploadDate, '%Y%m%d') as uploadDate
