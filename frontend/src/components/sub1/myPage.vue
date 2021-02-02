@@ -89,7 +89,6 @@
                 type="password"
                 required
                 v-model="pwd"
-                :rules="[pwd === user.pwd || '페스워드가 불일치합니다.']"
               ></v-text-field>
               <v-text-field
                 label="새 비밀번호 입력*"
@@ -264,25 +263,33 @@ export default {
         });
     },
     modifyPwd() {
-      if (this.pwd == this.user.pwd && this.pwd1 == this.pwd2) {
+      if (this.pwd1 == this.pwd2) {
         axios
           .put("http://localhost:3000/sub/member/pwd", {
             email: this.user.email,
             pwd: this.pwd2,
+            prePwd: this.pwd
           })
           .then((response) => {
-            const params = new URLSearchParams();
-            params.append("email", this.getUserEmail);
-            axios
-              .get("http://localhost:3000/sub/member", { params })
-              .then((response) => {
-                this.user = null;
-                this.user = response.data.info;
-              })
-              .catch(() => {
-                // this.$router.push("/Error");
-              });
-            this.dialog2 = false
+            if(response.data) {
+              alert('비밀번호변경완료')
+              const params = new URLSearchParams();
+              params.append("email", this.getUserEmail);
+              axios
+                .get("http://localhost:3000/sub/member", { params })
+                .then((response) => {
+                  this.user = null;
+                  this.user = response.data.info;
+                  this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
+                })
+                .catch(() => {
+                  // this.$router.push("/Error");
+                });
+              this.dialog2 = false
+            } else {
+              alert('비밀번호가 다릅니다.')
+            }
+            
           })
           .catch((error) => {
             this.$router.push("/Error");
