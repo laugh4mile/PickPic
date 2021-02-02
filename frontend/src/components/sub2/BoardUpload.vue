@@ -85,7 +85,7 @@
 </template>
 <script>
 import axios from "axios";
-
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
@@ -110,7 +110,7 @@ export default {
         const params = new URLSearchParams();
         params.append('email', this.$store.getters.getUserEmail);
         params.append('postNo', this.dialogm1)
-        axios.get('http://localhost:3000/sub/post', {params})
+        axios.get(`${SERVER_URL}/post`, {params})
         .then(response => {
             console.log(response);
             this.postNo = response.data.postInfo.postNo;
@@ -119,7 +119,7 @@ export default {
             this.imageUrl = [];
             for(var i=0; i<response.data.fileList.length;i++){
                 console.log(response.data.fileList[i].modPicName);
-                this.imageUrl.push('http://localhost:3000/sub/post/imgs/download?fileName=' + response.data.fileList[i].modPicName + '&postNo=' + this.dialogm1);
+                this.imageUrl.push(`${SERVER_URL}/post/imgs/download?fileName=` + response.data.fileList[i].modPicName + '&postNo=' + this.dialogm1);
             } 
         })
         .catch(error => {
@@ -144,7 +144,7 @@ export default {
       frm.append("title", this.title);
 
       axios
-        .post("http://localhost:3000/sub/temp", frm, {
+        .post(`${SERVER_URL}/temp`, frm, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -160,7 +160,7 @@ export default {
     getTemp(){
         const params = new URLSearchParams();
         params.append('email', this.$store.getters.getUserEmail);
-        axios.get('http://localhost:3000/sub/temp/list', {params})
+        axios.get(`${SERVER_URL}/temp/list`, {params})
         .then(response => {
             this.tempPost = response.data;
         })
@@ -180,7 +180,7 @@ export default {
       frm.append("title", this.title);
 
       axios
-        .post("http://localhost:3000/sub/post", frm, {
+        .post(`${SERVER_URL}/post`, frm, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

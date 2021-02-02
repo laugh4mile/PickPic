@@ -34,6 +34,7 @@
 </template>
 <script>
 import axios from "axios";
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
@@ -47,7 +48,7 @@ export default {
   created() {
     // this.board = this.$route.query.board;
     axios
-      .get("http://localhost:3000/sub/post", {
+      .get(`${SERVER_URL}/post`, {
         params: {
           email: this.$store.getters.getUserEmail,
           postNo: this.$route.query.board.postInfo.postNo,
@@ -63,7 +64,7 @@ export default {
         console.log('템프는',this.temp)
         for (var i = 0; i < response.data.fileList.length; i++) {
           this.imgUrl.push(
-            "http://localhost:3000/sub/post/imgs/download?fileName=" +
+            `${SERVER_URL}/post/imgs/download?fileName=` +
               response.data.fileList[i].modPicName +
               "&postNo=" +
               this.$route.query.board.postInfo.postNo
@@ -105,7 +106,7 @@ export default {
       frm.append("content", this.board.postInfo.content);
       frm.append("title", this.board.postInfo.title);
       axios
-        .put("http://localhost:3000/sub/post", frm)
+        .put(`${SERVER_URL}/post`, frm)
         .then((response) => {
           alert("수정 완료");
           this.$router.push("/board/" + this.board.postInfo.postNo);

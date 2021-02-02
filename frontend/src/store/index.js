@@ -88,7 +88,7 @@ export default new Vuex.Store({
       params.append('email', user.email);
       params.append('pwd', user.pwd);
 
-      return axios.post('http://localhost:3000/sub/login/confirm/login', params // pwd: user.pwd,
+      return axios.post(`${SERVER_URL}/login/confirm/login`, params // pwd: user.pwd,
         // name:'',
         // role:''
       ).then((response) => {

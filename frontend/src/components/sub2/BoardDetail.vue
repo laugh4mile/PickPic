@@ -88,7 +88,7 @@ import Vote from './vote.vue';
 import Comment from './Comment.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
-
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
@@ -110,7 +110,7 @@ export default {
   },
   created() {
     axios
-      .get('http://localhost:3000/sub/post', {
+      .get(`${SERVER_URL}/post`, {
         params: {
           email: this.$store.getters.getUserEmail,
           postNo: this.$route.params.no,
@@ -157,10 +157,10 @@ export default {
         params.append('postNo', this.board.postInfo.postNo);
 
         axios
-          .put('http://localhost:3000/sub/post/like', params)
+          .put(`${SERVER_URL}/post/like`, params)
           .then((response) => {
             axios
-              .get('http://localhost:3000/sub/post', {
+              .get(`${SERVER_URL}/post`, {
                 params: {
                   email: this.$store.getters.getUserEmail,
                   postNo: this.$route.params.no,
@@ -188,7 +188,7 @@ export default {
     },
     deleteForm() {
       axios
-        .delete('http://localhost:3000/sub/post', {
+        .delete(`${SERVER_URL}/post`, {
           params: {
             postNo: this.$route.params.no,
           },

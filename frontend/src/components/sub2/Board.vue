@@ -25,13 +25,15 @@
     import BoardDesign from "./BoardDesign.vue";
     import axios from 'axios';
     import InfiniteLoading from 'vue-infinite-loading';
+    const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
     components:{
         BoardDesign,
         InfiniteLoading
     },
     created() {
-        axios.get('http://localhost:3000/sub/post/list')
+        console.log(process.env.VUE_APP_SERVER_URL);
+        axios.get(`${SERVER_URL}/post/list`)
         .then(response => {
             this.boards = response.data;
             this.board = this.boards;
@@ -47,7 +49,7 @@ export default {
       params.append("pg", this.limit);
       console.log('마지막이라고')
       axios
-      .get("http://localhost:3000/sub/post/list", 
+      .get(`${SERVER_URL}/post/list`, 
           {params})
         .then((response) => {
             setTimeout(() => {

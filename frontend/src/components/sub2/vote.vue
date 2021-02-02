@@ -14,7 +14,7 @@
 </template>
 <script>
 import axios from 'axios';
-
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 export default {
   data() {
     return {
@@ -31,10 +31,10 @@ export default {
     params.append('email', this.$store.getters.getUserEmail)
     params.append('postNo', this.no);
 
-     axios.get('http://localhost:3000/sub/post', {params})
+     axios.get(`${SERVER_URL}/post`, {params})
     .then(response => {
       for(var i=0; i<response.data.fileList.length;i++){
-        // this.imgUrl.push('http://localhost:3000/sub/post/imgs/download?fileName=' + response.data.fileList[i].modPicName + '&postNo=' + this.no);
+        // this.imgUrl.push(`${SERVER_URL}/post/imgs/download?fileName=` + response.data.fileList[i].modPicName + '&postNo=' + this.no);
         this.imgUrl.push(response.data.fileList[i].modPicName);
       }
       console.log(this.imgUrl);
