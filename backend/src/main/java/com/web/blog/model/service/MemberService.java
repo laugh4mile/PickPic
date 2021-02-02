@@ -34,4 +34,6 @@ public interface MemberService {
 	public void uploadFile(MultipartFile file) throws IOException;
 
 	public String getFilePath(String email);
+	
+	public void deleteImg(String email);
 }

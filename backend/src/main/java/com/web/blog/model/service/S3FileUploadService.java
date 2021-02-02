@@ -112,6 +112,21 @@ public class S3FileUploadService {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
+	public void delete(String fileName) {
+		try {
+			// Delete 객체 생성
+			DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
+			// Delete
+			this.amazonS3Client.deleteObject(deleteObjectRequest);
+			System.out.println(String.format("[%s] deletion complete", fileName));
+
+		} catch (AmazonServiceException e) {
+			e.printStackTrace();
+		} catch (SdkClientException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void uploadOnS3(final String findName, final File file) {
 		// AWS S3 전송 객체 생성
 		final TransferManager transferManager = new TransferManager(this.amazonS3Client);

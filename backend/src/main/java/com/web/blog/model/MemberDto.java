@@ -8,13 +8,14 @@ public class MemberDto {
 	private String joinDate;
 	private String introduce;
 	private String profileImg;
+	private String profileImgName;
 
 	public MemberDto() {
 		super();
 	}
 
 	public MemberDto(String email, String name, String pwd, String role, String joinDate, String introduce,
-			String profileImg) {
+			String profileImg, String profileImgName) {
 		super();
 		this.email = email;
 		this.name = name;
@@ -23,6 +24,15 @@ public class MemberDto {
 		this.joinDate = joinDate;
 		this.introduce = introduce;
 		this.profileImg = profileImg;
+		this.profileImgName = profileImgName;
+	}
+
+	public String getProfileImgName() {
+		return profileImgName;
+	}
+
+	public void setProfileImgName(String profileImgName) {
+		this.profileImgName = profileImgName;
 	}
 
 	public String getProfileImg() {
@@ -83,7 +93,9 @@ public class MemberDto {
 
 	@Override
 	public String toString() {
-		return "MemberDto [email=" + email + ", name=" + name + ", pwd=" + pwd + ", role=" + role + "]";
+		return "MemberDto [email=" + email + ", name=" + name + ", pwd=" + pwd + ", role=" + role + ", joinDate="
+				+ joinDate + ", introduce=" + introduce + ", profileImg=" + profileImg + ", profileImgName="
+				+ profileImgName + "]";
 	}
 
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,8 @@ import com.web.blog.model.mapper.MemberMapper;
 
 @Service
 public class MemberServiceImpl implements MemberService {
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Autowired
 	MemberMapper dao;
@@ -24,6 +27,11 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public void saveImg(MemberDto dto) throws IOException, SQLException {
 		dao.setProfile(dto);
+	}
+
+	@Override
+	public void deleteImg(String email) {
+		dao.deleteImg(email);
 	}
 
 	@Override
@@ -49,13 +57,24 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public MemberDto login(MemberDto dto) throws SQLException {
-		MemberDto answer = dao.login(dto);
-		System.out.println(answer);
-		return answer;
+		String encodedPassword = dao.findPwd(dto.getEmail());
+		System.out.println("rowPassword : " + dto.getPwd());
+		System.out.println("encodedPassword : " + encodedPassword);
+		System.out.println("matches : " + passwordEncoder.matches(dto.getPwd(), encodedPassword));
+		if(passwordEncoder.matches(dto.getPwd(), encodedPassword)) {
+			dto.setPwd(dto.getPwd());
+			MemberDto answer = dao.login(dto);
+			System.out.println("answer : " + answer);
+			return answer;
+		}else {
+			return null;
+		}
 	}
 
 	@Override
 	public void join(MemberDto dto) throws Exception {
+		String encodePassword = passwordEncoder.encode(dto.getPwd());
+		dto.setPwd(encodePassword);
 		dao.join(dto);
 	}
 

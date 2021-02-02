@@ -1,12 +1,10 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-sm-2 col-md-2 selector" width="200">
-        <img
-          :src=imgUrl
-          alt="프로필 이미지"
-        />
-      </div>
+      <label class="col-sm-2 col-md-2 newbtn selector" width="200">
+        <img id="blah" :src=user.profileImg onerror="this.src=`https://apfbucket.s3.ap-northeast-2.amazonaws.com/c8c25cb23bdd4aa9a5c4608b7fa243ef.png`" alt="프로필 이미지"/>
+        <input id="pic" class='pis' @change="addProfile" type="file" >
+      </label>
       <div class="col-sm-10 col-md-10">
         <blockquote>
           <p>{{ user.name }}</p>
@@ -70,7 +68,7 @@
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialog2" width="500">
-          <template v-slot:activator="{ on, attrs }" @click="dialog2">
+          <template v-slot:activator="{ on, attrs }" >
             <v-btn variant="primary" v-bind="attrs" v-on="on">
               비밀번호변경
             </v-btn>
@@ -119,11 +117,6 @@
           </v-card>
         </v-dialog>
       </div>
-        <input type="file" name="photo" id="photo" />
-        <v-btn variant="primary" @click="uploadImg"
-        >이미지업로드</v-btn>
-        <!-- <v-btn variant="primary" @click="downImg"
-        >이미지다운로드</v-btn> -->
     </div>
     <v-col cols="12" md="4">
       <instagram />
@@ -149,7 +142,6 @@ export default {
       pwd: "",
       pwd1: "",
       pwd2: "",
-      imgUrl: '',
 
       pwdRules: [
         (v) =>
@@ -165,12 +157,6 @@ export default {
   },
   computed: {
     ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
-    dataUrl(){
-      return 'data:image/jpeg;base64m' + btoa(
-        new Uint8Array(this.user.profileImg)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-    }
   },
   created() {
     console.log("created");
@@ -181,12 +167,11 @@ export default {
     axios
       .get("http://localhost:3000/sub/member", { params })
       .then((response) => {
-        console.log(response);
+        console.log('리스폰스',response);
         this.user = null;
         this.user = response.data.info;
         console.log(this.user);
         console.log(this.user.email)
-        this.imgUrl = `http://localhost:3000/sub/member/download?email=${this.user.email}`
       })
       .catch(() => {
         // this.$router.push("/Error");
@@ -194,22 +179,12 @@ export default {
     
   },
   methods: {
-    // downImg: function() {
-    //   const params = new URLSearchParams();
-    //   params.append("email", this.user.email);
-    //   axios.get('http://localhost:3000/sub/member/download', {params})
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch(error => {
-    //     this.$router.push("/Error");
-    //   });
-    // },
-    uploadImg: function() {
-      
+    
+    addProfile: function(input) {
+      console.log(input.target.files[0]);
       var frm = new FormData();
-      var photoFile = document.getElementById("photo");
-      frm.append("profileImg", photoFile.files[0]);
+      var photoFile = input.target.files[0]
+      frm.append("profileImg", photoFile);
       frm.append("email", this.user.email);
       axios.post('http://localhost:3000/sub/member/upload', frm,{
         headers: {
@@ -217,9 +192,18 @@ export default {
         }
       })
       .then((response) => {
-        alert('완료');
-        this.$router.push("/");
-        console.log(response);
+        alert('프로필 업로드 완료');
+        const params = new URLSearchParams();
+        params.append("email", this.getUserEmail);
+        axios
+          .get("http://localhost:3000/sub/member", { params })
+          .then((response) => {
+            this.user = null;
+            this.user = response.data.info;
+          })
+          .catch(() => {
+            // this.$router.push("/Error");
+          });
       })
       .catch(error => {
         this.$router.push("/Error");
@@ -274,7 +258,18 @@ export default {
             pwd: this.pwd2,
           })
           .then((response) => {
-            console.log(response);
+            const params = new URLSearchParams();
+            params.append("email", this.getUserEmail);
+            axios
+              .get("http://localhost:3000/sub/member", { params })
+              .then((response) => {
+                this.user = null;
+                this.user = response.data.info;
+              })
+              .catch(() => {
+                // this.$router.push("/Error");
+              });
+            this.dialog2 = false
           })
           .catch((error) => {
             this.$router.push("/Error");
@@ -310,5 +305,19 @@ small {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+
+#pic{
+display: none;
+}
+
+.newbtn{
+  cursor: pointer;
+}
+#blah{
+  max-width:100px;
+  height:100px;
+  margin-top:20px;
 }
 </style>

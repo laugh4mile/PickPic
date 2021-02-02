@@ -11,7 +11,8 @@
 	<select id="login" parameterType="MemberDto" resultType="MemberDto">
 		select email, pwd, name, role 
 		from member 
-		where email=#{email} and pwd = #{pwd}
+		where email=#{email}
+		<!-- and pwd = #{pwd} -->
 	</select>
 	
 	<insert id="join" parameterType="MemberDto">
@@ -56,9 +57,14 @@
 	
 	<update id="setProfile" parameterType="MemberDto">
 		update member
-		set profileImg = #{profileImg}
+		set profileImg = #{profileImg}, profileImgName=#{profileImgName}
 		where email=#{email}
 	</update>
-	
+
+	<update id="deleteImg" parameterType="string">
+		update member
+		set profileImg = null, profileImgName=null
+		where email=#{email}
+	</update>
 	
 </mapper>
