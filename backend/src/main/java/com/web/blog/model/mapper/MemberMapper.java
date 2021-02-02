@@ -37,4 +37,8 @@ public interface MemberMapper {
 	public String getFilePath(String email);
 
 	public void deleteImg(String email);
+	
+	public String emailCheck(String email);
+	
+	public String nameCheck(String name);
 }
