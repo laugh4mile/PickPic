@@ -95,12 +95,32 @@ public class MemberServiceImpl implements MemberService {
 	public boolean updatePwd(MemberDto memberDto) throws Exception {
 		if (memberDto == null)
 			return false;
-
-		return dao.updatePwd(memberDto);
+		String encodedPassword = dao.findPwd(memberDto.getEmail());
+		if(passwordEncoder.matches(memberDto.getPrePwd(), encodedPassword)) {
+			memberDto.setPwd(passwordEncoder.encode(memberDto.getPwd()));
+			return dao.updatePwd(memberDto);
+		}
+		return false;
 	}
 
 	@Override
 	public MemberDto findUserInfo(String email) throws Exception {
 		return dao.findUserInfo(email);
+	}
+
+	@Override
+	public boolean emailCheck(String email) {
+		if(dao.emailCheck(email) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean nameCheck(String name) {
+		if(dao.nameCheck(name) != null) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -77,7 +77,7 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String fileName = dto.getProfileImgName();
+		String fileName = dto.getProfileImg();
 		System.out.println(fileName);
 		s3FileUploadService.delete(fileName);
 		memberService.deleteImg(email);
@@ -173,6 +173,7 @@ public class MemberController {
 		MemberDto dto = new MemberDto();
 		dto.setEmail(map.get("email"));
 		dto.setPwd(map.get("pwd"));
+		dto.setPrePwd(map.get("prePwd"));
 		System.out.println(dto);
 		boolean flag = false;
 
@@ -202,5 +203,17 @@ public class MemberController {
 		}
 
 		return new ResponseEntity<Boolean>(flag, status);
+	}
+	
+	@GetMapping("/emailCheck")
+	public ResponseEntity<Boolean> emailCheck(@RequestParam String email){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.emailCheck(email), status); 
+	}
+	
+	@GetMapping("/nameCheck")
+	public ResponseEntity<Boolean> nameCheck(@RequestParam String name){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.nameCheck(name), status);
 	}
 }
