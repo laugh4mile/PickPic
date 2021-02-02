@@ -93,20 +93,6 @@ public class S3FileUploadService {
 	}
 
 
-	public void delete(String fileName) {
-		try {
-			// Delete 객체 생성
-			DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
-			// Delete
-			this.amazonS3Client.deleteObject(deleteObjectRequest);
-			System.out.println(String.format("[%s] deletion complete", fileName));
-
-		} catch (AmazonServiceException e) {
-			e.printStackTrace();
-		} catch (SdkClientException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	private static String getUuid() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
