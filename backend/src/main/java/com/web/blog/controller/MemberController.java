@@ -70,7 +70,6 @@ public class MemberController {
 	@ApiOperation(value = "사용자의 이미지를 삭제한다")
 	@GetMapping("/delete")
 	public ResponseEntity<Void> deleteProfilePicture(@RequestParam String email) {
-		System.out.println(email);
 		MemberDto dto = new MemberDto();
 		try {
 			dto = memberService.findUserInfo(email);
@@ -174,6 +173,7 @@ public class MemberController {
 		MemberDto dto = new MemberDto();
 		dto.setEmail(map.get("email"));
 		dto.setPwd(map.get("pwd"));
+		dto.setPrePwd(map.get("prePwd"));
 		System.out.println(dto);
 		boolean flag = false;
 
@@ -203,5 +203,17 @@ public class MemberController {
 		}
 
 		return new ResponseEntity<Boolean>(flag, status);
+	}
+	
+	@GetMapping("/emailCheck")
+	public ResponseEntity<Boolean> emailCheck(@RequestParam String email){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.emailCheck(email), status); 
+	}
+	
+	@GetMapping("/nameCheck")
+	public ResponseEntity<Boolean> nameCheck(@RequestParam String name){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.nameCheck(name), status);
 	}
 }

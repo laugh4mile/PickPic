@@ -95,8 +95,12 @@ public class MemberServiceImpl implements MemberService {
 	public boolean updatePwd(MemberDto memberDto) throws Exception {
 		if (memberDto == null)
 			return false;
-
-		return dao.updatePwd(memberDto);
+		String encodedPassword = dao.findPwd(memberDto.getEmail());
+		if(passwordEncoder.matches(memberDto.getPrePwd(), encodedPassword)) {
+			memberDto.setPwd(passwordEncoder.encode(memberDto.getPwd()));
+			return dao.updatePwd(memberDto);
+		}
+		return false;
 	}
 
 	@Override
