@@ -207,7 +207,7 @@ public class MemberController {
 	@GetMapping("/emailCheck")
 	public ResponseEntity<Boolean> emailCheck(@RequestParam String email){
 		HttpStatus status = HttpStatus.ACCEPTED;
-		return new ResponseEntity<Boolean> (memberService.emailCheck(email), status);
+		return new ResponseEntity<Boolean> (memberService.emailCheck(email), status); 
 	}
 	
 	@GetMapping("/nameCheck")
