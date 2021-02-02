@@ -203,4 +203,16 @@ public class MemberController {
 
 		return new ResponseEntity<Boolean>(flag, status);
 	}
+	
+	@GetMapping("/emailCheck")
+	public ResponseEntity<Boolean> emailCheck(@RequestParam String email){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.emailCheck(email), status);
+	}
+	
+	@GetMapping("/nameCheck")
+	public ResponseEntity<Boolean> nameCheck(@RequestParam String name){
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<Boolean> (memberService.nameCheck(name), status);
+	}
 }

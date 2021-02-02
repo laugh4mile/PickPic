@@ -103,4 +103,20 @@ public class MemberServiceImpl implements MemberService {
 	public MemberDto findUserInfo(String email) throws Exception {
 		return dao.findUserInfo(email);
 	}
+
+	@Override
+	public boolean emailCheck(String email) {
+		if(dao.emailCheck(email) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean nameCheck(String name) {
+		if(dao.nameCheck(name) != null) {
+			return true;
+		}
+		return false;
+	}
 }
