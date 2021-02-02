@@ -36,4 +36,8 @@ public interface MemberService {
 	public String getFilePath(String email);
 	
 	public void deleteImg(String email);
+	
+	public boolean emailCheck(String email);
+	
+	public boolean nameCheck(String name);
 }

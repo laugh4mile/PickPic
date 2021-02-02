@@ -67,4 +67,16 @@
 		where email=#{email}
 	</update>
 	
+	<select id="emailCheck" parameterType="string" resultType="string">
+		select email
+		from member
+		where email = #{email}
+	</select>
+	
+	<select id="nameCheck" parameterType="string" resultType="string">
+		select name
+		from member
+		where name = #{name}
+	</select>
+	
 </mapper>
