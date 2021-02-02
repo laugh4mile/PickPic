@@ -147,7 +147,7 @@ import axios from "axios";
 import { mapGetters } from "vuex";
 
 import InfiniteLoading from 'vue-infinite-loading';
-
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
@@ -180,7 +180,7 @@ export default {
       params.append("pg", this.limit);
       console.log('마지막이라고')
       axios
-      .post("http://localhost:3000/sub/comment/" + this.$route.params.no,
+      .post(`${SERVER_URL}/comment/` + this.$route.params.no,
           params)
         .then((response) => {
           setTimeout(() => {
@@ -208,7 +208,7 @@ export default {
       const params = new URLSearchParams();
       params.append("email", this.getUserEmail);
       axios
-        .get("http://localhost:3000/sub/comment/" + this.$route.params.no, {
+        .get(`${SERVER_URL}/comment/` + this.$route.params.no, {
           params,
         })
         .then((response) => {
@@ -243,7 +243,7 @@ export default {
           alert("댓글을 입력해주세요");
         } else {
           axios
-            .post("http://localhost:3000/sub/comment", {
+            .post(`${SERVER_URL}/comment`, {
               email: this.$store.getters.getUserEmail,
               postNo: this.$route.params.no,
               content: this.userComment,
@@ -263,7 +263,7 @@ export default {
     menuclick(event, cmt) {
       if (event.target.innerText == "삭제") {
         axios
-          .delete("http://localhost:3000/sub/comment", {
+          .delete(`${SERVER_URL}/comment`, {
             data: {
               commentNo: cmt.Comment.commentNo,
             },
@@ -283,7 +283,7 @@ export default {
         event.target.innerText = "완료";
       } else if (event.target.innerText == "완료") {
         axios
-          .put("http://localhost:3000/sub/comment", cmt)
+          .put(`${SERVER_URL}/comment`, cmt)
           .then((response) => {
             event.target.innerText = "수정";
             alert("수정 완료");
@@ -300,7 +300,7 @@ export default {
       params.append("commentNo", comment.Comment.commentNo);
 
       axios
-        .put("http://localhost:3000/sub/comment/like", params)
+        .put(`${SERVER_URL}/comment/like`, params)
         .then((res) => {
           if (res.data.likeCheck == "Y") {
           }

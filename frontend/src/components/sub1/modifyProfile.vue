@@ -157,7 +157,7 @@ export default {
     const params = new URLSearchParams();
     params.append("email", this.getUserEmail);
     axios
-      .get('http://localhost:3000/sub/member', {params})
+      .get(`${SERVER_URL}/member`, {params})
       .then(response => {
         console.log(response);
         this.user = null;
@@ -179,7 +179,7 @@ export default {
       const params = new URLSearchParams();
       params.append("email", this.user.email);
       axios
-        .post("http://localhost:3000/sub/service/mail", params)
+        .post(`${SERVER_URL}/service/mail`, params)
         .then(response => {
           console.log(response);
           alert("메일이 전송되었습니다/");
@@ -192,7 +192,7 @@ export default {
       const params = new URLSearchParams();
       params.append("code", this.verityCode);
       axios
-        .post("http://localhost:3000/sub/service/verifyCode", params)
+        .post(`${SERVER_URL}/service/verifyCode`, params)
         .then(response => {
           if (response.data == 1) {
             this.verifys = true;
@@ -207,7 +207,7 @@ export default {
     },
     onSubmit() {
       this.$refs.form.validate();
-          axios.put("http://localhost:3000/sub/member", {
+          axios.put(`${SERVER_URL}/member`, {
               email: this.user.email,
               introduce : this.user.introduce,
               pwd : 'awww',
@@ -222,7 +222,7 @@ export default {
     },
     modifyPwd() {
       this.$refs.form.validate();
-          axios.put("http://localhost:3000/sub/member", {
+          axios.put(`${SERVER_URL}/member`, {
               email: this.user.email,
               introduce : this.user.introduce,
               pwd : 'awww',

@@ -164,7 +164,7 @@ export default {
     const params = new URLSearchParams();
     params.append("email", this.getUserEmail);
     axios
-      .get("http://localhost:3000/sub/member", { params })
+      .get(`${SERVER_URL}/member`, { params })
       .then((response) => {
         console.log('리스폰스',response);
         this.user = null;
@@ -185,7 +185,7 @@ export default {
       if (this.user.profileImg) {
         const params = new URLSearchParams();
         params.append("email", this.user.email);
-        axios.get('http://localhost:3000/sub/member/delete', {params})
+        axios.get(`${SERVER_URL}/member/delete`, {params})
         .then((response) => {
           console.log('기존이미지 삭제')
         })
@@ -197,7 +197,7 @@ export default {
       var photoFile = input.target.files[0]
       frm.append("profileImg", photoFile);
       frm.append("email", this.user.email);
-      axios.post('http://localhost:3000/sub/member/upload', frm,{
+      axios.post(`${SERVER_URL}/member/upload`, frm,{
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -207,7 +207,7 @@ export default {
         const params = new URLSearchParams();
         params.append("email", this.getUserEmail);
         axios
-          .get("http://localhost:3000/sub/member", { params })
+          .get(`${SERVER_URL}/member`, { params })
           .then((response) => {
             this.user = null;
             this.user = response.data.info;
@@ -230,7 +230,7 @@ export default {
       console.log(params);
       if (this.chk == "삭제하겠습니다.") {
         axios
-          .delete("http://localhost:3000/sub/member", {
+          .delete(`${SERVER_URL}/member`, {
             data: {
               email: this.getUserEmail,
             },
@@ -250,7 +250,7 @@ export default {
     },
     modifyIntro() {
       axios
-        .put("http://localhost:3000/sub/member/intro", {
+        .put(`${SERVER_URL}/member/intro`, {
           email: this.user.email,
           introduce: this.user.introduce,
         })
@@ -265,7 +265,7 @@ export default {
     modifyPwd() {
       if (this.pwd1 == this.pwd2) {
         axios
-          .put("http://localhost:3000/sub/member/pwd", {
+          .put(`${SERVER_URL}/member/pwd`, {
             email: this.user.email,
             pwd: this.pwd2,
             prePwd: this.pwd
@@ -276,7 +276,7 @@ export default {
               const params = new URLSearchParams();
               params.append("email", this.getUserEmail);
               axios
-                .get("http://localhost:3000/sub/member", { params })
+                .get(`${SERVER_URL}/member`, { params })
                 .then((response) => {
                   this.user = null;
                   this.user = response.data.info;

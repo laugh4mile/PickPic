@@ -117,7 +117,7 @@ export default {
     checkNameDuplicate() {
       const params = new URLSearchParams();
       params.append("name", this.user.name);
-      axios.get('http://localhost:3000/sub/member/nameCheck', {params})
+      axios.get(`${SERVER_URL}/member/nameCheck`, {params})
       .then((response) => {
         if (this.user.name) {
           if (response.data) {
@@ -138,7 +138,7 @@ export default {
     checkEmailDuplicate() {
       const params = new URLSearchParams();
       params.append("email", this.user.email);
-      axios.get('http://localhost:3000/sub/member/emailCheck', {params})
+      axios.get(`${SERVER_URL}/member/emailCheck`, {params})
       .then((response) => {
         if (this.user.email) {
           if (response.data) {
@@ -165,10 +165,10 @@ export default {
       const params = new URLSearchParams();
       params.append("email", this.user.email);
       axios
-        .post("http://localhost:3000/sub/service/mail", params)
+        .post(`${SERVER_URL}/service/mail`, params)
         .then(response => {
           console.log(response);
-          alert('메일이 전송되었습니다/');
+          alert('메일이 전송되었습니다');
         })
         .catch(error => {
           console.log(error);
@@ -178,7 +178,7 @@ export default {
       const params = new URLSearchParams();
       params.append("code", this.verityCode);
       axios
-        .post("http://localhost:3000/sub/service/verifyCode", params)
+        .post(`${SERVER_URL}/service/verifyCode`, params)
         .then(response => {
           if (response.data == 1) {
             this.verifys = true;
@@ -199,7 +199,7 @@ export default {
       } else if (!this.chkname || !this.chkemail){
         alert('중복검사를 해주세요')
       }else{
-          axios.post('http://localhost:3000/sub/member', this.user).then((response) => {
+          axios.post(`${SERVER_URL}/member`, this.user).then((response) => {
             alert('회원가입 완료');
             this.$router.push("/");
             console.log(response);
