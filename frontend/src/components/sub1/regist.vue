@@ -1,13 +1,19 @@
 <template>
   <v-form class="container" action="/" ref="form" v-model="valid" lazy-validation>
-    <v-text-field
-      v-model="user.name"
-      :counter="10"
-      :rules="nameRules"
-      label="Name"
-      required
-    ></v-text-field>
-
+    
+    
+    <v-row>
+      <v-col cols="12" md="10">
+        <v-text-field
+          v-model="user.name"
+          :counter="10"
+          :rules="nameRules"
+          label="Name"
+          required
+        ></v-text-field>
+      </v-col>
+      <v-btn class="mt-10" @click="checkNameDuplicate">이름 중복검사</v-btn>
+    </v-row>
     <v-row>
       <v-col cols="12" md="10">
         <v-text-field
@@ -17,6 +23,7 @@
           required
         ></v-text-field>
       </v-col>
+      <v-btn class="mt-10" @click="checkEmailDuplicate">메일 중복검사</v-btn>
       <v-btn class="mt-10" @click="sendVerifyCode">이메일 인증</v-btn>
     </v-row>
     <v-row>
@@ -101,10 +108,53 @@ export default {
       pwd:'',
       name:'',
       introduce: '',
-    }
+    },
+    chkname: false,
+    chkemail: false,
   }),
 
   methods: {
+    checkNameDuplicate() {
+      const params = new URLSearchParams();
+      params.append("name", this.user.name);
+      axios.get('http://localhost:3000/sub/member/nameCheck', {params})
+      .then((response) => {
+        if (this.user.name) {
+          if (response.data) {
+            alert('중복된이름')
+          } else {
+            alert('사용가능')
+            this.chkname = true
+          }
+        } else {
+          alert('이름을 입력해주세요')
+        }
+      
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+    },
+    checkEmailDuplicate() {
+      const params = new URLSearchParams();
+      params.append("email", this.user.email);
+      axios.get('http://localhost:3000/sub/member/emailCheck', {params})
+      .then((response) => {
+        if (this.user.email) {
+          if (response.data) {
+            alert('중복된메일')
+          } else {
+            alert('사용가능')
+            this.chkemail = true
+          }
+        } else {
+          alert('메일을 입력해주세요')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+    },
     validate() {
       this.$refs.form.validate();
     },
@@ -146,12 +196,14 @@ export default {
       if(!this.verifys){
         event.preventDefault();
         alert('이메일 인증 미완료');
+      } else if (!this.chkname || !this.chkemail){
+        alert('중복검사를 해주세요')
       }else{
-           axios.post('http://localhost:3000/sub/member', this.user).then((response) => {
-             alert('회원가입 완료');
-             this.$router.push("/");
-        console.log(response);
-      })
+          axios.post('http://localhost:3000/sub/member', this.user).then((response) => {
+            alert('회원가입 완료');
+            this.$router.push("/");
+            console.log(response);
+          })
       .catch(error => {
         this.$router.push("/Error");
       });
