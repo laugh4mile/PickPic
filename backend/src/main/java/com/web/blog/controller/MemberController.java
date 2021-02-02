@@ -173,6 +173,7 @@ public class MemberController {
 		MemberDto dto = new MemberDto();
 		dto.setEmail(map.get("email"));
 		dto.setPwd(map.get("pwd"));
+		dto.setPrePwd(map.get("prePwd"));
 		System.out.println(dto);
 		boolean flag = false;
 
