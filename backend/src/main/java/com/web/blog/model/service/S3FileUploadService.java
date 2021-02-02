@@ -92,8 +92,6 @@ public class S3FileUploadService {
 		return member;
 	}
 
-
-	
 	private static String getUuid() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}

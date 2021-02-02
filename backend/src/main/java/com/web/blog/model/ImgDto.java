@@ -8,6 +8,7 @@ public class ImgDto {
 	private String modPicName; // 저장할 파일
 	private long picSize;
 	private String uploadDate;
+	private int voteCnt;
 
 //	public ImgDto() {
 //		super();
@@ -69,11 +70,18 @@ public class ImgDto {
 		this.uploadDate = uploadDate;
 	}
 
+	public int getVoteCnt() {
+		return voteCnt;
+	}
+
+	public void setVoteCnt(int voteCnt) {
+		this.voteCnt = voteCnt;
+	}
+
 	@Override
 	public String toString() {
 		return "ImgDto [picNo=" + picNo + ", postNo=" + postNo + ", oriPicName=" + oriPicName + ", modPicName="
-				+ modPicName + ", picSize=" + picSize + ", uploadDate=" + uploadDate + "]";
+				+ modPicName + ", picSize=" + picSize + ", uploadDate=" + uploadDate + ", voteCnt=" + voteCnt + "]";
 	}
 
-	
 }
