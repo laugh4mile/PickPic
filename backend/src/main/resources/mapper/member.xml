@@ -57,13 +57,13 @@
 	
 	<update id="setProfile" parameterType="MemberDto">
 		update member
-		set profileImg = #{profileImg}, profileImgName=#{profileImgName}
+		set profileImg = #{profileImg}
 		where email=#{email}
 	</update>
 
 	<update id="deleteImg" parameterType="string">
 		update member
-		set profileImg = null, profileImgName=null
+		set profileImg = null
 		where email=#{email}
 	</update>
 	

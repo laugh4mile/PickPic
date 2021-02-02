@@ -77,7 +77,7 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String fileName = dto.getProfileImgName();
+		String fileName = dto.getProfileImg();
 		System.out.println(fileName);
 		s3FileUploadService.delete(fileName);
 		memberService.deleteImg(email);

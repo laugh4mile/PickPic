@@ -142,7 +142,7 @@ export default {
       pwd: "",
       pwd1: "",
       pwd2: "",
-
+      imgSrc: "",
       pwdRules: [
         (v) =>
           /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v) ||
@@ -170,6 +170,7 @@ export default {
         console.log('리스폰스',response);
         this.user = null;
         this.user = response.data.info;
+        this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
         console.log(this.user);
         console.log(this.user.email)
       })
@@ -182,6 +183,17 @@ export default {
     
     addProfile: function(input) {
       console.log(input.target.files[0]);
+      if (this.user.profileImg) {
+        const params = new URLSearchParams();
+        params.append("email", this.user.email);
+        axios.get('http://localhost:3000/sub/member/delete', {params})
+        .then((response) => {
+          console.log('기존이미지 삭제')
+        })
+        .catch((err) => {
+          console.log(err)
+        });
+      }
       var frm = new FormData();
       var photoFile = input.target.files[0]
       frm.append("profileImg", photoFile);
@@ -200,6 +212,7 @@ export default {
           .then((response) => {
             this.user = null;
             this.user = response.data.info;
+            this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
           })
           .catch(() => {
             // this.$router.push("/Error");
