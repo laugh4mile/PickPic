@@ -206,8 +206,8 @@
 	</select>
 	
 	<insert id="uploadFile">
-		insert into post_pics (postNo, oriPicName, modPicName, picSize)
-		values(#{postNo}, #{oriPicName}, #{modPicName}, #{picSize})
+		insert into post_pics (postNo, oriPicName, modPicName, thumbnail, picSize)
+		values(#{postNo}, #{oriPicName}, #{modPicName}, #{thumbnail}, #{picSize})
 	</insert>
 	
 	<select id="getFiles" parameterType="int" resultType="ImgDto">

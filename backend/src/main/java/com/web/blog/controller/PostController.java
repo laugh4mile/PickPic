@@ -225,20 +225,9 @@ public class PostController {
 		try {
 			for(MultipartFile file : files) {
 				// s3 업로드 후 db 저장
-				// 원본 저장
-				String saveFileName = s3FileUploadService.upload(file);
-				System.out.println(saveFileName);
-				
-				// 썸네일 저장
-				String thumbnail = "";
-
-				ImgDto img = new ImgDto();
+				ImgDto img = s3FileUploadService.uploadImage(file);
+				System.out.println(img);
 				img.setPostNo(postNo);
-				img.setOriPicName(file.getOriginalFilename());
-				img.setModPicName(saveFileName);
-				// 썸네일 이름
-//				img.setThumbnail(thumbnail);
-				img.setPicSize(file.getSize());
 				
 				postService.uploadFile(img);
 			}
@@ -259,6 +248,7 @@ public class PostController {
 			// ec2 파일 삭제
 			for(ImgDto imgDto : postService.getImages(postNo)) {
 				s3FileUploadService.delete(imgDto.getModPicName());
+				s3FileUploadService.delete(imgDto.getThumbnail());
 			}
 			
 			// db post 삭제 --cascade--> post images 삭제
@@ -317,7 +307,6 @@ public class PostController {
 			resultMap.put("likeCnt", postService.likeCount(postNo));
 			status = HttpStatus.OK;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
