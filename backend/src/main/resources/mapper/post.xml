@@ -42,12 +42,29 @@
 				likeCnt, email, name,
 				(
 					select thumbnail
-					from post_pics
-					where post.postNo = post_pics.postNo
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						order by count desc
+						) as temp
 					limit 1
-					) as thumbnail
-		from post join member 
-					on post.email = member.email
+				) as thumbnail,
+				(
+					select thumbnail
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						order by count desc
+						) as temp
+					limit 1, 1
+				) as thumbnailTwo
+		from post join member using(email)
 		where temp = 0
 		<if test="word != null and word != ''">
 			<if test="key == 'title'">
@@ -189,8 +206,8 @@
 	</select>
 	
 	<insert id="uploadFile">
-		insert into post_pics (postNo, oriPicName, modPicName, thumbnail, picSize)
-		values(#{postNo}, #{oriPicName}, #{modPicName}, #{thumbnail}, #{picSize})
+		insert into post_pics (postNo, oriPicName, modPicName, picSize)
+		values(#{postNo}, #{oriPicName}, #{modPicName}, #{picSize})
 	</insert>
 	
 	<select id="getFiles" parameterType="int" resultType="ImgDto">

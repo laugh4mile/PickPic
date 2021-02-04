@@ -204,9 +204,10 @@ public class PostController {
 		try {
 			for(String picNo : unmodified) {
 				// ec2에서 파일 지우고 db에서 지우기
-//				ImgDto imgDto = postService.getImageInfo(picNo);
-//				s3FileUploadService.delete(imgDto.getModPicName());
+				// 원본
 				s3FileUploadService.delete(postService.getImageInfo(picNo).getModPicName());
+				// 썸네일
+				s3FileUploadService.delete(postService.getImageInfo(picNo).getThumbnail());
 				
 				postService.deleteImage(picNo);
 			}
@@ -224,13 +225,19 @@ public class PostController {
 		try {
 			for(MultipartFile file : files) {
 				// s3 업로드 후 db 저장
+				// 원본 저장
 				String saveFileName = s3FileUploadService.upload(file);
 				System.out.println(saveFileName);
+				
+				// 썸네일 저장
+				String thumbnail = "";
 
 				ImgDto img = new ImgDto();
 				img.setPostNo(postNo);
 				img.setOriPicName(file.getOriginalFilename());
 				img.setModPicName(saveFileName);
+				// 썸네일 이름
+//				img.setThumbnail(thumbnail);
 				img.setPicSize(file.getSize());
 				
 				postService.uploadFile(img);
