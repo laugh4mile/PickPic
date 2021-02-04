@@ -92,7 +92,12 @@
 		from post join member using(email)
 		where temp = 1 and email = #{email}
 		order by postNo desc, modifyDate desc
-		limit #{start}, #{spp}
+	</select>
+	
+	<select id="getTempCount" parameterType="string" resultType="int">
+		select count(postNo)
+		from post
+		where temp = 1 and email = #{email}
 	</select>
 	
 	<insert id="write" parameterType="PostDto">

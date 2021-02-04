@@ -45,11 +45,13 @@ public class PostServiceImpl implements PostService {
 	}
 	@Override
 	public List<PostDto> getTempList(PostParameterDto postParameterDto) throws Exception {
-		int start = postParameterDto.getPg() == 0 ? 0 : (postParameterDto.getPg() - 1) * postParameterDto.getSpp();
-		postParameterDto.setStart(start);
 		return postMapper.getTempList(postParameterDto);
 	}
 
+	@Override
+	public int getTempCount(String email) throws Exception {
+		return postMapper.getTempCount(email);
+	}
 	
 	@Override
 	public boolean write(PostDto postDto) throws Exception {
@@ -80,9 +82,6 @@ public class PostServiceImpl implements PostService {
 //				|| "".equals(postDto.getTitle()) || "".equals(postDto.getContent())	// 제목, 내용 빈 문자열이면 취소
 				) {
 			throw new Exception("No title or No Content!");
-		}
-		if(postDto.getPostNo() != -1) {
-			return postMapper.modify(postDto) == 1;
 		}
 		if(postDto.getEmail() == null || "".equals(postDto.getEmail())) {
 			throw new Exception("You are not Logged In!!");

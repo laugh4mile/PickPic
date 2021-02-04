@@ -105,12 +105,7 @@ export default {
           this.imageUrl = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
             console.log(response.data.fileList[i].modPicName);
-            this.imageUrl.push(
-              `${SERVER_URL}/post/imgs/download?fileName=` +
-                response.data.fileList[i].modPicName +
-                '&postNo=' +
-                this.dialogm1
-            );
+            this.imageUrl.push(response.data.fileList[i].modPicName);
           }
         })
         .catch((error) => {
