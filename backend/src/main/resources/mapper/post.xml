@@ -39,8 +39,15 @@
 				then date_format(modifyDate, '%H:%i:%s')
 				else date_format(modifyDate, '%y.%m.%d')
 				end modifyDate,
-				likeCnt, email, name
-		from post join member using(email)
+				likeCnt, email, name,
+				(
+					select thumbnail
+					from post_pics
+					where post.postNo = post_pics.postNo
+					limit 1
+					) as thumbnail
+		from post join member 
+					on post.email = member.email
 		where temp = 0
 		<if test="word != null and word != ''">
 			<if test="key == 'title'">
@@ -182,12 +189,12 @@
 	</select>
 	
 	<insert id="uploadFile">
-		insert into post_pics (postNo, oriPicName, modPicName, picSize)
-		values(#{postNo}, #{oriPicName}, #{modPicName}, #{picSize})
+		insert into post_pics (postNo, oriPicName, modPicName, thumbnail, picSize)
+		values(#{postNo}, #{oriPicName}, #{modPicName}, #{thumbnail}, #{picSize})
 	</insert>
 	
 	<select id="getFiles" parameterType="int" resultType="ImgDto">
-		select picNo, postNo, oriPicName, modPicName,
+		select picNo, postNo, oriPicName, modPicName, thumbnail,
 <!-- 			round(picSize/1024, 1) as picSize, -->
 			picSize,
 			date_format(uploadDate, '%Y%m%d') as uploadDate,
@@ -201,7 +208,7 @@
 	</select>
 	
 	<select id="getFileInfo" parameterType="string" resultType="ImgDto">
-		select picNo, postNo, oriPicName, modPicName,
+		select picNo, postNo, oriPicName, modPicName, thumbnail,
 <!-- 			round(picSize/1024, 1) as picSize, -->
 			picSize,
 			date_format(uploadDate, '%Y%m%d') as uploadDate,

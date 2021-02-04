@@ -32,6 +32,8 @@ public class PostDto {
 	private List<MultipartFile> files;
 	@ApiModelProperty(value = "바뀐 파일들")
 	private List<String> unmodified;
+	@ApiModelProperty(value = "썸네일")
+	private String thumbnail;
 
 	@Override
 	public String toString() {
@@ -126,5 +128,13 @@ public class PostDto {
 
 	public void setTemp(int temp) {
 		this.temp = temp;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 }

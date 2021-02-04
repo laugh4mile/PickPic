@@ -106,7 +106,8 @@ public class PostController {
 	@GetMapping("/list")
 	public ResponseEntity<List<PostDto>> getList(
 			@ApiParam(value = "게시글을 얻기위한 부가정보.", required = true) PostParameterDto postParameterDto) throws Exception {
-		logger.info("getList - 호출");
+		logger.info("getList - 호출, " + postParameterDto);
+		
 		return new ResponseEntity<List<PostDto>>(postService.getList(postParameterDto), HttpStatus.OK);
 	}
 
