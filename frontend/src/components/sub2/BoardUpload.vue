@@ -59,6 +59,7 @@
 
     <v-btn @click="completeUpload">작성 완료</v-btn>
     <v-btn @click="tempUpload">임시저장</v-btn>
+    <p>{{imageUrl}}</p>
     <div class="card">
       <v-row>
         <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
@@ -90,8 +91,10 @@ export default {
   methods: {
     deleteImg(index) {
       console.log(index)
-      this.imageUrl.splice(index, 1)
-      this.myfile.splice(index, 1)
+      // this.imageUrl.splice(index, 1)
+      // this.myfile.splice(index, 1)
+      console.log('이미지',this.imageUrl)
+      console.log('파일',this.myfile)
     },
     onChangeImages(e) {
       var file = e.target.files;
