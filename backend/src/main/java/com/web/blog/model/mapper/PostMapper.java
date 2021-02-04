@@ -20,6 +20,8 @@ public interface PostMapper {
 	public PostDto getOne(int postNo) throws SQLException;
 	public List<PostDto> getList(PostParameterDto postParameterDto) throws SQLException;
 	public List<PostDto> getTempList(PostParameterDto postParameterDto) throws SQLException;
+	public int getTempCount(String email) throws SQLException;
+	
 	public int write(PostDto postDto) throws SQLException;
 	public int writeTemp(PostDto postDto) throws SQLException;
 	public int modify(PostDto postDto) throws SQLException;

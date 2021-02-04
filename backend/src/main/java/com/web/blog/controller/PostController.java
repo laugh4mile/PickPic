@@ -147,6 +147,7 @@ public class PostController {
 			for(ImgDto img : postImgs) {
 				// 이름에 url 붙여주기
 				img.setModPicName(s3FileUploadService.getDefaultUrl() + img.getModPicName());
+				img.setThumbnail(s3FileUploadService.getDefaultUrl() + img.getThumbnail());
 			}
 			resultMap.put("voteCount", voteService.getVoteCountofPost(postNo));
 			resultMap.put("fileList", postImgs);

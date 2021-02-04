@@ -20,13 +20,13 @@ public class PostDto {
 	private String uploadDate;
 	@ApiModelProperty(value = "수정일")
 	private String modifyDate;
-	@ApiModelProperty(value = "좋아요", example = "20")
+	@ApiModelProperty(value = "좋아요", example = "0")
 	private int likeCnt;
 	@ApiModelProperty(value = "작성자 이메일 아이디")
 	private String email;
 	@ApiModelProperty(value = "작성자 이름")
 	private String name;
-	@ApiModelProperty(value = "임시저장용", example = "1")
+	@ApiModelProperty(value = "임시저장용", example = "0")
 	private int temp;
 	@ApiModelProperty(value = "업로드할 파일들")
 	private List<MultipartFile> files;

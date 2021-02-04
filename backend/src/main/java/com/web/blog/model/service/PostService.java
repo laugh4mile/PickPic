@@ -17,8 +17,10 @@ public interface PostService {
 	/* 글 목록 : 검색 기능 */
 	public List<PostDto> getList(PostParameterDto postParameterDto) throws Exception;
 	
-	/* 글 목록 : 검색 기능 */
+	/* 임시저장 게시글 목록 */
 	public List<PostDto> getTempList(PostParameterDto postParameterDto) throws Exception;
+	/* 임시저장 게시글 수 */
+	public int getTempCount(String email) throws Exception;
 
 	/* 글 작성  */
 	public boolean write(PostDto postDto) throws Exception;
