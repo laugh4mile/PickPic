@@ -106,7 +106,8 @@ public class PostController {
 	@GetMapping("/list")
 	public ResponseEntity<List<PostDto>> getList(
 			@ApiParam(value = "게시글을 얻기위한 부가정보.", required = true) PostParameterDto postParameterDto) throws Exception {
-		logger.info("getList - 호출");
+		logger.info("getList - 호출, " + postParameterDto);
+		
 		return new ResponseEntity<List<PostDto>>(postService.getList(postParameterDto), HttpStatus.OK);
 	}
 
@@ -203,9 +204,10 @@ public class PostController {
 		try {
 			for(String picNo : unmodified) {
 				// ec2에서 파일 지우고 db에서 지우기
-//				ImgDto imgDto = postService.getImageInfo(picNo);
-//				s3FileUploadService.delete(imgDto.getModPicName());
+				// 원본
 				s3FileUploadService.delete(postService.getImageInfo(picNo).getModPicName());
+				// 썸네일
+				s3FileUploadService.delete(postService.getImageInfo(picNo).getThumbnail());
 				
 				postService.deleteImage(picNo);
 			}
@@ -223,14 +225,9 @@ public class PostController {
 		try {
 			for(MultipartFile file : files) {
 				// s3 업로드 후 db 저장
-				String saveFileName = s3FileUploadService.upload(file);
-				System.out.println(saveFileName);
-
-				ImgDto img = new ImgDto();
+				ImgDto img = s3FileUploadService.uploadImage(file);
+				System.out.println(img);
 				img.setPostNo(postNo);
-				img.setOriPicName(file.getOriginalFilename());
-				img.setModPicName(saveFileName);
-				img.setPicSize(file.getSize());
 				
 				postService.uploadFile(img);
 			}
@@ -251,6 +248,7 @@ public class PostController {
 			// ec2 파일 삭제
 			for(ImgDto imgDto : postService.getImages(postNo)) {
 				s3FileUploadService.delete(imgDto.getModPicName());
+				s3FileUploadService.delete(imgDto.getThumbnail());
 			}
 			
 			// db post 삭제 --cascade--> post images 삭제
@@ -309,7 +307,6 @@ public class PostController {
 			resultMap.put("likeCnt", postService.likeCount(postNo));
 			status = HttpStatus.OK;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;

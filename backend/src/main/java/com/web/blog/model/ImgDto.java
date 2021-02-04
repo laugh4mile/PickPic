@@ -6,21 +6,18 @@ public class ImgDto {
 	private int postNo;
 	private String oriPicName; // 실제 파일
 	private String modPicName; // 저장할 파일
+	private String thumbnail; // 저장할 파일
 	private long picSize;
 	private String uploadDate;
 	private int voteCnt;
 
-//	public ImgDto() {
-//		super();
-//	}
-//
-//	public ImgDto(int postNo, String oriPicName, String modPicName, long picSize) {
-//		super();
-//		this.postNo = postNo;
-//		this.oriPicName = oriPicName;
-//		this.modPicName = modPicName;
-//		this.picSize = picSize;
-//	}
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 
 	public int getPicNo() {
 		return picNo;

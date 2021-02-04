@@ -19,7 +19,10 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.web.blog.model.ImgDto;
 import com.web.blog.model.MemberDto;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @Service
 public class S3FileUploadService {
@@ -90,6 +93,47 @@ public class S3FileUploadService {
 		// 파일 삭제
 		file.delete();
 		return member;
+	}
+	
+	public ImgDto uploadImage(MultipartFile uploadFile) throws IOException {
+		ImgDto img = new ImgDto();
+		String origName = uploadFile.getOriginalFilename();
+//		try {
+			// 확장자를 찾기 위한 코드
+		final String ext = origName.substring(origName.lastIndexOf('.'));
+		// 파일이름 암호화
+		final String saveFileName = getUuid() + ext;
+		final String thumbFileName = "t_" + saveFileName;
+		// 파일 객체 생성
+		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
+		File file = new File(IMAGE_DIR + saveFileName);
+		File thumb = new File(IMAGE_DIR + thumbFileName);
+		//변환
+		uploadFile.transferTo(file);
+		
+		int THUMB_HEIGHT = 200;
+		int THUMB_WIDTH = 200;
+		
+		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
+		
+		// 파일 변환
+		// S3 파일 업로드
+		uploadOnS3(saveFileName, file);
+		uploadOnS3(thumbFileName, thumb);
+		
+		img.setOriPicName(origName);
+		img.setModPicName(saveFileName);
+		img.setThumbnail(thumbFileName);
+		img.setPicSize(uploadFile.getSize());
+		// 주소 할당
+//			url = defaultUrl + saveFileName;
+		// 파일 삭제
+		file.delete();
+		thumb.delete();
+//		} catch (StringIndexOutOfBoundsException e) {
+//			url = null;
+//		}
+		return img;
 	}
 
 	private static String getUuid() {

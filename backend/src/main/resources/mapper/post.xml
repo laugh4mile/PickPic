@@ -39,7 +39,31 @@
 				then date_format(modifyDate, '%H:%i:%s')
 				else date_format(modifyDate, '%y.%m.%d')
 				end modifyDate,
-				likeCnt, email, name
+				likeCnt, email, name,
+				(
+					select thumbnail
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						order by count desc
+						) as temp
+					limit 1
+				) as thumbnail,
+				(
+					select thumbnail
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						order by count desc
+						) as temp
+					limit 1, 1
+				) as thumbnailTwo
 		from post join member using(email)
 		where temp = 0
 		<if test="word != null and word != ''">
@@ -182,12 +206,12 @@
 	</select>
 	
 	<insert id="uploadFile">
-		insert into post_pics (postNo, oriPicName, modPicName, picSize)
-		values(#{postNo}, #{oriPicName}, #{modPicName}, #{picSize})
+		insert into post_pics (postNo, oriPicName, modPicName, thumbnail, picSize)
+		values(#{postNo}, #{oriPicName}, #{modPicName}, #{thumbnail}, #{picSize})
 	</insert>
 	
 	<select id="getFiles" parameterType="int" resultType="ImgDto">
-		select picNo, postNo, oriPicName, modPicName,
+		select picNo, postNo, oriPicName, modPicName, thumbnail,
 <!-- 			round(picSize/1024, 1) as picSize, -->
 			picSize,
 			date_format(uploadDate, '%Y%m%d') as uploadDate,
@@ -201,7 +225,7 @@
 	</select>
 	
 	<select id="getFileInfo" parameterType="string" resultType="ImgDto">
-		select picNo, postNo, oriPicName, modPicName,
+		select picNo, postNo, oriPicName, modPicName, thumbnail,
 <!-- 			round(picSize/1024, 1) as picSize, -->
 			picSize,
 			date_format(uploadDate, '%Y%m%d') as uploadDate,
