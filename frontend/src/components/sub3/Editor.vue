@@ -62,7 +62,7 @@
     <hr /> -->
     <v-row align="center" class="mb-3">
       <select id="select_font" v-model="font" @change="cng">
-        <option selected value="Arial">Arial</option>
+        <option value="Arial">Arial</option>
         <option value="Sans Serif" selected>Sans Serif</option>
         <option value="Comic Sans MS">Comic Sans MS</option>
         <option value="Times New Roman">Times New Roman</option>
@@ -91,16 +91,16 @@
       <!-- <img width="20px" src="@/assets/icon/c.png" alt="" onclick="document.execCommand('Code')"> -->
       <img
         width="20px"
-        src="@/assets/icon/underline.svg"
+        src="@/assets/icon/underline.png"
         onclick="document.execCommand('Underline')"
         alt=""
       />
-      <img
+      <!-- <img
         width="40px"
         src="@/assets/icon/strikethrough.svg"
         onclick="document.execCommand('StrikeThrough')"
         alt=""
-      />
+      /> -->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn color="primary" dark v-bind="attrs" v-on="on">
@@ -117,24 +117,47 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <input
-        type="button"
-        class="aignLeft"
-        value="왼쪽 정렬"
-        onclick="document.execCommand('justifyleft')"
-      />
-      <input
-        type="button"
-        class="aignCenter"
-        value="가운데 정렬"
-        onclick="document.execCommand('justifycenter')"
-      />
-      <input
-        type="button"
-        class="aignRight"
-        value="오른쪽 정렬"
-        onclick="document.execCommand('justifyright')"
-      />
+      <img width="30px" src="@/assets/icon/align-left.png" alt="" onclick="document.execCommand('justifyleft')">
+      <img width="30px" src="@/assets/icon/align-center.png" alt="" onclick="document.execCommand('justifycenter')">
+      <img width="30px" src="@/assets/icon/align-right.png" alt="" onclick="document.execCommand('justifyright')">
+      <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="red lighten-2"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          링크
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          Privacy Policy
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field v-model="srcs" label="링크 입력"></v-text-field>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="dialogComp"
+          >
+            완료
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-row>
 
     <div
@@ -142,7 +165,12 @@
       id="editor"
       contenteditable="true"
       label="본문"
-    ></div>
+    >
+    <!-- <video src="https://tv.naver.com/v/18161441"></video> -->
+    <!-- https://youtu.be/70ip9Ug8DHs -->
+    <br>
+      <!-- <iframe v-for="(item, index) in videosrcs" :key="index" id="video" :src="item" frameborder="0"></iframe> -->
+    </div>
     <br />
   </div>
 </template>
@@ -150,100 +178,107 @@
 <script>
 var font_size = 14;
 var selection_range;
-var clickHandler = function (event) {
-    document.getElementById("editor").removeEventListener("keypress", clickHandler);
-    updateFontSizeForNewText(event);
-    updateFontStyleForNewText(event);
+
+
+var clickHandler = function(event) {
+  document
+    .getElementById("editor")
+    .removeEventListener("keypress", clickHandler);
+  updateFontSizeForNewText(event);
+  updateFontStyleForNewText(event);
 };
 
+var isValidKeyPress = function(e) {
+  var keycode = e.keyCode;
+  var valid =
+    (keycode > 47 && keycode < 58) || // number keys
+    (keycode > 64 && keycode < 91) || // letter keys
+    (keycode > 95 && keycode < 112) || // numpad keys
+    (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+    (keycode > 218 && keycode < 223); // [\]' (in order)
+  return valid;
+};
 
-  
-    var isValidKeyPress = function(e) {
-      var keycode = e.keyCode;
-      var valid =
-        (keycode > 47 && keycode < 58) || // number keys
-        (keycode > 64 && keycode < 91) || // letter keys
-        (keycode > 95 && keycode < 112) || // numpad keys
-        (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-        (keycode > 218 && keycode < 223); // [\]' (in order)
-      return valid;
-    };
+var updateFontSizeForNewText = function(e) {
+  var timestamp = new Date().getUTCMilliseconds();
+  var key = "";
+  if (isValidKeyPress(e)) {
+    event.preventDefault();
+    key = e.key;
+    var span = document.createElement("span");
+    span.id = timestamp;
+    var txt = document.createTextNode(key);
+    span.style.fontSize = font_size + "px";
+    span.appendChild(txt);
+    var wrap = document.createElement("div");
+    wrap.appendChild(span.cloneNode(true));
+    pasteHtmlAtCaret(wrap.innerHTML);
+  }
+};
 
-    var updateFontSizeForNewText = function(e) {
-      var timestamp = new Date().getUTCMilliseconds();
-      var key = "";
-      if (isValidKeyPress(e)) {
-        event.preventDefault();
-        key = e.key;
-        var span = document.createElement("span");
-        span.id = timestamp;
-        var txt = document.createTextNode(key);
-        span.style.fontSize = font_size + "px";
-        span.appendChild(txt);
-        var wrap = document.createElement("div");
-        wrap.appendChild(span.cloneNode(true));
-        pasteHtmlAtCaret(wrap.innerHTML);
+var updateFontStyleForNewText = function(e) {
+  var timestamp = new Date().getUTCMilliseconds();
+  var key = "";
+  if (isValidKeyPress(e)) {
+    event.preventDefault();
+    key = e.key;
+    var span = document.createElement("span");
+    span.id = timestamp;
+    var txt = document.createTextNode(key);
+    span.style.fontFamily = this.font;
+    span.appendChild(txt);
+    var wrap = document.createElement("div");
+    wrap.appendChild(span.cloneNode(true));
+    pasteHtmlAtCaret(wrap.innerHTML);
+  }
+};
+
+var pasteHtmlAtCaret = function(html) {
+  var sel, range;
+  if (window.getSelection) {
+    // IE9 and non-IE
+    sel = window.getSelection();
+    if (sel.getRangeAt && sel.rangeCount) {
+      range = sel.getRangeAt(0);
+      range.deleteContents();
+
+      // Range.createContextualFragment() would be useful here but is
+      // non-standard and not supported in all browsers (IE9, for one)
+      var el = document.createElement("div");
+      el.innerHTML = html;
+      var frag = document.createDocumentFragment(),
+        node,
+        lastNode;
+      while ((node = el.firstChild)) {
+        lastNode = frag.appendChild(node);
       }
-    };
+      range.insertNode(frag);
 
-    var updateFontStyleForNewText = function(e) {
-      var timestamp = new Date().getUTCMilliseconds();
-      var key = "";
-      if (isValidKeyPress(e)) {
-        event.preventDefault();
-        key = e.key;
-        var span = document.createElement("span");
-        span.id = timestamp;
-        var txt = document.createTextNode(key);
-        span.style.fontFamily = this.font;
-        span.appendChild(txt);
-        var wrap = document.createElement("div");
-        wrap.appendChild(span.cloneNode(true));
-        pasteHtmlAtCaret(wrap.innerHTML);
+      // Preserve the selection
+      if (lastNode) {
+        range = range.cloneRange();
+        range.setStartAfter(lastNode);
+        range.collapse(lastNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
-    };
-
-    var pasteHtmlAtCaret = function(html) {
-      var sel, range;
-      if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-          range = sel.getRangeAt(0);
-          range.deleteContents();
-
-          // Range.createContextualFragment() would be useful here but is
-          // non-standard and not supported in all browsers (IE9, for one)
-          var el = document.createElement("div");
-          el.innerHTML = html;
-          var frag = document.createDocumentFragment(),
-            node,
-            lastNode;
-          while ((node = el.firstChild)) {
-            lastNode = frag.appendChild(node);
-          }
-          range.insertNode(frag);
-
-          // Preserve the selection
-          if (lastNode) {
-            range = range.cloneRange();
-            range.setStartAfter(lastNode);
-            range.collapse(lastNode);
-            sel.removeAllRanges();
-            sel.addRange(range);
-          }
-        }
-      } else if (document.selection && document.selection.type != "Control") {
-        // IE < 9
-        document.selection.createRange().pasteHTML(html);
-      }
-    };
+    }
+  } else if (document.selection && document.selection.type != "Control") {
+    // IE < 9
+    document.selection.createRange().pasteHTML(html);
+  }
+};
 
 export default {
+  created(){
+    this.validateYouTubeUrl();
+  },
   methods: {
     cng() {
       this.changeFont();
     },
+    
+    
     GetNextLeaf(node) {
       while (!node.nextSibling) {
         node = node.parentNode;
@@ -375,7 +410,7 @@ export default {
         this.ColorizeNode(node.childNodes[i], size);
       }
     },
-    
+
     ColorizeSelection(size) {
       if (window.getSelection) {
         // all browsers, except IE before version 9
@@ -399,7 +434,12 @@ export default {
           selectionRange.removeAllRanges();
 
           if (startContainer == endContainer) {
-            this.ColorizeNodeFromTo(startContainer, size, startOffset, endOffset);
+            this.ColorizeNodeFromTo(
+              startContainer,
+              size,
+              startOffset,
+              endOffset
+            );
           } else {
             if (startContainer.firstChild) {
               var startLeaf = startContainer.childNodes[startOffset];
@@ -434,9 +474,42 @@ export default {
         alert("Your browser does not support this example!");
       }
     },
+    dialogComp(){
+      this.dialog = false;
+      if(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www\.)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(this.srcs)){
+          alert("valid url");
+          if(this.validateYouTubeUrl(this.srcs)){
+            this.videosrcs.push(this.srcs);
+            console.log("this.videosrcs[" + this.videosrcs.length + "]");
+            // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
+             var a = document.createElement("a");
+            a.href = this.srcs;
+            a.innerText = this.srcs;
+            console.log(a);
+            document.getElementById('editor').append(a);
+            document.getElementById('editor').append(document.createElement('br'));
+            var iframe = document.createElement("iframe");
+            iframe.src = this.videosrcs[this.videosrcs.length-1]
+            iframe.width =  560;
+            iframe.height = 315;
+            document.getElementById('editor').append(iframe);
+            document.getElementById('editor').append(document.createElement('br'));
+          }else{
+            var a = document.createElement("a");
+            a.href = this.srcs;
+            a.innerText = this.srcs;
+            console.log(a);
+            document.getElementById('editor').append(a);
+          }
+      } else {
+          alert("invalid url");
+      }
+    },
+    linkbtn(){
 
-    
-
+      document.getElementById('editor').append('<span>asd</span>');
+      document.getElementById('editor').append('<iframe v-for="(item, index) in videosrcs" :key="index" id="video" :src="item" frameborder="0"></iframe>');
+    },
     execFontSize(size, unit) {
       // var spanString = $("<span/>", {
       //   text: document.getSelection(),
@@ -461,7 +534,7 @@ export default {
       this.execFontSize(item, "px");
     },
     changeFont() {
-      console.log(this.font)
+      console.log(this.font);
       var sel = window.getSelection(); // Gets selection
       if (sel.rangeCount) {
         // Creates a new element, and insert the selected text with the chosen font inside
@@ -475,11 +548,61 @@ export default {
         range.insertNode(e); // … and inserts the new element at its place
       }
     },
+    // validateYouTubeUrl(url)
+    // {
+    //   var urls = document.getElementById('editor').innerText;
+    //   // console.log(urls.split('\n'));
+    //   var temp = urls.split('\n');
+    //   console.log(temp);
+    //   for(var i=0; i < temp.length; i++){
+    //     var url = temp[i]
+    //     // console.log(urls.split('\n')[i]);
+    //         if (url != undefined || url != '') {
+    //             var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+    //             var match = url.match(regExp);
+    //             console.log(match);
+    //             if (match && match[2].length > 10) {
+    //                 // Do anything for being valid
+    //                 // if need to change the url to embed url then use below line
+                    
+    //                 console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
+    //                 this.videosrcs[i] = 'https://www.youtube.com/embed/' + match[2];
+    //                 console.log(this.videosrcs.length);
+    //                 // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
+    //             }
+    //             else {
+    //                 // Do anything for not being valid
+    //             }
+    //         }
+    //   }
+    // },
+    validateYouTubeUrl(url)
+    {
+            if (url != undefined || url != '') {
+                var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+                var match = url.match(regExp);
+                console.log(match);
+                if (match && match[2].length > 10) {
+                    // Do anything for being valid
+                    // if need to change the url to embed url then use below line
+                    return true;
+                    // console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
+                    // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
+                }
+                else {
+                    // Do anything for not being valid
+                    return false;
+                }
+            }
+    },
   },
   data() {
     return {
       H: ["H1", "H2", "H3", "H4", "H5", "H6"],
       size: [8, 10, 11, 13, 15, 16, 19, 24, 28, 30, 34, 38],
+      videosrcs:[],
+      srcs:'',
+      dialog:false,
       fonts: [
         "Arial",
         "Sans Serif",
@@ -495,14 +618,16 @@ export default {
         "Palatino",
         "Georgia",
       ],
-      font: "",
+      font: "Arial",
       content: `
           <h2>
             Menu Bubble
           </h2>
           <span>
             Hey, try to select some text here. There will popup a menu for selecting some inline styles. <em>Remember:</em> you have full control about content and styling of this menu.
+            
           </span>
+          <div>www.youtube.com</div>
         `,
     };
   },
