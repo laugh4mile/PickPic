@@ -32,7 +32,7 @@
       </v-col>
       <v-btn class="mt-10" @click="verifyBtn">인증</v-btn>
     </v-row>
-    <span v-if="verifys">인증 완료</span>
+    <span v-if="verifys" class="valid">인증 완료</span>
 
     <v-text-field
       v-model="user.pwd"
@@ -212,3 +212,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.valid {
+  color: green;
+}
+</style>
