@@ -272,7 +272,7 @@
 <!-- 		set deleted = 'Y' -->
 <!-- 		where picNo = #{picNo} -->
 <!-- 	</update> -->
-	<delete id="deleteImg" parameterType="int">
+	<delete id="deleteImg" parameterType="string">
 		delete from post_pics
 		where picNo = #{picNo}
 	</delete>
