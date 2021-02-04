@@ -63,6 +63,9 @@
       <v-row>
         <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
           <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
+          <v-btn color="red darken-1" @click="deleteImg(index)">
+            Delete
+          </v-btn>
         </v-col>
       </v-row>
     </div>
@@ -81,14 +84,23 @@ export default {
       dialogm1: '',
       dialog: false,
       postNo: -1,
+      myfile: [],
     };
   },
   methods: {
+    deleteImg(index) {
+      console.log(index)
+      this.imageUrl.splice(index, 1)
+      this.myfile.splice(index, 1)
+    },
     onChangeImages(e) {
       var file = e.target.files;
       for (var i = 0; i < file.length; i++) {
         this.imageUrl.push(URL.createObjectURL(file[i]));
+        this.myfile.push(this.$refs.file.files[i])
       }
+      // console.log(this.myfile)
+      // console.log(this.imageUrl)
     },
     getTempPost() {
       this.dialog = false;
@@ -162,15 +174,14 @@ export default {
     },
     completeUpload() {
       var frm = new FormData();
-      for (var i = 0; i < this.$refs.file.files.length; i++) {
-        let file = this.$refs.file.files[i];
+      for (var i = 0; i < this.myfile.length; i++) {
+        let file = this.myfile[i];
         frm.append('files', file);
       }
       frm.append('postNo', this.postNo);
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
       frm.append('title', this.title);
-
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {
