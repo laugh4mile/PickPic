@@ -3,11 +3,8 @@
     <div>
       <v-row>
         <v-col>
-          <h3>{{ this.board.postInfo.title }}</h3>
-          <span style="font-size:12px">{{ board.postInfo.name }}</span>
-          <span style="font-size:12px">
-            좋아요 {{ this.board.postInfo.likeCnt }}</span
-          >
+          <h2>{{ this.board.postInfo.title }}</h2>
+          <span style="font-size:15px">작성자 {{ board.postInfo.name }}</span>
           <br />
           <span style="font-size:12px">{{
             this.board.postInfo.uploadDate
@@ -28,6 +25,9 @@
               @click="heartClick"
             ></i>
           </div>
+          <span class="d-flex justify-content-end" style="font-size:15px">
+            좋아요 {{ this.board.postInfo.likeCnt }}
+          </span>
         </v-col>
       </v-row>
     </div>
