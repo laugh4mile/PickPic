@@ -76,20 +76,17 @@ export default {
           this.temp.push(this.not[n].picNo);
         }
         this.cont = response.data.postInfo.content;
-        for (var i = 0; i < response.data.fileList.length; i++) {
-          this.imgUrl.push(
-            `${SERVER_URL}/post/imgs/download?fileName=` +
-              response.data.fileList[i].modPicName +
-              "&postNo=" +
-              this.$route.query.board.postInfo.postNo
-          );
+         for (var i = 0; i < response.data.fileList.length; i++) {
+          this.imgUrl.push(response.data.fileList[i]);
         }
+        console.log(this.imgUrl)
         this.board = response.data;
       })
       .catch((error) => {
         console.log(error);
       });
   },
+
 
   methods: {
     emitedData(event){
