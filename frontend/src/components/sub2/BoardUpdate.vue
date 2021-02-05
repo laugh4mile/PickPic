@@ -12,19 +12,29 @@
 
     <div>
       <v-row align="center">
-        <span v-for="(item, index) in imgUrl" :key="index">
-          <v-col>
-            <img :src="item" :id="'img' + index" width="300px" height="300px" />
-            <input
+        <span>
+          <v-col v-for="(item, idx) in imgUrl" :key="idx">
+            <img :src="item.modPicName" :id="'img' + idx" width="300px" height="300px" />
+            <!-- <input
               ref="file"
               type="file"
               id="file"
               name="file"
               @change="onChangeImages($event, item, index)"
-            />
+            /> -->
+            <v-btn color="red darken-1" @click="modiImg(item,idx)">
+            Delete
+          </v-btn>
           </v-col>
+          <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
+          <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
+          <v-btn color="red darken-1" @click="deleteImg(index)">
+            Delete
+          </v-btn>
+        </v-col>
         </span>
       </v-row>
+
     </div>
 
     <v-btn dark @click="modifyComplete">수정 완료</v-btn>
