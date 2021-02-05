@@ -111,7 +111,7 @@ public class S3FileUploadService {
 		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
-
+        file.mkdirs();
 		// 변환
 		// 썸네일 사이즈 조절
 		BufferedImage image = ImageIO.read(uploadFile.getInputStream());
