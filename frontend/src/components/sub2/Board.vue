@@ -47,16 +47,13 @@ export default {
         infiniteHandler($state) {
       const params = new URLSearchParams();
       params.append("pg", this.limit);
-      console.log('마지막이라고')
       axios
       .get(`${SERVER_URL}/post/list`, 
           {params})
         .then((response) => {
             setTimeout(() => {
             if(response.data.length) {
-              console.log(response.data);
               this.board = this.board.concat(response.data);
-              console.log(this.board)
               $state.loaded()
               this.limit += 1
               // 끝 지정(No more data) - 데이터가 EACH_LEN개 미만이면 

@@ -32,12 +32,12 @@
       </v-row>
     </div>
     <hr />
-    <div>{{ this.board.postInfo.content }}</div>
+    <div class="contents" v-html="cont"></div>
     <vote :no="board.postInfo.postNo" />
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="modifyForm"
+        @click="modifyForm"  :contents="this.cont"
         >수정</v-btn
       >
       <v-dialog v-model="dialog1" width="230">
@@ -98,7 +98,7 @@ export default {
       like: false,
       dialog1: false,
       items: ["취소", "삭제"],
-      
+      cont:'',
     };
   },
   computed: {
@@ -119,6 +119,9 @@ export default {
       .then((response) => {
         console.log(response.data);
         this.board = response.data;
+        this.cont = this.board.postInfo.content;
+        console.log(this.cont);
+        document.getElementById("editor").innerHTML = this.cont;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
