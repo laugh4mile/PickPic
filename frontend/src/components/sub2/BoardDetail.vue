@@ -32,12 +32,12 @@
       </v-row>
     </div>
     <hr />
-    <div class="contents" v-html="cont"></div>
+    <div>{{ this.board.postInfo.content }}</div>
     <vote :no="board.postInfo.postNo" />
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="modifyForm" :contents="this.cont"
+        @click="modifyForm"
         >수정</v-btn
       >
       <v-dialog v-model="dialog1" width="230">
@@ -117,13 +117,9 @@ export default {
         },
       })
       .then((response) => {
+        console.log(response.data);
         this.board = response.data;
         this.cont = this.board.postInfo.content;
-        console.log(cont.toString());
-        
-        // $(".contents").append('<div style="text-align: left;">asdasdasdasd<a href="https://www.youtube.com/embed/zJQpQNSulqY" style="background-color: rgb(255, 255, 255);"><span style="background-color: rgb(255, 255, 255);">https://www.youtube.com/embed/zJQpQNSulqY</span><span id="47" style="background-color: rgb(255, 255, 255); font-size: 24px;">a</span></a>sdasdasd<span id="38" style="font-size: 15px;">asdasdasd<span id="985" style="font-size: 38px;">asdasdasd</span></span><a href="https://www.youtube.com/embed/zJQpQNSulqY"></a></div><iframe src="https://www.youtube.com/embed/zJQpQNSulqY" width="560" height="315"></iframe><br>');
-        // document.getElementById('contents').innerHTML = 'asd';
-
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
@@ -135,8 +131,6 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
-        
   },
   methods: {
     menuclick(event, cmt) {
@@ -174,6 +168,7 @@ export default {
                 },
               })
               .then((response) => {
+                console.log(response.data);
                 this.board = response.data;
                 if (this.board.likeCheck == 'N') {
                   this.heartIcon = require('@/assets/blank heart.png');
