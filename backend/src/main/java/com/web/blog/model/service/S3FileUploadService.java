@@ -112,27 +112,27 @@ public class S3FileUploadService {
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
 
-		//변환
+		// 변환
 		// 썸네일 사이즈 조절
 		BufferedImage image = ImageIO.read(uploadFile.getInputStream());
-		
+
 		int THUMB_HEIGHT = image.getHeight();
 		int THUMB_WIDTH = image.getWidth();
 		final int THUMB_SIZE = 200;
-		
-		if(THUMB_HEIGHT >= THUMB_SIZE || THUMB_WIDTH >= THUMB_SIZE) {
+
+		if (THUMB_HEIGHT >= THUMB_SIZE || THUMB_WIDTH >= THUMB_SIZE) {
 			// width가 height보다 크다
-			if((double)THUMB_WIDTH / (double)THUMB_HEIGHT > 1.0) {
-				THUMB_WIDTH = (int) ((double)THUMB_WIDTH / (double)THUMB_HEIGHT * THUMB_SIZE);
+			if ((double) THUMB_WIDTH / (double) THUMB_HEIGHT > 1.0) {
+				THUMB_WIDTH = (int) ((double) THUMB_WIDTH / (double) THUMB_HEIGHT * THUMB_SIZE);
 				THUMB_HEIGHT = THUMB_SIZE;
 			}
 			// width가 height보다 작다
 			else {
-				THUMB_HEIGHT = (int) ((double)THUMB_HEIGHT / (double)THUMB_WIDTH * THUMB_SIZE);
+				THUMB_HEIGHT = (int) ((double) THUMB_HEIGHT / (double) THUMB_WIDTH * THUMB_SIZE);
 				THUMB_WIDTH = THUMB_SIZE;
 			}
 		}
-		
+
 		// 파일 임시 저장
 		uploadFile.transferTo(file);
 		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
@@ -142,15 +142,15 @@ public class S3FileUploadService {
 		uploadOnS3(saveFileName, file);
 		uploadOnS3(thumbFileName, thumb);
 
-		img.setOriPicName(origName);
-		img.setModPicName(saveFileName);
-		img.setThumbnail(thumbFileName);
-		img.setPicSize(uploadFile.getSize());
-		
+		imgDto.setOriPicName(origName);
+		imgDto.setModPicName(saveFileName);
+		imgDto.setThumbnail(thumbFileName);
+		imgDto.setPicSize(uploadFile.getSize());
+
 		// 파일 삭제
 		file.delete();
 		thumb.delete();
-		
+
 		return imgDto;
 	}
 
