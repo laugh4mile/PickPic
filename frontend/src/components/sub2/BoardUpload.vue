@@ -60,8 +60,22 @@
 
     <v-btn @click="completeUpload">작성 완료</v-btn>
     <v-btn @click="tempUpload">임시저장</v-btn>
+    <p>{{imgUrl}}</p>
     <div class="card">
       <v-row>
+        <v-col v-for="(item, idx) in imgUrl" :key="idx">
+          <img :src="item.modPicName" :id="'img' + idx" width="300px" height="300px" />
+          <!-- <input
+            ref="file"
+            type="file"
+            id="file"
+            name="file"
+            @change="onChangeImages($event, item, index)"
+          /> -->
+          <v-btn color="red darken-1" @click="modiImg(item,idx)">
+          Delete
+        </v-btn>
+        </v-col>
         <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
           <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
           <v-btn color="red darken-1" @click="deleteImg(index)">
@@ -73,8 +87,8 @@
   </div>
 </template>
 <script>
-import editor from '../sub3/Editor.vue';
 import axios from 'axios';
+import editor from '../sub3/Editor.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -87,14 +101,26 @@ export default {
       dialog: false,
       postNo: -1,
       myfile: [],
+      imgUrl: [],
+      deleted: [],
     };
   },
-  components:{
+   components:{
     editor,
   },
   methods: {
+    modiImg(item, index) {
+      this.deleted.push(item.picNo)
+      this.imgUrl.splice(index, 1)
+      console.log(item)
+      console.log(index)
+    },
     deleteImg(index) {
       console.log(index)
+      // this.imageUrl.splice(index, 1)
+      // this.myfile.splice(index, 1)
+      console.log('이미지',this.imageUrl)
+      console.log('파일',this.myfile)
       this.imageUrl.splice(index, 1)
       this.myfile.splice(index, 1)
     },
@@ -122,15 +148,10 @@ export default {
           this.postNo = response.data.postInfo.postNo;
           this.title = response.data.postInfo.title;
           this.content = response.data.postInfo.content;
-          this.imageUrl = [];
+          this.imgUrl = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
             console.log(response.data.fileList[i].modPicName);
-            this.imageUrl.push(
-              `${SERVER_URL}/post/imgs/download?fileName=` +
-                response.data.fileList[i].modPicName +
-                '&postNo=' +
-                this.dialogm1
-            );
+            this.imgUrl.push(response.data.fileList[i]);
           }
         })
         .catch((error) => {
@@ -190,6 +211,8 @@ export default {
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
       frm.append('title', this.title);
+      frm.append("unmodified",this.deleted)
+      console.log('딜리티스',this.deleted)
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {
