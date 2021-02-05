@@ -1,16 +1,6 @@
 <template>
   <div class="container">
-    <v-text-field
-      label="제목"
-      v-model="board.postInfo.title"
-      :value="board.postInfo.title"
-    ></v-text-field>
-    <v-textarea
-      label="본문"
-      rows="5"
-      v-model="board.postInfo.content"
-      :value="board.postInfo.content"
-    ></v-textarea>
+    <editor :contents="this.board.postInfo" @text="emitedData"></editor>
     <input
       multiple="multiple"
       ref="file"
@@ -50,6 +40,7 @@
 </template>
 <script>
 import axios from "axios";
+import editor from "../sub3/Editor.vue"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -62,10 +53,14 @@ export default {
       myfile: [],
       imageUrl: [],
       deleted: [],
+      cont: '',
     };
   },
+  components:{
+    editor,
+  },
   created() {
-    // this.board = this.$route.query.board;
+    this.board = this.$route.query.board;
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -80,7 +75,7 @@ export default {
         for (var n = 0; n < this.not.length; n++) {
           this.temp.push(this.not[n].picNo);
         }
-        console.log('템프는',this.temp)
+        this.cont = response.data.postInfo.content;
         for (var i = 0; i < response.data.fileList.length; i++) {
           this.imgUrl.push(response.data.fileList[i]);
         }
@@ -93,6 +88,10 @@ export default {
   },
 
   methods: {
+  emitedData(event){
+      this.board.postInfo = event;
+      console.log("emitted",this.board);
+    },
     modiImg(item, index) {
       this.deleted.push(item.picNo)
       this.imgUrl.splice(index, 1)
@@ -107,6 +106,7 @@ export default {
     modifyComplete() {
       var frm = new FormData();
       console.log(this.myfile)
+      
       for (var i = 0; i < this.myfile.length; i++) {
         let file = this.myfile[i];
         frm.append('files', file);

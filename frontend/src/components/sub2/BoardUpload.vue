@@ -47,6 +47,7 @@
       </div>
     </v-row>
     <hr />
+    <editor @text="getText"></editor>
     <v-textarea label="본문" v-model="content"></v-textarea>
     <input
       multiple="multiple"
@@ -87,6 +88,7 @@
 </template>
 <script>
 import axios from 'axios';
+import editor from '../sub3/Editor.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -103,6 +105,9 @@ export default {
       deleted: [],
     };
   },
+   components:{
+    editor,
+  },
   methods: {
     modiImg(item, index) {
       this.deleted.push(item.picNo)
@@ -118,6 +123,9 @@ export default {
       console.log('파일',this.myfile)
       this.imageUrl.splice(index, 1)
       this.myfile.splice(index, 1)
+    },
+    getText(event){
+      this.content = event;
     },
     onChangeImages(e) {
       var file = e.target.files;

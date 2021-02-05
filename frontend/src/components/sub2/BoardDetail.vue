@@ -98,7 +98,7 @@ export default {
       like: false,
       dialog1: false,
       items: ["취소", "삭제"],
-      
+      cont:'',
     };
   },
   computed: {
@@ -119,6 +119,7 @@ export default {
       .then((response) => {
         console.log(response.data);
         this.board = response.data;
+        this.cont = this.board.postInfo.content;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
