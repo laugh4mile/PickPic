@@ -9,7 +9,6 @@
       name="file"
       @change="onChangeImages"
     />
-
     <div>
       <v-row align="center">
         <span>
@@ -34,7 +33,6 @@
         </v-col>
         </span>
       </v-row>
-
     </div>
 
     <v-btn dark @click="modifyComplete">수정 완료</v-btn>
@@ -52,6 +50,9 @@ export default {
       not: [],
       modified: [],
       temp: [],
+      myfile: [],
+      imageUrl: [],
+      deleted: [],
       cont: '',
     };
   },
@@ -60,7 +61,6 @@ export default {
   },
   created() {
     this.board = this.$route.query.board;
-    console.log(this.board);
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -76,7 +76,7 @@ export default {
           this.temp.push(this.not[n].picNo);
         }
         this.cont = response.data.postInfo.content;
-         for (var i = 0; i < response.data.fileList.length; i++) {
+        for (var i = 0; i < response.data.fileList.length; i++) {
           this.imgUrl.push(response.data.fileList[i]);
         }
         console.log(this.imgUrl)
@@ -87,39 +87,51 @@ export default {
       });
   },
 
-
   methods: {
-    emitedData(event){
+  emitedData(event){
       this.board.postInfo = event;
       console.log("emitted",this.board);
     },
-   modifyComplete() {
+    modiImg(item, index) {
+      this.deleted.push(item.picNo)
+      this.imgUrl.splice(index, 1)
+      console.log(item)
+      console.log(index)
+    },
+    deleteImg(index) {
+      console.log(index)
+      this.imageUrl.splice(index, 1)
+      this.myfile.splice(index, 1)
+    },
+    modifyComplete() {
       var frm = new FormData();
-      console.log('모디파ㄴ이는',this.modified)
-      if(this.$refs.file){
-
-        for (var i = 0; i < this.$refs.file.length; i++) {
-          if(this.$refs.file[i].files.length>0){
-            frm.append("files", this.$refs.file[i].files[0]);
-        }
-        }
-        console.log(frm);
-        for (var i = 0; i < this.modified.length; i++) {
-          const idx = this.temp.indexOf(this.modified[i]);
-          this.temp.splice(idx,1);
-        }
-        for (var i = 0; i < this.temp.length; i++){
-          frm.append("unmodified", this.temp[i]);
-
-        }
-        if (this.modified.length <1) {
-          console.log('변경된거 없음')
-          this.temp = []
-        }
-        console.log('모디파이드 배열은',this.modified)
-        console.log('최종보내줄 배열은',this.temp)
-
+      console.log(this.myfile)
+      
+      for (var i = 0; i < this.myfile.length; i++) {
+        let file = this.myfile[i];
+        frm.append('files', file);
       }
+    // for (var i = 0; i < this.$refs.file.length; i++) {
+    //     if(this.$refs.file[i].files.length>0){
+    //         frm.append("files", this.$refs.file[i].files[0]);
+    //     }
+    //   }
+      console.log(frm);
+      for (var i = 0; i < this.modified.length; i++) {
+        const idx = this.temp.indexOf(this.modified[i]);
+        this.temp.splice(idx,1);
+      }
+      // for (var i = 0; i < this.temp.length; i++){
+      //   frm.append("unmodified", this.temp[i]);
+
+      // }
+      if (this.modified.length <1) {
+        console.log('변경된거 없음')
+        this.temp = []
+      }
+      console.log('모디파이드 배열은',this.modified)
+      console.log('최종보내줄 배열은',this.temp)
+      frm.append("unmodified",this.deleted)
       frm.append("postNo", this.board.postInfo.postNo);
       frm.append("content", this.board.postInfo.content);
       frm.append("title", this.board.postInfo.title);
@@ -133,23 +145,33 @@ export default {
           alert("수정 실패");
         });
     },
-    onChangeImages(event, item, index) {
-      document.getElementById("img" + index).src = URL.createObjectURL(
-        event.target.files[0]
-      );
-      console.log(event);
-      this.not[index] = event.target.files[0];
-      this.modified = [];
-      for (var n = 0; n < this.not.length; n++) {
-        //   console.log(this.not[n].picNo)
-        if (this.not[n].picNo) {
-          this.modified.push(this.not[n].picNo);
-        }
-        //   console.log(this.not[n])
+    onChangeImages(e) {
+      var file = e.target.files;
+      for (var i = 0; i < file.length; i++) {
+        this.imageUrl.push(URL.createObjectURL(file[i]));
+        this.myfile.push(this.$refs.file.files[i])
       }
-      //   this.imgUrl[0] = URL.createObjectURL(event.target.files[0]);
-      console.log(this.modified);
+      console.log(this.myfile)
+      console.log(this.imageUrl)
     },
+    // onChangeImages(e) {
+    //   this.myfile.push(event.target.files[0])
+    //   document.getElementById("img" + index).src = URL.createObjectURL(
+    //     event.target.files[0]
+    //   );
+    //   console.log(event);
+    //   this.not[index] = event.target.files[0];
+    //   this.modified = [];
+    //   for (var n = 0; n < this.not.length; n++) {
+    //     //   console.log(this.not[n].picNo)
+    //     if (this.not[n].picNo) {
+    //       this.modified.push(this.not[n].picNo);
+    //     }
+    //     //   console.log(this.not[n])
+    //   }
+    //   //   this.imgUrl[0] = URL.createObjectURL(event.target.files[0]);
+    //   console.log(this.modified);
+    // },
   },
   computed: {},
 };
