@@ -1,8 +1,11 @@
 package com.web.blog.model.service;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
 
 //import lombok.extern.slf4j.Slf4j;
 //import org.slf4j.Logger;
@@ -96,7 +99,7 @@ public class S3FileUploadService {
 	}
 	
 	public ImgDto uploadImage(MultipartFile uploadFile) throws IOException {
-		ImgDto img = new ImgDto();
+		ImgDto imgDto = new ImgDto();
 		String origName = uploadFile.getOriginalFilename();
 //		try {
 			// 확장자를 찾기 위한 코드
@@ -111,8 +114,25 @@ public class S3FileUploadService {
 		//변환
 		uploadFile.transferTo(file);
 		
-		int THUMB_HEIGHT = 200;
-		int THUMB_WIDTH = 200;
+		// 썸네일 사이즈 조절
+		BufferedImage image = ImageIO.read(uploadFile.getInputStream());
+		
+		int THUMB_HEIGHT = image.getHeight();
+		int THUMB_WIDTH = image.getWidth();
+		final int THUMB_SIZE = 200;
+		
+		if(THUMB_HEIGHT >= THUMB_SIZE || THUMB_WIDTH >= THUMB_SIZE) {
+			// width가 height보다 크다
+			if((double)THUMB_WIDTH / (double)THUMB_HEIGHT > 1.0) {
+				THUMB_WIDTH = (int) ((double)THUMB_WIDTH / (double)THUMB_HEIGHT * THUMB_SIZE);
+				THUMB_HEIGHT = THUMB_SIZE;
+			}
+			// width가 height보다 작다
+			else {
+				THUMB_HEIGHT = (int) ((double)THUMB_HEIGHT / (double)THUMB_WIDTH * THUMB_SIZE);
+				THUMB_WIDTH = THUMB_SIZE;
+			}
+		}
 		
 		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
 		
@@ -121,10 +141,10 @@ public class S3FileUploadService {
 		uploadOnS3(saveFileName, file);
 		uploadOnS3(thumbFileName, thumb);
 		
-		img.setOriPicName(origName);
-		img.setModPicName(saveFileName);
-		img.setThumbnail(thumbFileName);
-		img.setPicSize(uploadFile.getSize());
+		imgDto.setOriPicName(origName);
+		imgDto.setModPicName(saveFileName);
+		imgDto.setThumbnail(thumbFileName);
+		imgDto.setPicSize(uploadFile.getSize());
 		// 주소 할당
 //			url = defaultUrl + saveFileName;
 		// 파일 삭제
@@ -133,7 +153,7 @@ public class S3FileUploadService {
 //		} catch (StringIndexOutOfBoundsException e) {
 //			url = null;
 //		}
-		return img;
+		return imgDto;
 	}
 
 	private static String getUuid() {
