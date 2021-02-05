@@ -101,8 +101,7 @@ public class S3FileUploadService {
 	public ImgDto uploadImage(MultipartFile uploadFile) throws IOException {
 		ImgDto imgDto = new ImgDto();
 		String origName = uploadFile.getOriginalFilename();
-//		try {
-			// 확장자를 찾기 위한 코드
+		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
@@ -112,10 +111,9 @@ public class S3FileUploadService {
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
 		//변환
-		uploadFile.transferTo(file);
-		
 		// 썸네일 사이즈 조절
 		BufferedImage image = ImageIO.read(uploadFile.getInputStream());
+		
 		
 		int THUMB_HEIGHT = image.getHeight();
 		int THUMB_WIDTH = image.getWidth();
@@ -134,6 +132,8 @@ public class S3FileUploadService {
 			}
 		}
 		
+		// 파일 임시 저장
+		uploadFile.transferTo(file);
 		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
 		
 		// 파일 변환
@@ -145,14 +145,10 @@ public class S3FileUploadService {
 		imgDto.setModPicName(saveFileName);
 		imgDto.setThumbnail(thumbFileName);
 		imgDto.setPicSize(uploadFile.getSize());
-		// 주소 할당
-//			url = defaultUrl + saveFileName;
 		// 파일 삭제
 		file.delete();
 		thumb.delete();
-//		} catch (StringIndexOutOfBoundsException e) {
-//			url = null;
-//		}
+		
 		return imgDto;
 	}
 
