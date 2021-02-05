@@ -47,6 +47,7 @@
       </div>
     </v-row>
     <hr />
+    <editor @text="getText"></editor>
     <v-textarea label="본문" v-model="content"></v-textarea>
     <input
       multiple="multiple"
@@ -59,7 +60,6 @@
 
     <v-btn @click="completeUpload">작성 완료</v-btn>
     <v-btn @click="tempUpload">임시저장</v-btn>
-    <p>{{imageUrl}}</p>
     <div class="card">
       <v-row>
         <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
@@ -73,6 +73,7 @@
   </div>
 </template>
 <script>
+import editor from '../sub3/Editor.vue';
 import axios from 'axios';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
@@ -88,13 +89,17 @@ export default {
       myfile: [],
     };
   },
+  components:{
+    editor,
+  },
   methods: {
     deleteImg(index) {
       console.log(index)
-      // this.imageUrl.splice(index, 1)
-      // this.myfile.splice(index, 1)
-      console.log('이미지',this.imageUrl)
-      console.log('파일',this.myfile)
+      this.imageUrl.splice(index, 1)
+      this.myfile.splice(index, 1)
+    },
+    getText(event){
+      this.content = event;
     },
     onChangeImages(e) {
       var file = e.target.files;
@@ -120,7 +125,12 @@ export default {
           this.imageUrl = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
             console.log(response.data.fileList[i].modPicName);
-            this.imageUrl.push(response.data.fileList[i].modPicName);
+            this.imageUrl.push(
+              `${SERVER_URL}/post/imgs/download?fileName=` +
+                response.data.fileList[i].modPicName +
+                '&postNo=' +
+                this.dialogm1
+            );
           }
         })
         .catch((error) => {

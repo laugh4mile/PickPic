@@ -3,7 +3,7 @@
     <head> </head>
     <!-- <v-row align="center"> -->
 
-    <v-text-field label="제목" v-model="title"></v-text-field>
+    <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
 
     <!-- <div class="text-center">
               <v-dialog
@@ -163,6 +163,8 @@
     <div
       style="border: .2px solid black; font-size: 12px;"
       id="editor"
+      @input="getText"
+      @change="getText"
       contenteditable="true"
       label="본문"
     >
@@ -271,13 +273,62 @@ var pasteHtmlAtCaret = function(html) {
 
 export default {
   created(){
-    this.validateYouTubeUrl();
+    this.temp = this.contents;
+    console.log("temp : " + this.temp);
+    // this.content = this.contents;
+    // console.log(this.content);
+    $("#editor").innerHTML = this.contents;
+  },
+  mounted(){
+    this.temp = this.contents;
+    $("#editor").append(this.contents.content);
+    console.log(this.temp);
+  },
+  data() {
+    return {
+      H: ["H1", "H2", "H3", "H4", "H5", "H6"],
+      size: [8, 10, 11, 13, 15, 16, 19, 24, 28, 30, 34, 38],
+      videosrcs:[],
+      srcs:'',
+      temp:'',
+      dialog:false,
+      fonts: [
+        "Arial",
+        "Sans Serif",
+        "Comic Sans MS",
+        "Times New Roman",
+        "Courier New",
+        "Verdana",
+        "Trebuchet MS",
+        "Arial Black",
+        "Impact",
+        "Bookman",
+        "Garamond",
+        "Palatino",
+        "Georgia",
+      ],
+      font: "Arial",
+      content: '',
+    };
+  },
+  props:{
+    contents:{
+      type:Object
+    }
   },
   methods: {
     cng() {
       this.changeFont();
     },
-    
+    getTitle(){
+      this.contents.content = document.getElementById('editor').innerHTML;
+      this.$emit('text', this.contents);
+    },
+    getText(){
+      // console.log(document.getElementById('editor').innerHTML);
+      this.contents.content = document.getElementById('editor').innerHTML;
+      this.$emit('text', this.contents);
+    },
     
     GetNextLeaf(node) {
       while (!node.nextSibling) {
@@ -494,12 +545,18 @@ export default {
             iframe.height = 315;
             document.getElementById('editor').append(iframe);
             document.getElementById('editor').append(document.createElement('br'));
+            this.contents.content = document.getElementById('editor').innerHTML;
+            console.log(this.contents.content);
+            this.$emit('text', this.contents);
           }else{
             var a = document.createElement("a");
             a.href = this.srcs;
             a.innerText = this.srcs;
             console.log(a);
             document.getElementById('editor').append(a);
+            this.contents.content = document.getElementById('editor').innerHTML;
+            console.log(this.contents.content);
+            this.$emit('text', this.contents);
           }
       } else {
           alert("invalid url");
@@ -596,40 +653,6 @@ export default {
             }
     },
   },
-  data() {
-    return {
-      H: ["H1", "H2", "H3", "H4", "H5", "H6"],
-      size: [8, 10, 11, 13, 15, 16, 19, 24, 28, 30, 34, 38],
-      videosrcs:[],
-      srcs:'',
-      dialog:false,
-      fonts: [
-        "Arial",
-        "Sans Serif",
-        "Comic Sans MS",
-        "Times New Roman",
-        "Courier New",
-        "Verdana",
-        "Trebuchet MS",
-        "Arial Black",
-        "Impact",
-        "Bookman",
-        "Garamond",
-        "Palatino",
-        "Georgia",
-      ],
-      font: "Arial",
-      content: `
-          <h2>
-            Menu Bubble
-          </h2>
-          <span>
-            Hey, try to select some text here. There will popup a menu for selecting some inline styles. <em>Remember:</em> you have full control about content and styling of this menu.
-            
-          </span>
-          <div>www.youtube.com</div>
-        `,
-    };
-  },
+  
 };
 </script>
