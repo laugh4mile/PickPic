@@ -36,7 +36,7 @@ public class S3FileUploadService {
 	private String defaultUrl;
 
 	private final AmazonS3Client amazonS3Client;
-	private final String IMAGE_DIR = "/home/ubuntu/apps/s04p13a305/backend/target/uploaded/";
+	private final String IMAGE_DIR = "uploaded/";
 
 	public S3FileUploadService(AmazonS3Client amazonS3Client) {
 		this.amazonS3Client = amazonS3Client;
