@@ -15,37 +15,56 @@ import com.web.blog.model.PostParameterDto;
 public interface PostMapper {
 
 	public int getTotalCount(PostParameterDto postParameterDto) throws SQLException;
+
 	public int getCount() throws SQLException;
-	
+
 	public PostDto getOne(int postNo) throws SQLException;
+
 	public List<PostDto> getList(PostParameterDto postParameterDto) throws SQLException;
+
 	public List<PostDto> getTempList(PostParameterDto postParameterDto) throws SQLException;
+
 	public int getTempCount(String email) throws SQLException;
-	
+
 	public int write(PostDto postDto) throws SQLException;
+
 	public int writeTemp(PostDto postDto) throws SQLException;
+
 	public int modify(PostDto postDto) throws SQLException;
+
 	public int delete(int postNo) throws SQLException;
-	
+
 	public int likeCount(int postNo) throws SQLException;
+
 	public int likeCheck(Map<String, Object> map) throws SQLException;
+
 	public PostLikeDto likeInfo(Map<String, Object> map) throws SQLException;
+
 	public int insertLike(Map<String, Object> map) throws SQLException;
+
 	public int like(Map<String, Object> map) throws SQLException;
+
 	public int unlike(Map<String, Object> map) throws SQLException;
+
 	public int updateLike(Map<String, Object> map) throws SQLException;
 
 	public int likeCntUp(int postNo) throws SQLException;
+
 	public int likeCntDown(int postNo) throws SQLException;
-	
+
 	public int getLastPostNo(String email) throws SQLException;
+
 	public int uploadFile(ImgDto img) throws SQLException;
+
 	public List<ImgDto> getFiles(int postNo) throws SQLException;
+
 	public ImgDto getFileInfo(String picNo) throws SQLException;
-	
+
 	public int deleteImgs(List<String> unmodified) throws SQLException;
+
 	public int deleteImg(String picNo) throws SQLException;
+
 	public int getCountFiles(int postNo) throws SQLException;
-	
+
 	public int writeTemptoDB(PostDto postDto) throws SQLException;
 }

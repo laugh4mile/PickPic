@@ -36,7 +36,7 @@ public class S3FileUploadService {
 	private String defaultUrl;
 
 	private final AmazonS3Client amazonS3Client;
-	private final String IMAGE_DIR = "c:\\SSAFY\\uploaded\\";
+	private final String IMAGE_DIR = "/home/ubuntu/apps/s04p13a305/backend/target/uploaded/";
 
 	public S3FileUploadService(AmazonS3Client amazonS3Client) {
 		this.amazonS3Client = amazonS3Client;
@@ -45,12 +45,12 @@ public class S3FileUploadService {
 	public String getDefaultUrl() {
 		return defaultUrl;
 	}
-	
+
 	public String upload(MultipartFile uploadFile) throws IOException {
 		String origName = uploadFile.getOriginalFilename();
 //		String url;
 //		try {
-			// 확장자를 찾기 위한 코드
+		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
@@ -71,7 +71,7 @@ public class S3FileUploadService {
 //		return url;
 		return saveFileName;
 	}
-	
+
 	public MemberDto upload(String email, MultipartFile uploadFile) throws IOException {
 		MemberDto member = new MemberDto();
 		String origName = uploadFile.getOriginalFilename();
@@ -94,12 +94,12 @@ public class S3FileUploadService {
 		file.delete();
 		return member;
 	}
-	
+
 	public ImgDto uploadImage(MultipartFile uploadFile) throws IOException {
 		ImgDto img = new ImgDto();
 		String origName = uploadFile.getOriginalFilename();
 //		try {
-			// 확장자를 찾기 위한 코드
+		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
@@ -108,19 +108,19 @@ public class S3FileUploadService {
 		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
-		//변환
+		// 변환
 		uploadFile.transferTo(file);
-		
+
 		int THUMB_HEIGHT = 200;
 		int THUMB_WIDTH = 200;
-		
+
 		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
-		
+
 		// 파일 변환
 		// S3 파일 업로드
 		uploadOnS3(saveFileName, file);
 		uploadOnS3(thumbFileName, thumb);
-		
+
 		img.setOriPicName(origName);
 		img.setModPicName(saveFileName);
 		img.setThumbnail(thumbFileName);
