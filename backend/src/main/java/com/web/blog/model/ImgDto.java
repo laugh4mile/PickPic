@@ -75,10 +75,4 @@ public class ImgDto {
 		this.voteCnt = voteCnt;
 	}
 
-	@Override
-	public String toString() {
-		return "ImgDto [picNo=" + picNo + ", postNo=" + postNo + ", oriPicName=" + oriPicName + ", modPicName="
-				+ modPicName + ", picSize=" + picSize + ", uploadDate=" + uploadDate + ", voteCnt=" + voteCnt + "]";
-	}
-
 }

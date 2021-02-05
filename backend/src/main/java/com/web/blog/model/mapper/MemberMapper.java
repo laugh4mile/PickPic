@@ -5,13 +5,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.web.blog.model.MemberDto;
 
 @Mapper
 public interface MemberMapper {
-	// 관리자
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public List<MemberDto> getAllMember();
 
 	/** id, pwd와 일치하는 MemberDto를 반환 */
@@ -26,19 +25,27 @@ public interface MemberMapper {
 	/** 인자로 받은 MemberDto를 수정하고, 성공 여부를 반환 */
 	public boolean updateIntro(MemberDto memberDto) throws SQLException;
 
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public boolean updatePwd(MemberDto memberDto) throws SQLException;
-	
-	public String findPwd(String email); 
 
+	/** id, pwd와 일치하는 MemberDto를 반환 */
+	public String findPwd(String email);
+
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public MemberDto findUserInfo(String email) throws SQLException;
 
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public void setProfile(MemberDto memberDto) throws IOException;
 
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public String getFilePath(String email);
 
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public void deleteImg(String email);
-	
+
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public String emailCheck(String email);
-	
+
+	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public String nameCheck(String name);
 }

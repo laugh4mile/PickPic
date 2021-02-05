@@ -38,9 +38,4 @@ public class PostVoteDto {
 		this.postNo = postNo;
 	}
 
-	@Override
-	public String toString() {
-		return "PostVoteDto [vNo=" + vNo + ", picNo=" + picNo + ", email=" + email + ", postNo=" + postNo + "]";
-	}
-
 }

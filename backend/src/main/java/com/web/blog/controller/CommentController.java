@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.blog.model.CommentDto;
 import com.web.blog.model.CommentLikeDto;
-import com.web.blog.model.CommentParameterDto;
 import com.web.blog.model.service.CommentService;
 
 import io.swagger.annotations.ApiOperation;
@@ -33,31 +34,139 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin(origins = { "*" })
 
 public class CommentController {
+
+	private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
+
 	@Autowired
 	CommentService commentService;
-	
-//	@GetMapping("/{postNo}")
-//	public ResponseEntity<List<CommentDto>> commentList (@PathVariable int postNo, HttpServletRequest req) throws Exception {
-//		
-//		return new ResponseEntity<List<CommentDto>>(commentService.commentList(postNo), HttpStatus.OK);
-//	}
 
-	@GetMapping("/{postNo}")
-	public ResponseEntity<List<Map<String, Object>>> commentList (@PathVariable int postNo, @RequestParam String email, HttpServletRequest req) throws Exception {
-		
+	@ApiOperation(value = "댓글 작성", notes = "댓글을 작성한다.", response = Boolean.class)
+	@PostMapping
+	public ResponseEntity<Boolean> commentWrite(@RequestBody Map<String, String> map) {
+		logger.info("commentWrite - 호출");
+
+		HttpStatus status = HttpStatus.ACCEPTED;
+		boolean flag = true;
+
+		// 댓글 담기
+		CommentDto dto = new CommentDto();
+		dto.setContent(map.get("content"));
+		dto.setEmail(map.get("email"));
+		dto.setPostNo(Integer.parseInt(map.get("postNo")));
+
+		// 댓글 작성
+		try {
+			commentService.commentWrite(dto);
+			status = HttpStatus.ACCEPTED;
+		} catch (Exception e) {
+			e.printStackTrace();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Boolean>(flag, status);
+	}
+
+	@ApiOperation(value = "댓글 수정", notes = "댓글을 수정한다.", response = String.class)
+	@PutMapping
+	public ResponseEntity<String> modify(@RequestBody CommentDto commentDto) throws Exception {
+		logger.info("modify - 호출");
+
+		// 해당 댓글 수정
+		if (commentService.commentUpdate(commentDto)) {
+			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+		}
+
+		return new ResponseEntity<String>("FAIL", HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "댓글 삭제", notes = "댓글을 삭제한다.", response = Boolean.class)
+	@DeleteMapping
+	public ResponseEntity<Boolean> delete(@RequestBody Map<String, String> map) {
+		logger.info("delete - 호출");
+
+		HttpStatus status = HttpStatus.ACCEPTED;
+		boolean flag = false;
+
+		// 해당 댓글 삭제
+		try {
+			flag = commentService.commentDelete(Integer.parseInt(map.get("commentNo")));
+			status = HttpStatus.ACCEPTED;
+		} catch (Exception e) {
+			e.printStackTrace();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Boolean>(flag, status);
+	}
+
+	@ApiOperation(value = "댓글 like", notes = "댓글번호에 해당하는 댓글의 좋아요를 토글한다. 그리고 DB 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
+	@PutMapping("/like")
+	public ResponseEntity<Map<String, Object>> like(@RequestParam int commentNo, @RequestParam String email) {
+		logger.info("like - 호출");
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.OK;
-		
-		List<Map<String, Object>> commentDtoList = new ArrayList<Map<String,Object>>();
-		
-		for(CommentDto comment : commentService.commentList(postNo)) {
+
+		try {
+			map.put("commentNo", commentNo);
+			map.put("email", email);
+
+			// 해당 댓글 like 여부
+			CommentLikeDto likeDto = commentService.likeInfo(map);
+
+			// 해당 댓글에 한번도 like 한 적 없다면
+			if (likeDto == null) {
+				commentService.insertLike(map);
+				likeDto = commentService.likeInfo(map);
+			}
+
+			String like_check = "N";
+			like_check = likeDto.getLikeCheck(); // like 체크 값
+
+			if (like_check.equals("N")) {
+				commentService.like(map);
+				like_check = "Y";
+				commentService.likeCntUp(commentNo); // like 갯수 증가
+			} else {
+				commentService.unlike(map);
+				like_check = "N";
+				commentService.likeCntDown(commentNo); // like 갯수 감소
+			}
+
+			resultMap.put("commentNo", commentNo);
+			resultMap.put("likeCheck", like_check);
+			resultMap.put("likeCnt", commentService.likeCount(commentNo));
+			status = HttpStatus.OK;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+
+	@ApiOperation(value = "댓글 목록", notes = "댓글의 목록을 가지고 온다.", response = List.class)
+	@GetMapping("/{postNo}")
+	public ResponseEntity<List<Map<String, Object>>> commentList(@PathVariable int postNo, @RequestParam String email,
+			HttpServletRequest req) throws Exception {
+		logger.info("commentList - 호출");
+
+		HttpStatus status = HttpStatus.OK;
+		List<Map<String, Object>> commentDtoList = new ArrayList<Map<String, Object>>();
+
+		// 댓글 목록 조회
+		for (CommentDto comment : commentService.commentList(postNo)) {
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			Map<String, Object> likecheck = new HashMap<String, Object>();
 			resultMap.put("Comment", comment);
 			likecheck.put("email", email);
 			likecheck.put("commentNo", comment.getCommentNo());
-			
+
+			// 댓글 like 여부
 			CommentLikeDto likeDto = commentService.likeInfo(likecheck);
-			
+
 			// 해당 게시글 like 누른적 한 번도 없다면
 			if (likeDto == null) {
 				resultMap.put("likeCheck", "N");
@@ -66,209 +175,44 @@ public class CommentController {
 			else {
 				resultMap.put("likeCheck", likeDto.getLikeCheck());
 			}
-			System.out.println(resultMap);
 			commentDtoList.add(resultMap);
 		}
 		return new ResponseEntity<List<Map<String, Object>>>(commentDtoList, status);
 	}
-	
-//	@PostMapping("/{postNo}")
-//	public ResponseEntity<List<Map<String, Object>>> commentList (@PathVariable int postNo, @RequestParam String email, HttpServletRequest req) throws Exception {
-//        
-//        HttpStatus status = HttpStatus.OK;
-//        
-//        List<Map<String, Object>> commentDtoList = new ArrayList<Map<String,Object>>();
-//        
-//        for(CommentDto comment : commentService.commentList(postNo)) {
-//        	Map<String, Object> resultMap = new HashMap<String, Object>();
-//            Map<String, Object> likecheck = new HashMap<String, Object>();
-//            resultMap.put("Comment", comment);
-//            likecheck.put("email", email);
-//            likecheck.put("commentNo", comment.getCommentNo());
-//
-//            CommentLikeDto likeDto = commentService.likeInfo(likecheck);
-//
-//            // 해당 게시글 like 누른적 한 번도 없다면
-//            if (likeDto == null) {
-//                resultMap.put("likeCheck", "N");
-//            }
-//            // 좋아요를 누른 적이 있으면
-//            else {
-//                resultMap.put("likeCheck", likeDto.getLikeCheck());
-//            }
-//            System.out.println(resultMap);
-//            commentDtoList.add(resultMap);
-//        }
-//        return new ResponseEntity<List<Map<String, Object>>>(commentDtoList, status);
-//    }
-	
-//	// 잘되는거
-//	@PostMapping("/{postNo}")
-//	public ResponseEntity<List<Map<String, Object>>> infiniteScrollDownComment (@PathVariable int postNo, @RequestParam String email, @RequestBody CommentParameterDto commentParameterDto, HttpServletRequest req) throws Exception {
-//		HttpStatus status = HttpStatus.OK;
-//		System.out.println(commentParameterDto);
-//		commentParameterDto.setSpp(commentParameterDto.getStart()+10);
-//		List<Map<String, Object>> commentDtoList = new ArrayList<Map<String,Object>>();
-//		for(CommentDto comment : commentService.infiniteScrollDown(postNo, commentParameterDto)) {
-//			Map<String, Object> resultMap = new HashMap<String, Object>();
-//			Map<String, Object> likecheck = new HashMap<String, Object>();
-//			resultMap.put("Comment", comment);
-//			likecheck.put("email", email);
-//			likecheck.put("commentNo", comment.getCommentNo());
-//			
-//			CommentLikeDto likeDto = commentService.likeInfo(likecheck);
-//			
-//			// 해당 게시글 like 누른적 한 번도 없다면
-//			if (likeDto == null) {
-//				resultMap.put("likeCheck", "N");
-//			}
-//			// 좋아요를 누른 적이 있으면
-//			else {
-//				resultMap.put("likeCheck", likeDto.getLikeCheck());
-//			}
-//			System.out.println(resultMap);
-//			commentDtoList.add(resultMap);
-//			
-//		}
-//		return new ResponseEntity<List<Map<String, Object>>>(commentDtoList, status);
-//	}
 
+	@ApiOperation(value = "댓글 무한 스크롤", notes = "댓글 창을 무한으로 스크롤 할 수 있도록 한다.", response = List.class)
 	@PostMapping("/{postNo}")
-	public ResponseEntity<List<Map<String, Object>>> infiniteScrollDownComment (@PathVariable int postNo, @RequestParam String email, @RequestParam int pg, HttpServletRequest req) throws Exception {
+	public ResponseEntity<List<Map<String, Object>>> infiniteScrollDownComment(@PathVariable int postNo,
+			@RequestParam String email, @RequestParam int pg, HttpServletRequest req) throws Exception {
+		logger.info("infiniteScrollDownComment - 호출");
+
 		HttpStatus status = HttpStatus.OK;
-		
 		pg *= 10;
-		System.out.println(pg);
-        List<Map<String, Object>> commentDtoList = new ArrayList<Map<String,Object>>();
-        for(CommentDto comment : commentService.infiniteScrollDown(postNo, pg)) {
-        	Map<String, Object> resultMap = new HashMap<String, Object>();
-            Map<String, Object> likecheck = new HashMap<String, Object>();
-            resultMap.put("Comment", comment);
-            likecheck.put("email", email);
-            likecheck.put("commentNo", comment.getCommentNo());
+		List<Map<String, Object>> commentDtoList = new ArrayList<Map<String, Object>>();
 
-            CommentLikeDto likeDto = commentService.likeInfo(likecheck);
+		// 댓글 목록 조회
+		for (CommentDto comment : commentService.infiniteScrollDown(postNo, pg)) {
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			Map<String, Object> likecheck = new HashMap<String, Object>();
+			resultMap.put("Comment", comment);
+			likecheck.put("email", email);
+			likecheck.put("commentNo", comment.getCommentNo());
 
-            // 해당 게시글 like 누른적 한 번도 없다면
-            if (likeDto == null) {
-                resultMap.put("likeCheck", "N");
-            }
-            // 좋아요를 누른 적이 있으면
-            else {
-                resultMap.put("likeCheck", likeDto.getLikeCheck());
-            }
-            System.out.println(resultMap);
-            commentDtoList.add(resultMap);
-            
-        }
-        return new ResponseEntity<List<Map<String, Object>>>(commentDtoList, status);
-	}
-	
-	@PostMapping
-	public ResponseEntity<Boolean> commentWrite(@RequestBody Map<String, String> map){
-		System.out.println(map);
-		HttpStatus status = HttpStatus.ACCEPTED;
-		CommentDto dto = new CommentDto();
-		dto.setContent(map.get("content"));
-		dto.setEmail(map.get("email"));
-		dto.setPostNo(Integer.parseInt(map.get("postNo")));
-		System.out.println(dto);
-		boolean flag = true;
-		
-		try {
-			commentService.commentWrite(dto);
-			status = HttpStatus.ACCEPTED;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		
-		return new ResponseEntity<Boolean>(flag, status);
-	}
-	
-	@PutMapping
-	public ResponseEntity<String> modify(@RequestBody CommentDto commentDto) throws Exception {
+			// 댓글 like 여부
+			CommentLikeDto likeDto = commentService.likeInfo(likecheck);
 
-		if (commentService.commentUpdate(commentDto)) {
-			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
-		}
-		return new ResponseEntity<String>("FAIL", HttpStatus.OK);
-	}
-
-	@DeleteMapping
-	public ResponseEntity<Boolean> delete(@RequestBody Map<String, String> map) {
-		HttpStatus status = HttpStatus.ACCEPTED;
-		System.out.println(map);
-		boolean flag = false;
-		
-		try {
-			flag = commentService.commentDelete(Integer.parseInt(map.get("commentNo")));
-			status = HttpStatus.ACCEPTED;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<Boolean>(flag, status);
-	}
-	
-	@ApiOperation(value = "like", notes = "댓글번호에 해당하는 댓글의 좋아요를 토글한다. 그리고 DB 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
-	@PutMapping("/like")
-	public ResponseEntity<Map<String, Object>> like(@RequestParam int commentNo, @RequestParam String email) {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		Map<String, Object> resultMap = new HashMap<>();
-		HttpStatus status = HttpStatus.OK;
-
-		try {
-			map.put("commentNo", commentNo);
-			map.put("email", email);
-
-			CommentLikeDto likeDto = commentService.likeInfo(map);
-			System.out.println(likeDto);
-
-			System.out.println(1);
-
-//			int like_cnt = postDto.getLikeCnt(); // 게시판의 좋아요 카운트
-			// 해당 게시글에 한번도 좋아요 한 적 없다면
+			// 해당 댓글 like 누른적 한 번도 없다면
 			if (likeDto == null) {
-				commentService.insertLike(map);
-				System.out.println(2);
-				likeDto = commentService.likeInfo(map);
+				resultMap.put("likeCheck", "N");
 			}
-
-			String like_check = "N";
-			like_check = likeDto.getLikeCheck(); // 좋아요 체크 값
-
-			if (like_check.equals("N")) {
-//				msgs.add("좋아요!");
-				commentService.like(map);
-				like_check = "Y";
-//				like_cnt++;
-				commentService.likeCntUp(commentNo); // 좋아요 갯수 증가
-			} else {
-//				msgs.add("좋아요 취소");
-				commentService.unlike(map);
-				like_check = "N";
-//				like_cnt--;
-				commentService.likeCntDown(commentNo); // 좋아요 갯수 감소
+			// like를 누른 적이 있으면
+			else {
+				resultMap.put("likeCheck", likeDto.getLikeCheck());
 			}
+			commentDtoList.add(resultMap);
 
-			resultMap.put("commentNo", commentNo);
-			resultMap.put("likeCheck", like_check);
-//	    	resultMap.put("likeCnt", like_cnt);
-			resultMap.put("likeCnt", commentService.likeCount(commentNo));
-			status = HttpStatus.OK;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			resultMap.put("message", e.getMessage());
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-
-		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		return new ResponseEntity<List<Map<String, Object>>>(commentDtoList, status);
 	}
 
 }
