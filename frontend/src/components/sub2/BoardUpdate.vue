@@ -1,6 +1,15 @@
 <template>
   <div class="container">
     <editor :contents="this.board.postInfo" @text="emitedData"></editor>
+    <input
+      multiple="multiple"
+      ref="file"
+      type="file"
+      id="file"
+      name="file"
+      @change="onChangeImages"
+    />
+
     <div>
       <v-row align="center">
         <span v-for="(item, index) in imgUrl" :key="index">
