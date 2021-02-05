@@ -3,7 +3,7 @@
     <head> </head>
     <!-- <v-row align="center"> -->
 
-    <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
+    <v-text-field label="제목" @change="getTitle" v-model="content.title"></v-text-field>
 
     <!-- <div class="text-center">
               <v-dialog
@@ -162,7 +162,7 @@
 
     <div
       style="border: .2px solid black; font-size: 12px;"
-      id="editor"
+      id="editors"
       @input="getText"
       @change="getText"
       contenteditable="true"
@@ -184,7 +184,7 @@ var selection_range;
 
 var clickHandler = function(event) {
   document
-    .getElementById("editor")
+    .getElementById("editors")
     .removeEventListener("keypress", clickHandler);
   updateFontSizeForNewText(event);
   updateFontStyleForNewText(event);
@@ -272,17 +272,21 @@ var pasteHtmlAtCaret = function(html) {
 };
 
 export default {
-  created(){
-    this.temp = this.contents;
-    console.log("temp : " + this.temp);
-    // this.content = this.contents;
-    // console.log(this.content);
-    $("#editor").innerHTML = this.contents;
-  },
+  // created(){
+  //   this.temp = this.contents;
+  //   console.log("temp : " + this.temp);
+  //   // this.content = this.contents;
+  //   // console.log(this.content);
+  //   $("#editor").innerHTML = this.contents;
+  // },
   mounted(){
-    this.temp = this.contents;
-    $("#editor").append(this.contents.content);
-    console.log(this.temp);
+    console.log('mounted')
+    if(this.contents){
+      console.log(this.contents);
+      this.content = this.contents;
+      $("#editors").append(this.contents.content);
+      console.log(this.temp);
+    }
   },
   data() {
     return {
@@ -308,7 +312,10 @@ export default {
         "Georgia",
       ],
       font: "Arial",
-      content: '',
+      content: {
+        title:'',
+        content:'',
+      },
     };
   },
   props:{
@@ -321,13 +328,11 @@ export default {
       this.changeFont();
     },
     getTitle(){
-      this.contents.content = document.getElementById('editor').innerHTML;
-      this.$emit('text', this.contents);
+      this.$emit('text', this.content);
     },
     getText(){
-      // console.log(document.getElementById('editor').innerHTML);
-      this.contents.content = document.getElementById('editor').innerHTML;
-      this.$emit('text', this.contents);
+      this.content.content = document.getElementById('editors').innerHTML;
+      this.$emit('text', this.content);
     },
     
     GetNextLeaf(node) {
@@ -471,7 +476,7 @@ export default {
           font_size = size;
           console.log("Collapsed");
           document
-            .getElementById("editor")
+            .getElementById("editors")
             .addEventListener("keypress", clickHandler);
           selection_range = selectionRange;
         } else {
@@ -528,35 +533,32 @@ export default {
     dialogComp(){
       this.dialog = false;
       if(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www\.)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(this.srcs)){
-          alert("valid url");
+        alert("valid url");
           if(this.validateYouTubeUrl(this.srcs)){
+            console.log("들어옴");
             this.videosrcs.push(this.srcs);
             console.log("this.videosrcs[" + this.videosrcs.length + "]");
             // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
-             var a = document.createElement("a");
-            a.href = this.srcs;
-            a.innerText = this.srcs;
-            console.log(a);
-            document.getElementById('editor').append(a);
-            document.getElementById('editor').append(document.createElement('br'));
+
             var iframe = document.createElement("iframe");
             iframe.src = this.videosrcs[this.videosrcs.length-1]
             iframe.width =  560;
             iframe.height = 315;
-            document.getElementById('editor').append(iframe);
-            document.getElementById('editor').append(document.createElement('br'));
-            this.contents.content = document.getElementById('editor').innerHTML;
-            console.log(this.contents.content);
-            this.$emit('text', this.contents);
+            document.getElementById('editors').append(iframe);
+            document.getElementById('editors').append(document.createElement('br'));
+            this.content.content = document.getElementById('editors').innerHTML;
+            console.log('url',this.content.content);
+            this.$emit('text', this.content);
           }else{
+            console.log('안들어옴');
             var a = document.createElement("a");
             a.href = this.srcs;
             a.innerText = this.srcs;
             console.log(a);
-            document.getElementById('editor').append(a);
-            this.contents.content = document.getElementById('editor').innerHTML;
-            console.log(this.contents.content);
-            this.$emit('text', this.contents);
+            document.getElementById('editors').append(a);
+            this.content.content = document.getElementById('editors').innerHTML;
+            console.log('url',this.content.content);
+            this.$emit('text', this.content);
           }
       } else {
           alert("invalid url");
@@ -635,10 +637,10 @@ export default {
     // },
     validateYouTubeUrl(url)
     {
+      console.log("match");
             if (url != undefined || url != '') {
-                var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+                var regExp = /^.*(youtube\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
                 var match = url.match(regExp);
-                console.log(match);
                 if (match && match[2].length > 10) {
                     // Do anything for being valid
                     // if need to change the url to embed url then use below line

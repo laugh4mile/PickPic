@@ -23,11 +23,6 @@
         >
           {{ link.text }}
         </v-btn>
-
-        <v-btn class="hidden-sm-and-down" text @click="editorForm">
-          게시판
-        </v-btn>
-
         <template v-if="!getAccessToken">
           <v-spacer />
           <v-btn text @click="registForm">
@@ -207,9 +202,6 @@ export default {
       });
       // this.$router.push("/board");
     },
-    editorForm(){
-      this.$router.push("/editor");
-    }
   },
   data() {
     return {
