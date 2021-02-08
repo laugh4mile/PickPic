@@ -15,7 +15,7 @@ public class VoteServiceImpl implements VoteService {
 
 	@Autowired
 	PostVoteMapper voteMapper;
-	
+
 	@Override
 	public int checkVoted(PostVoteDto voteInfo) throws SQLException {
 		return voteMapper.checkVoted(voteInfo);

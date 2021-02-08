@@ -3,9 +3,6 @@ package com.web.blog.model.service;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -55,26 +52,32 @@ public class S3FileUploadService {
 	public MemberDto upload(String email, MultipartFile uploadFile) throws IOException {
 		MemberDto member = new MemberDto();
 		String origName = uploadFile.getOriginalFilename();
+
 		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
+
 		// 파일 변환
 		File file = new File(IMAGE_DIR + saveFileName);
-		if(file.getParent() != null) {
+		if (file.getParent() != null) {
 			file.mkdirs();
 		}
-		
+
 		// 파일 객체 생성
 		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
 		uploadFile.transferTo(file);
+
 		// S3 파일 업로드
 		uploadOnS3(saveFileName, file);
+
 		// 주소 할당
 		member.setEmail(email);
 		member.setProfileImg(saveFileName);
+
 		// 파일 삭제
 		file.delete();
+
 		return member;
 	}
 
@@ -87,15 +90,16 @@ public class S3FileUploadService {
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
 		final String thumbFileName = "t_" + saveFileName;
+
 		// 파일 객체 생성
 		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
-		
-		if(file.getParent() != null) {
+
+		if (file.getParent() != null) {
 			file.mkdirs();
 		}
-		
+
 		// 변환
 		// 썸네일 사이즈 조절
 		BufferedImage image = ImageIO.read(uploadFile.getInputStream());

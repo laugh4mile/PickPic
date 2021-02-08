@@ -72,9 +72,10 @@ public class MemberController {
 	@ApiOperation(value = "이메일 중복 체크", notes = "같은 이메일로 가입한 사용자가 있는지 확인한다.", response = Boolean.class)
 	@GetMapping("/emailCheck")
 	public ResponseEntity<Boolean> emailCheck(@RequestParam String email) {
-		logger.info("emailChekc - 호출");
+		logger.info("emailCheck - 호출");
 
 		HttpStatus status = HttpStatus.ACCEPTED;
+
 		return new ResponseEntity<Boolean>(memberService.emailCheck(email), status);
 	}
 
@@ -84,6 +85,7 @@ public class MemberController {
 		logger.info("nameCheck - 호출");
 
 		HttpStatus status = HttpStatus.ACCEPTED;
+
 		return new ResponseEntity<Boolean>(memberService.nameCheck(name), status);
 	}
 
