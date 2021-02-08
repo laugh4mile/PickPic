@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <v-row align="center">
-      <v-text-field label="제목" v-model="title"></v-text-field>
+      <!-- <v-text-field label="제목" v-model="title"></v-text-field> -->
+
 
       <div class="text-center">
         <v-dialog v-model="dialog" scrollable max-width="290">
@@ -45,10 +46,11 @@
           </v-card>
         </v-dialog>
       </div>
+
     </v-row>
-    <hr />
-    <editor @text="getText"></editor>
-    <v-textarea label="본문" v-model="content"></v-textarea>
+    <hr>
+            <editor id="editor" @text="emitedData"></editor>
+    <!-- <v-textarea label="본문" v-model="content"></v-textarea> -->
     <input
       multiple="multiple"
       ref="file"
@@ -88,7 +90,7 @@
 </template>
 <script>
 import axios from 'axios';
-import editor from '../sub3/Editor.vue';
+import Editor from '../sub3/Editor.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -103,12 +105,18 @@ export default {
       myfile: [],
       imgUrl: [],
       deleted: [],
+      board:[],
     };
   },
    components:{
-    editor,
+    Editor,
   },
   methods: {
+    emitedData(event){
+      this.content = event.content;
+      this.title = event.title;
+      console.log("emitted",event);
+    },
     modiImg(item, index) {
       this.deleted.push(item.picNo)
       this.imgUrl.splice(index, 1)

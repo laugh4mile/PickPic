@@ -39,7 +39,7 @@ public class S3FileUploadService {
 	private String defaultUrl;
 
 	private final AmazonS3Client amazonS3Client;
-	private final String IMAGE_DIR = "c:\\SSAFY\\uploaded\\";
+	private final String IMAGE_DIR = "uploaded/";
 
 	public S3FileUploadService(AmazonS3Client amazonS3Client) {
 		this.amazonS3Client = amazonS3Client;
@@ -48,12 +48,12 @@ public class S3FileUploadService {
 	public String getDefaultUrl() {
 		return defaultUrl;
 	}
-	
+
 	public String upload(MultipartFile uploadFile) throws IOException {
 		String origName = uploadFile.getOriginalFilename();
 //		String url;
 //		try {
-			// 확장자를 찾기 위한 코드
+		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
@@ -74,7 +74,7 @@ public class S3FileUploadService {
 //		return url;
 		return saveFileName;
 	}
-	
+
 	public MemberDto upload(String email, MultipartFile uploadFile) throws IOException {
 		MemberDto member = new MemberDto();
 		String origName = uploadFile.getOriginalFilename();
@@ -97,12 +97,12 @@ public class S3FileUploadService {
 		file.delete();
 		return member;
 	}
-	
+
 	public ImgDto uploadImage(MultipartFile uploadFile) throws IOException {
 		ImgDto imgDto = new ImgDto();
 		String origName = uploadFile.getOriginalFilename();
-//		try {
-			// 확장자를 찾기 위한 코드
+
+		// 확장자를 찾기 위한 코드
 		final String ext = origName.substring(origName.lastIndexOf('.'));
 		// 파일이름 암호화
 		final String saveFileName = getUuid() + ext;
@@ -111,48 +111,46 @@ public class S3FileUploadService {
 		// System.getProperty => 시스템 환경에 관한 정보를 얻을 수 있다. (user.dir = 현재 작업 디렉토리를 의미함)
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
-		//변환
-		uploadFile.transferTo(file);
-		
+        file.mkdirs();
+		// 변환
 		// 썸네일 사이즈 조절
 		BufferedImage image = ImageIO.read(uploadFile.getInputStream());
-		
+
 		int THUMB_HEIGHT = image.getHeight();
 		int THUMB_WIDTH = image.getWidth();
 		final int THUMB_SIZE = 200;
-		
-		if(THUMB_HEIGHT >= THUMB_SIZE || THUMB_WIDTH >= THUMB_SIZE) {
+
+		if (THUMB_HEIGHT >= THUMB_SIZE || THUMB_WIDTH >= THUMB_SIZE) {
 			// width가 height보다 크다
-			if((double)THUMB_WIDTH / (double)THUMB_HEIGHT > 1.0) {
-				THUMB_WIDTH = (int) ((double)THUMB_WIDTH / (double)THUMB_HEIGHT * THUMB_SIZE);
+			if ((double) THUMB_WIDTH / (double) THUMB_HEIGHT > 1.0) {
+				THUMB_WIDTH = (int) ((double) THUMB_WIDTH / (double) THUMB_HEIGHT * THUMB_SIZE);
 				THUMB_HEIGHT = THUMB_SIZE;
 			}
 			// width가 height보다 작다
 			else {
-				THUMB_HEIGHT = (int) ((double)THUMB_HEIGHT / (double)THUMB_WIDTH * THUMB_SIZE);
+				THUMB_HEIGHT = (int) ((double) THUMB_HEIGHT / (double) THUMB_WIDTH * THUMB_SIZE);
 				THUMB_WIDTH = THUMB_SIZE;
 			}
 		}
-		
+
+		// 파일 임시 저장
+		uploadFile.transferTo(file);
 		Thumbnails.of(file).size(THUMB_WIDTH, THUMB_HEIGHT).toFile(thumb);
-		
+
 		// 파일 변환
 		// S3 파일 업로드
 		uploadOnS3(saveFileName, file);
 		uploadOnS3(thumbFileName, thumb);
-		
+
 		imgDto.setOriPicName(origName);
 		imgDto.setModPicName(saveFileName);
 		imgDto.setThumbnail(thumbFileName);
 		imgDto.setPicSize(uploadFile.getSize());
-		// 주소 할당
-//			url = defaultUrl + saveFileName;
+
 		// 파일 삭제
 		file.delete();
 		thumb.delete();
-//		} catch (StringIndexOutOfBoundsException e) {
-//			url = null;
-//		}
+
 		return imgDto;
 	}
 

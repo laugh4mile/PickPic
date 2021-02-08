@@ -9,106 +9,6 @@ public class CommentDto {
 	private String modifyDate;
 	private int likeCnt;
 	private String name;
-	
-	public CommentDto() {
-		super();
-	}
-
-	
-
-	public int getCommentNo() {
-		return commentNo;
-	}
-
-
-
-	public void setCommentNo(int commentNo) {
-		this.commentNo = commentNo;
-	}
-
-
-
-	public String getContent() {
-		return content;
-	}
-
-
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-
-
-	public String getEmail() {
-		return email;
-	}
-
-
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-
-
-	public int getPostNo() {
-		return postNo;
-	}
-
-
-
-	public void setPostNo(int postNo) {
-		this.postNo = postNo;
-	}
-
-
-
-	public String getUploadDate() {
-		return uploadDate;
-	}
-
-
-
-	public void setUploadDate(String uploadDate) {
-		this.uploadDate = uploadDate;
-	}
-
-
-
-	public String getModifyDate() {
-		return modifyDate;
-	}
-
-
-
-	public void setModifyDate(String modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-
-
-
-	public int getLikeCnt() {
-		return likeCnt;
-	}
-
-
-
-	public void setLikeCnt(int likeCnt) {
-		this.likeCnt = likeCnt;
-	}
-
-
-
-	public String getName() {
-		return name;
-	}
-
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public CommentDto(int commentNo, String content, String email, int postNo, String uploadDate, String modifyDate,
 			int likeCnt, String name) {
@@ -123,13 +23,72 @@ public class CommentDto {
 		this.name = name;
 	}
 
+	public CommentDto() {
+		super();
+	}
 
+	public int getCommentNo() {
+		return commentNo;
+	}
 
-	@Override
-	public String toString() {
-		return "CommentDto [commentNo=" + commentNo + ", content=" + content + ", email=" + email + ", postNo=" + postNo
-				+ ", uploadDate=" + uploadDate + ", modifyDate=" + modifyDate + ", likeCnt=" + likeCnt + ", name="
-				+ name + "]";
+	public void setCommentNo(int commentNo) {
+		this.commentNo = commentNo;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public int getPostNo() {
+		return postNo;
+	}
+
+	public void setPostNo(int postNo) {
+		this.postNo = postNo;
+	}
+
+	public String getUploadDate() {
+		return uploadDate;
+	}
+
+	public void setUploadDate(String uploadDate) {
+		this.uploadDate = uploadDate;
+	}
+
+	public String getModifyDate() {
+		return modifyDate;
+	}
+
+	public void setModifyDate(String modifyDate) {
+		this.modifyDate = modifyDate;
+	}
+
+	public int getLikeCnt() {
+		return likeCnt;
+	}
+
+	public void setLikeCnt(int likeCnt) {
+		this.likeCnt = likeCnt;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
