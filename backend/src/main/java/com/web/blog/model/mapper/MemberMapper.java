@@ -10,42 +10,44 @@ import com.web.blog.model.MemberDto;
 
 @Mapper
 public interface MemberMapper {
-	/** id, pwd와 일치하는 MemberDto를 반환 */
+
+	// MemberController
+	/** 회원 목록을 List로 반환 */
 	public List<MemberDto> getAllMember();
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public MemberDto login(MemberDto dto) throws SQLException;
-
-	/** 인자로 MemberDto를 생성하고, 생성 여부를 반환 */
+	/** 인자로 MemberDto를 생성 */
 	public void join(MemberDto dto) throws Exception;
 
-	/** 인자로 받은 MemberDto를 삭제하고, 성공 여부를 반환 */
-	public boolean delete(String id) throws SQLException;
+	/** 인자로 받은 email의 중복 여부 */
+	public String emailCheck(String email);
+
+	/** 인자로 받은 name의 중복 여부 */
+	public String nameCheck(String name);
+
+	/** 인자로 받은 email의 비밀번호를 반환 */
+	public MemberDto findUserInfo(String email) throws SQLException;
 
 	/** 인자로 받은 MemberDto를 수정하고, 성공 여부를 반환 */
 	public boolean updateIntro(MemberDto memberDto) throws SQLException;
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
+	/** 인자로 받은 MemberDto의 비밀번호를 수정하고, 성공 여부를 반환 */
 	public boolean updatePwd(MemberDto memberDto) throws SQLException;
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public String findPwd(String email);
+	/** 인자로 받은 MemberDto를 삭제하고, 성공 여부를 반환 */
+	public boolean delete(String email) throws SQLException;
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public MemberDto findUserInfo(String email) throws SQLException;
+	/** 인자로 받은 MemberDto로 프로필을 설정 */
+	public void saveImg(MemberDto memberDto) throws IOException;
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public void setProfile(MemberDto memberDto) throws IOException;
-
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public String getFilePath(String email);
-
-	/** id, pwd와 일치하는 MemberDto를 반환 */
+	/** 인자로 받은 email의 프로필 사진을 삭제 */
 	public void deleteImg(String email);
 
-	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public String emailCheck(String email);
+	// LoginController
 
 	/** id, pwd와 일치하는 MemberDto를 반환 */
-	public String nameCheck(String name);
+	public MemberDto login(MemberDto dto) throws SQLException;
+
+	/** 인자로 받은 email의 비밀번호를 반환 */
+	public String findPwd(String email);
+
 }

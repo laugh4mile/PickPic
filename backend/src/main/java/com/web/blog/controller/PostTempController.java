@@ -39,6 +39,14 @@ public class PostTempController {
 	@Autowired
 	private S3FileUploadService s3FileUploadService;
 
+	@ApiOperation(value = "게시글 목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
+	@GetMapping("/list")
+	public ResponseEntity<List<PostDto>> getList(PostParameterDto postParameterDto) throws Exception {
+		logger.info("getList - 호출");
+
+		return new ResponseEntity<List<PostDto>>(postService.getTempList(postParameterDto), HttpStatus.OK);
+	}
+
 	@ApiOperation(value = "게시글 임시저장", notes = "작성하던 게시글을 임시 저장한다. 그리고 DB입력 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PostMapping
 	public ResponseEntity<String> write(PostDto postDto) throws Exception {
@@ -75,14 +83,6 @@ public class PostTempController {
 		}
 
 		return new ResponseEntity<String>(result, status);
-	}
-
-	@ApiOperation(value = "게시글 목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
-	@GetMapping("/list")
-	public ResponseEntity<List<PostDto>> getList(PostParameterDto postParameterDto) throws Exception {
-		logger.info("getList - 호출");
-
-		return new ResponseEntity<List<PostDto>>(postService.getTempList(postParameterDto), HttpStatus.OK);
 	}
 
 }

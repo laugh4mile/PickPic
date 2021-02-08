@@ -50,54 +50,6 @@ public class PostController {
 	@Autowired
 	private VoteService voteService;
 
-	@ApiOperation(value = "게시글 작성", notes = "새로운 게시글 정보를 입력한다. 그리고 DB입력 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
-	@PostMapping
-	public ResponseEntity<String> write(PostDto postDto) {
-		logger.info("write - 호출");
-
-		String result = SUCCESS;
-		HttpStatus status = HttpStatus.OK;
-
-		List<MultipartFile> files = postDto.getFiles();
-		List<String> unmodified = postDto.getUnmodified();
-
-		// 게시글 작성 성공 시
-		try {
-			if (postService.write(postDto)) {
-				int postNo = postService.getLastPostNo(postDto.getEmail());
-
-				// 임시저장했던 게시글이었다면
-				if (postDto.getPostNo() != -1) {
-					// postNo 바꿔주기
-					postNo = postDto.getPostNo();
-				}
-
-				// 삭제한 파일이 있다면
-				if (unmodified != null && unmodified.size() > 0) {
-					deleteFiles(unmodified);
-				}
-
-				// 추가된 파일이 있다면
-				if (files != null && files.size() > 0) {
-					saveFiles(postNo, files);
-				}
-			}
-			// 작성 실패시
-			else {
-				logger.error("게시글 작성 실패!");
-				result = FAIL;
-				status = HttpStatus.INTERNAL_SERVER_ERROR;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("게시글 작성 실패! 오류 : " + e.getMessage());
-			result = FAIL;
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-
-		return new ResponseEntity<String>(result, status);
-	}
-
 	@ApiOperation(value = "게시글 목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
 	@GetMapping("/list")
 	public ResponseEntity<List<PostDto>> getList(PostParameterDto postParameterDto) throws Exception {
@@ -155,6 +107,54 @@ public class PostController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 
+	@ApiOperation(value = "게시글 작성", notes = "새로운 게시글 정보를 입력한다. 그리고 DB입력 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
+	@PostMapping
+	public ResponseEntity<String> write(PostDto postDto) {
+		logger.info("write - 호출");
+
+		String result = SUCCESS;
+		HttpStatus status = HttpStatus.OK;
+
+		List<MultipartFile> files = postDto.getFiles();
+		List<String> unmodified = postDto.getUnmodified();
+
+		// 게시글 작성 성공 시
+		try {
+			if (postService.write(postDto)) {
+				int postNo = postService.getLastPostNo(postDto.getEmail());
+
+				// 임시저장했던 게시글이었다면
+				if (postDto.getPostNo() != -1) {
+					// postNo 바꿔주기
+					postNo = postDto.getPostNo();
+				}
+
+				// 삭제한 파일이 있다면
+				if (unmodified != null && unmodified.size() > 0) {
+					deleteFiles(unmodified);
+				}
+
+				// 추가된 파일이 있다면
+				if (files != null && files.size() > 0) {
+					saveFiles(postNo, files);
+				}
+			}
+			// 작성 실패시
+			else {
+				logger.error("게시글 작성 실패!");
+				result = FAIL;
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("게시글 작성 실패! 오류 : " + e.getMessage());
+			result = FAIL;
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<String>(result, status);
+	}
+
 	@ApiOperation(value = "게시글 수정", notes = "새로운 게시글 정보를 입력한다. 그리고 DB수정 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PutMapping
 	public ResponseEntity<String> modify(PostDto post) throws Exception {
@@ -188,51 +188,6 @@ public class PostController {
 		return new ResponseEntity<String>(result, status);
 	}
 
-	@ApiOperation(value = "이미지 삭제", notes = "게시글의 이미지를 삭제한다.")
-	@DeleteMapping("/imgs/delete")
-	private ResponseEntity<String> deleteFiles(List<String> unmodified) {
-		logger.info("deleteFiles 호출, " + unmodified.size());
-
-		// ec2에서 파일 지우고 db에서 지우기
-		try {
-			for (String picNo : unmodified) {
-				// 원본
-				s3FileUploadService.delete(postService.getImageInfo(picNo).getModPicName());
-				// 썸네일
-				s3FileUploadService.delete(postService.getImageInfo(picNo).getThumbnail());
-
-				postService.deleteImage(picNo);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<String>(FAIL, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
-	}
-
-	@ApiOperation(value = "이미지 저장", notes = "게시글의 이미지를 삭제한다.")
-	@PostMapping("/imgs/save")
-	private ResponseEntity<String> saveFiles(int postNo, List<MultipartFile> files) {
-		logger.info("saveFiles 호출, " + files.size());
-
-		// s3 업로드 후 db 저장
-		try {
-			for (MultipartFile file : files) {
-				ImgDto img = s3FileUploadService.uploadImage(file);
-				System.out.println(img);
-				img.setPostNo(postNo);
-
-				postService.uploadFile(img);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<String>(FAIL, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
-	}
-
 	@ApiOperation(value = "게시글 삭제", notes = "게시글 번호에 해당하는 게시글의 정보를 삭제한다. 그리고 DB삭제 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@DeleteMapping
 	public ResponseEntity<String> delete(@RequestParam int postNo) {
@@ -255,6 +210,50 @@ public class PostController {
 		}
 
 		return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
+	}
+
+	@ApiOperation(value = "이미지 저장", notes = "게시글의 이미지를 저장한다.")
+	@PostMapping("/imgs/save")
+	private ResponseEntity<String> saveFiles(int postNo, List<MultipartFile> files) {
+		logger.info("saveFiles 호출, " + files.size());
+
+		// s3 업로드 후 db 저장
+		try {
+			for (MultipartFile file : files) {
+				ImgDto img = s3FileUploadService.uploadImage(file);
+				img.setPostNo(postNo);
+
+				postService.uploadFile(img);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(FAIL, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "이미지 삭제", notes = "게시글의 이미지를 삭제한다.")
+	@DeleteMapping("/imgs/delete")
+	private ResponseEntity<String> deleteFiles(List<String> unmodified) {
+		logger.info("deleteFiles 호출, " + unmodified.size());
+
+		// ec2에서 파일 지우고 db에서 지우기
+		try {
+			for (String picNo : unmodified) {
+				// 원본
+				s3FileUploadService.delete(postService.getImgInfo(picNo).getModPicName());
+				// 썸네일
+				s3FileUploadService.delete(postService.getImgInfo(picNo).getThumbnail());
+
+				postService.deleteImage(picNo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(FAIL, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "게시글 like", notes = "게시글 번호에 해당하는 게시글의 like를 토글한다.", response = HashMap.class)

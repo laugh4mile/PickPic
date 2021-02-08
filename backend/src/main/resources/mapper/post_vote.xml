@@ -7,13 +7,13 @@
 	<select id="checkVoted" parameterType="PostVoteDto" resultType="int">
 		select count(vNo)
 		from post_vote
-		where postNo=#{postNo} and email=#{email}
+		where postNo = #{postNo} and email = #{email}
 	</select>
 	
 	<select id="getVoteInfo" parameterType="PostVoteDto" resultType="PostVoteDto">
 	    select vNo, picNo, email, postNo
 	    from post_vote
-	    where postNo=#{postNo} and email=#{email}
+	    where postNo = #{postNo} and email = #{email}
 	</select>
 	
 	<insert id="insertVotePost" parameterType="PostVoteDto">
@@ -41,12 +41,12 @@
 	
 	<update id="updateVoteCnt" parameterType="map">
 		update post_pics
-		<if test="type=='up'">
-		set voteCnt = voteCnt + 1
-		</if>
-		<if test="type=='down'">
-		set voteCnt = voteCnt - 1
-		</if>
+			<if test="type=='up'">
+				set voteCnt = voteCnt + 1
+			</if>
+			<if test="type=='down'">
+				set voteCnt = voteCnt - 1
+			</if>
 		where picNo = #{picNo}
 	</update>
 	
