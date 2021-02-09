@@ -39,7 +39,8 @@ public class S3FileUploadService {
 	private String defaultUrl;
 
 	private final AmazonS3Client amazonS3Client;
-	private final String IMAGE_DIR = "/home/ubuntu/temp/";
+//	private final String IMAGE_DIR = "/home/ubuntu/temp/";
+	private final String IMAGE_DIR = "c:\\ssafy\\uploaded\\";
 
 	public S3FileUploadService(AmazonS3Client amazonS3Client) {
 		this.amazonS3Client = amazonS3Client;
@@ -60,7 +61,7 @@ public class S3FileUploadService {
 
 		// 파일 변환
 		File file = new File(IMAGE_DIR + saveFileName);
-		if (file.getParent() != null) {
+		if (!file.exists()) {
 			file.mkdirs();
 		}
 
@@ -96,7 +97,7 @@ public class S3FileUploadService {
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
 
-		if (file.getParent() != null) {
+		if (!file.exists()) {
 			file.mkdirs();
 		}
 
