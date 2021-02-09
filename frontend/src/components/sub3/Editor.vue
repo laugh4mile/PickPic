@@ -61,7 +61,7 @@
       </v-row>
     <hr /> -->
     <v-row align="center" class="mb-3">
-      <select id="select_font" v-model="font" @change="cng">
+      <select class="ml-2" id="select_font" v-model="font" @change="cng">
         <option value="Arial">Arial</option>
         <option value="Sans Serif" selected>Sans Serif</option>
         <option value="Comic Sans MS">Comic Sans MS</option>
@@ -76,35 +76,22 @@
         <option value="Palatino">Palatino</option>
         <option value="Georgia">Georgia</option>
       </select>
-      <img
-        width="20px"
-        src="@/assets/icon/bold.svg"
-        alt=""
-        onclick="document.execCommand('bold')"
-      />
-      <img
-        width="20px"
-        src="@/assets/icon/italic.svg"
-        alt=""
-        onclick="document.execCommand('Italic')"
-      />
-      <!-- <img width="20px" src="@/assets/icon/c.png" alt="" onclick="document.execCommand('Code')"> -->
-      <img
-        width="20px"
-        src="@/assets/icon/underline.png"
-        onclick="document.execCommand('Underline')"
-        alt=""
-      />
-      <!-- <img
-        width="40px"
-        src="@/assets/icon/strikethrough.svg"
-        onclick="document.execCommand('StrikeThrough')"
-        alt=""
-      /> -->
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="primary" dark v-bind="attrs" v-on="on">
-            12px
+      <button class="mr-2" onclick="document.execCommand('Bold')">
+        <i class="fas fa-bold fa-lg fa-border"></i>
+      </button>
+      <button class="mr-2" onclick="document.execCommand('Italic')">
+        <i class="fas fa-italic fa-lg fa-border"></i>
+      </button>
+      <button class="mr-2" onclick="document.execCommand('Underline')">
+        <i class="fas fa-underline fa-lg fa-border"></i>
+      </button>
+      <button class="mr-2" onclick="document.execCommand('StrikeThrough')">
+        <i class="fas fa-strikethrough fa-lg fa-border"></i>
+      </button>
+      <v-menu  offset-y>
+        <template  v-slot:activator="{ on, attrs }">
+          <v-btn class="mr-2" color="primary" dark v-bind="attrs" v-on="on">
+            {{font_size}}px
           </v-btn>
         </template>
         <v-list>
@@ -117,16 +104,21 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <img width="30px" src="@/assets/icon/align-left.png" alt="" onclick="document.execCommand('justifyleft')">
-      <img width="30px" src="@/assets/icon/align-center.png" alt="" onclick="document.execCommand('justifycenter')">
-      <img width="30px" src="@/assets/icon/align-right.png" alt="" onclick="document.execCommand('justifyright')">
+      <button class="mr-2" onclick="document.execCommand('justifyleft')">
+        <i class="fas fa-align-left fa-lg fa-border"></i>
+      </button>
+      <button class="mr-2" onclick="document.execCommand('justifycenter')">
+        <i class="fas fa-align-center fa-lg fa-border"></i>
+      </button>
+      <button class="mr-2" onclick="document.execCommand('justifyright')">
+        <i class="fas fa-align-right fa-lg fa-border"></i>
+      </button>
       <v-dialog
       v-model="dialog"
       width="500"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          color="red lighten-2"
           dark
           v-bind="attrs"
           v-on="on"
@@ -158,10 +150,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-btn class="ml-2" id="preview" dark @click="preview">Preview</v-btn>
+    <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
     </v-row>
 
     <div
-      style="border: .2px solid black; font-size: 12px;"
+      style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto; padding: 10px;"
       id="editors"
       @input="getText"
       @change="getText"
@@ -173,12 +167,19 @@
     <br>
       <!-- <iframe v-for="(item, index) in videosrcs" :key="index" id="video" :src="item" frameborder="0"></iframe> -->
     </div>
+    <div
+      style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto;"
+      id="previewEditor"
+      class="hidden"
+      label="본문"
+      v-html="sendText"
+    ></div>
     <br />
   </div>
 </template>
 
 <script>
-var font_size = 14;
+var font_size = 12;
 var selection_range;
 
 
@@ -282,19 +283,21 @@ export default {
   mounted(){
     console.log('mounted')
     if(this.contents){
-      console.log(this.contents);
       this.content = this.contents;
       $("#editors").append(this.contents.content);
+      this.sendText = marked($("#editors")[0].innerText + '', { sanitize: true });
       console.log(this.temp);
     }
   },
   data() {
     return {
       H: ["H1", "H2", "H3", "H4", "H5", "H6"],
-      size: [8, 10, 11, 13, 15, 16, 19, 24, 28, 30, 34, 38],
+      size: [8, 10, 11, 12, 13, 15, 16, 19, 24, 28, 30, 34, 38],
       videosrcs:[],
       srcs:'',
       temp:'',
+      sendText: '',
+      font_size:'12',
       dialog:false,
       fonts: [
         "Arial",
@@ -324,17 +327,32 @@ export default {
     }
   },
   methods: {
+    preview(){
+      $("#preview").addClass('hidden');
+      $("#edit").removeClass('hidden');
+      $("#previewEditor").removeClass('hidden');
+      $("#editors").addClass('hidden');
+    },
+    edit(){
+      $("#edit").addClass('hidden');
+      $("#preview").removeClass('hidden');
+      $("#previewEditor").addClass('hidden');
+      $("#editors").removeClass('hidden');
+    },
     cng() {
       this.changeFont();
     },
     getTitle(){
       this.$emit('text', this.content);
     },
-    getText(){
+    getText(event){
       this.content.content = document.getElementById('editors').innerHTML;
       this.$emit('text', this.content);
+      this.update(event);
     },
-    
+    update: _.debounce(function(e) {
+           this.sendText = marked(e.target.innerText + '', { sanitize: true });
+        }, 500),
     GetNextLeaf(node) {
       while (!node.nextSibling) {
         node = node.parentNode;
@@ -468,6 +486,7 @@ export default {
     },
 
     ColorizeSelection(size) {
+      this.font_size = size;
       if (window.getSelection) {
         // all browsers, except IE before version 9
         var selectionRange = window.getSelection();

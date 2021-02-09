@@ -3,10 +3,12 @@
     <v-radio-group>
       <v-row>
         <label v-for="(item, index) in imgUrl" :key="index">
-          <div class="image-container" :class="{ redd: index == selected }">
-            <img :src="item.modPicName" />
+          <div class="image-container" :class="{ 'redd' : index == selected }">
+            <img :src="item.modPicName"/>
           </div>
-          <v-radio @click="selectImg(item, index)" style="margin-left:94px" />
+            <v-radio @click="selectImg(item,index)"
+            style="margin-left:94px"
+            />
         </label>
       </v-row>
     </v-radio-group>
@@ -92,16 +94,16 @@ export default {
           console.log(error);
         });
     },
-    selectImg(item, idx) {
-      this.item = item;
-      this.selected = idx;
-      console.log(this.selected);
-    },
-  },
+    selectImg(item,idx){
+      this.item = item
+      this.selected = idx
+      console.log(this.selected)
+    }
+  }
 };
 </script>
 <style scoped>
-.image-container {
+.image-container{
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -112,7 +114,7 @@ export default {
 }
 img {
   width: 100%;
-  height: 100%;
+  height: 100%; 
 }
 
 /* .v-radio {
