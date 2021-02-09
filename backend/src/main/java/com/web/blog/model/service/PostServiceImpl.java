@@ -27,6 +27,11 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public PostDto getLikePost(int no) throws Exception {
+		return postMapper.getLikePost(no-1);
+	}
+
+	@Override
 	public PostDto getDetail(int postNo) throws Exception {
 		return postMapper.getOne(postNo);
 	}
@@ -155,5 +160,4 @@ public class PostServiceImpl implements PostService {
 	public int getTempCount(String email) throws Exception {
 		return postMapper.getTempCount(email);
 	}
-
 }

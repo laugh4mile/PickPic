@@ -1,9 +1,5 @@
 <template>
-  <v-footer
-    class="py-4"
-    dark
-    height="auto"
-  >
+  <v-footer class="py-4" dark height="auto">
     <v-container class="mx-auto">
       <v-row>
         <v-col cols="9">
@@ -36,40 +32,40 @@
 </template>
 
 <script>
-  export default {
-    name: 'CoreFooter',
+export default {
+  name: 'CoreFooter',
 
-    data: () => ({
-      items: [
-        {
-          href: '#!',
-          icon: 'mdi-twitter',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-instagram',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-facebook',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-google-plus',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-reddit',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-discord',
-        },
-        {
-          href: '#!',
-          icon: 'mdi-pinterest',
-        },
-      ],
-    }),
-  }
+  data: () => ({
+    items: [
+      {
+        href: '#!',
+        icon: 'mdi-twitter',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-instagram',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-facebook',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-google-plus',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-reddit',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-discord',
+      },
+      {
+        href: '#!',
+        icon: 'mdi-pinterest',
+      },
+    ],
+  }),
+};
 </script>

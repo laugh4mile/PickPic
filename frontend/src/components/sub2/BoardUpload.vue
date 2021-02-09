@@ -3,7 +3,6 @@
     <v-row align="center">
       <!-- <v-text-field label="제목" v-model="title"></v-text-field> -->
 
-
       <div class="text-center">
         <v-dialog v-model="dialog" scrollable max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -46,10 +45,9 @@
           </v-card>
         </v-dialog>
       </div>
-
     </v-row>
-    <hr>
-            <editor id="editor" @text="emitedData"></editor>
+    <hr />
+    <editor id="editor" @text="emitedData"></editor>
     <!-- <v-textarea label="본문" v-model="content"></v-textarea> -->
     <input
       multiple="multiple"
@@ -65,7 +63,12 @@
     <div class="card">
       <v-row>
         <v-col v-for="(item, idx) in imgUrl" :key="idx">
-          <img :src="item.modPicName" :id="'img' + idx" width="300px" height="300px" />
+          <img
+            :src="item.modPicName"
+            :id="'img' + idx"
+            width="300px"
+            height="300px"
+          />
           <!-- <input
             ref="file"
             type="file"
@@ -73,9 +76,9 @@
             name="file"
             @change="onChangeImages($event, item, index)"
           /> -->
-          <v-btn color="red darken-1" @click="modiImg(item,idx)">
-          Delete
-        </v-btn>
+          <v-btn color="red darken-1" @click="modiImg(item, idx)">
+            Delete
+          </v-btn>
         </v-col>
         <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
           <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
@@ -104,40 +107,41 @@ export default {
       myfile: [],
       imgUrl: [],
       deleted: [],
-      board:[],
+      board: [],
     };
   },
-   components:{
+  components: {
     Editor,
   },
   methods: {
-    emitedData(event){
+    emitedData(event) {
       this.content = event.content;
       this.title = event.title;
+      console.log(event);
     },
     modiImg(item, index) {
-      this.deleted.push(item.picNo)
-      this.imgUrl.splice(index, 1)
-      console.log(item)
-      console.log(index)
+      this.deleted.push(item.picNo);
+      this.imgUrl.splice(index, 1);
+      console.log(item);
+      console.log(index);
     },
     deleteImg(index) {
-      console.log(index)
+      console.log(index);
       // this.imageUrl.splice(index, 1)
       // this.myfile.splice(index, 1)
-      console.log('이미지',this.imageUrl)
-      console.log('파일',this.myfile)
-      this.imageUrl.splice(index, 1)
-      this.myfile.splice(index, 1)
+      console.log('이미지', this.imageUrl);
+      console.log('파일', this.myfile);
+      this.imageUrl.splice(index, 1);
+      this.myfile.splice(index, 1);
     },
-    getText(event){
+    getText(event) {
       this.content = event;
     },
     onChangeImages(e) {
       var file = e.target.files;
       for (var i = 0; i < file.length; i++) {
         this.imageUrl.push(URL.createObjectURL(file[i]));
-        this.myfile.push(this.$refs.file.files[i])
+        this.myfile.push(this.$refs.file.files[i]);
       }
       // console.log(this.myfile)
       // console.log(this.imageUrl)
@@ -217,8 +221,8 @@ export default {
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
       frm.append('title', this.title);
-      frm.append("unmodified",this.deleted)
-      console.log('딜리티스',this.deleted)
+      frm.append('unmodified', this.deleted);
+      console.log('딜리티스', this.deleted);
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {

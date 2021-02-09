@@ -55,6 +55,49 @@
 		order by postNo desc, modifyDate desc
 		limit #{start}, #{spp}
 	</select>
+	
+	<select id="getLikePost" parameterType="int" resultType="PostDto">
+		select postNo, title, content,
+				case when date_format(uploadDate, '%Y%m%d') = date_format(now(), '%Y%m%d')
+				then date_format(uploadDate, '%H:%i:%s')
+				else date_format(uploadDate, '%y.%m.%d')
+				end uploadDate,
+				case when date_format(modifyDate, '%Y%m%d') = date_format(now(), '%Y%m%d')
+				then date_format(modifyDate, '%H:%i:%s')
+				else date_format(modifyDate, '%y.%m.%d')
+				end modifyDate,
+				likeCnt, email, name,
+				(
+					select thumbnail
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						where post.postNo = pp.postNo
+						order by count desc
+						) as temp
+					limit 1
+				) as thumbnail,
+				(
+					select thumbnail
+					from (
+						select pp.*, (select count(*)
+									from post_vote
+									where pp.picNo = post_vote.picNo
+						            ) as count
+						from post_pics pp
+						where post.postNo = pp.postNo
+						order by count desc
+						) as temp
+					limit 1, 1
+				) as thumbnailTwo
+		from post join member using(email)
+		where temp = 0
+        order by likeCnt desc
+		limit #{no},1
+	</select>
 
 	<select id="getTotalCount" parameterType="map" resultType="int">
 		select count(email)
