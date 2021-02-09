@@ -227,6 +227,7 @@ export default {
         })
         .then((response) => {
           alert('등록 완료');
+          console.log(response)
           this.$router.push('/board');
         })
         .catch((error) => {
