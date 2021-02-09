@@ -33,7 +33,7 @@
     </div>
     <hr />
     <div class="contents" v-html="cont"></div>
-    <vote :no="board.postInfo.postNo" />
+    <Vote :no="board.postInfo.postNo" />
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"

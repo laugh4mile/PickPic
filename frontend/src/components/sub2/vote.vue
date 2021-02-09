@@ -2,12 +2,14 @@
   <div>
     <v-radio-group>
       <v-row>
-        <span v-for="(item, index) in imgUrl" :key="index">
-          <img :src="item.modPicName" width="300px" height="300px"/>
-            <v-radio @click="selectImg(item)"
-            style="margin-left:150px"
+        <label v-for="(item, index) in imgUrl" :key="index">
+          <div class="image-container" :class="{ 'redd' : index == selected }">
+            <img :src="item.modPicName"/>
+          </div>
+            <v-radio @click="selectImg(item,index)"
+            style="margin-left:94px"
             />
-        </span>
+        </label>
       </v-row>
     </v-radio-group>
     <v-btn @click="vote">투표하기</v-btn>
@@ -22,6 +24,7 @@ export default {
     return {
       imgUrl : [],
       item: [],
+      selected: '',
     };
   },
   props:{
@@ -62,10 +65,43 @@ export default {
         console.log(error);
       });
     },
-    selectImg(item){
-      console.log(item)
+    selectImg(item,idx){
       this.item = item
+      this.selected = idx
+      console.log(this.selected)
     }
   }
 };
 </script>
+<style scoped>
+.image-container{
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  margin-right: 10px;
+}
+img {
+  width: 100%;
+  height: 100%; 
+}
+
+/* .v-radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+} */
+
+/* IMAGE STYLES */
+img + div.v-radio {
+  cursor: pointer;
+}
+
+/* CHECKED STYLES */
+.redd {
+  outline: 2px solid #f00;
+}
+</style>
