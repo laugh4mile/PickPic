@@ -14,6 +14,9 @@ public interface PostService {
 
 	/** 게시글 목록 : 검색 기능 */
 	public List<PostDto> getList(PostParameterDto postParameterDto) throws Exception;
+	
+	/** like 게시글 */
+	public PostDto getLikePost(int no) throws Exception;
 
 	/** 하나의 게시글 정보 */
 	public PostDto getDetail(int postNo) throws Exception;
@@ -75,5 +78,6 @@ public interface PostService {
 
 	/** 임시저장글 작성 */
 	public boolean writeTemp(PostDto postDto) throws Exception;
+
 
 }

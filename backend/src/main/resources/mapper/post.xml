@@ -55,6 +55,12 @@
 		order by postNo desc, modifyDate desc
 		limit #{start}, #{spp}
 	</select>
+	
+	<select id="getLikePost" parameterType="int" resultType="PostDto">
+		select * from post
+		order by likeCnt desc
+		limit #{no},1
+	</select>
 
 	<select id="getTotalCount" parameterType="map" resultType="int">
 		select count(email)

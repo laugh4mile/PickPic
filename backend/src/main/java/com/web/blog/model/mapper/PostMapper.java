@@ -17,6 +17,9 @@ public interface PostMapper {
 	/** 게시글 목록 : 검색 기능 */
 	public List<PostDto> getList(PostParameterDto postParameterDto) throws SQLException;
 
+	/** like 게시글 */
+	public PostDto getLikePost(int no) throws SQLException;
+
 	/** 총 게시글 개수 */
 	public int getTotalCount(PostParameterDto postParameterDto) throws SQLException;
 

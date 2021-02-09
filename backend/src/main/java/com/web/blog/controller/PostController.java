@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,14 @@ public class PostController {
 		logger.info("getList - 호출, " + postParameterDto);
 
 		return new ResponseEntity<List<PostDto>>(postService.getList(postParameterDto), HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "해당 숫자의 순서의 Post", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
+	@GetMapping("/list/{no}")
+	public ResponseEntity<PostDto> getLikePost(@PathVariable int no) throws Exception {
+		logger.info("getOne - 호출, " + no);
+		
+		return new ResponseEntity<PostDto>(postService.getLikePost(no), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "게시글 보기", notes = "게시글 번호에 해당하는 게시글의 정보를 반환한다.", response = PostDto.class)
