@@ -3,59 +3,56 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.web.blog.model.mapper.MemberMapper">
+	
+	<!-- MemberController -->
 
 	<select id="getAllMember" resultType="MemberDto">
-		select * from member
+		select * 
+		from member
 	</select>
-	
-	<select id="login" parameterType="MemberDto" resultType="MemberDto">
-		select email, pwd, name, role 
-		from member 
-		where email=#{email}
-		<!-- and pwd = #{pwd} -->
-	</select>
-	
+
 	<insert id="join" parameterType="MemberDto">
-		insert into member (email, pwd, name, joinDate, introduce)
+		insert into member (email, pwd,	name, joinDate, introduce)
 		values (#{email}, #{pwd}, #{name}, NOW(), #{introduce})
 	</insert>
-	
-	<delete id="delete" parameterType="string">
-		delete from member
+
+	<select id="emailCheck" parameterType="string" resultType="string">
+		select email
+		from member
+		where email = #{email}
+	</select>
+
+	<select id="nameCheck" parameterType="string" resultType="string">
+		select name
+		from member
+		where name = #{name}
+	</select>
+
+	<select id="findUserInfo" parameterType="string" resultType="MemberDto">
+		select *
+		from member
 		where email=#{email}
-	</delete>
-	
+	</select>
+
 	<update id="updateIntro" parameterType="MemberDto">
 		update member
-		set introduce = #{introduce}
+		set	introduce = #{introduce}
 		where email=#{email}
 	</update>
-	
+
 	<update id="updatePwd" parameterType="MemberDto">
 		update member
 		set pwd = #{pwd}
 		where email=#{email}
 	</update>
-	
-	<select id="findUserInfo" parameterType="string" resultType="MemberDto">
-		select * 
+
+	<delete id="delete" parameterType="string">
+		delete 
 		from member
 		where email=#{email}
-	</select>
-	
-	<select id="findPwd" parameterType="string" resultType="string">
-		select pwd
-		from member
-		where email=#{email}
-	</select>
-	
-	<select id="getFilePath" parameterType="string" resultType="string">
-		select profileImg 
-		from member
-		where email=#{email}
-	</select>
-	
-	<update id="setProfile" parameterType="MemberDto">
+	</delete>
+
+	<update id="saveImg" parameterType="MemberDto">
 		update member
 		set profileImg = #{profileImg}
 		where email=#{email}
@@ -66,17 +63,19 @@
 		set profileImg = null
 		where email=#{email}
 	</update>
+
+	<!-- LoginController -->
 	
-	<select id="emailCheck" parameterType="string" resultType="string">
-		select email
+	<select id="login" parameterType="MemberDto" resultType="MemberDto">
+		select email, pwd, name, role
 		from member
-		where email = #{email}
+		where email=#{email}
 	</select>
-	
-	<select id="nameCheck" parameterType="string" resultType="string">
-		select name
+
+	<select id="findPwd" parameterType="string" resultType="string">
+		select pwd
 		from member
-		where name = #{name}
+		where email=#{email}
 	</select>
-	
+
 </mapper>

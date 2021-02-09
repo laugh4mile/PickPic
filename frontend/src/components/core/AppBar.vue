@@ -1,7 +1,6 @@
 <template>
-  <v-app-bar app flat>
+  <v-app-bar app flat color="white-grey">
     <v-app-bar-nav-icon class="hidden-md-and-up" @click="toggleDrawer" />
-
     <v-container class="mx-auto py-0">
       <v-row align="center">
         <v-img
@@ -13,31 +12,36 @@
           max-width="48"
           @click="toHome"
         />
-
         <v-btn
           v-for="(link, i) in links"
           :key="i"
-          class="hidden-sm-and-down"
+          class="hidden-sm-and-down "
           text
           @click="onClick($event, link)"
         >
           {{ link.text }}
         </v-btn>
-
-        <v-btn class="hidden-sm-and-down" text @click="editorForm">
-          게시판
-        </v-btn>
-
         <template v-if="!getAccessToken">
           <v-spacer />
-          <v-btn text @click="registForm">
-            회원가입
+          <v-btn
+            text
+            @click="registForm"
+            class="btn btn-outline-secondary rounded-pill"
+            style="border-width : 3px; font-size : 15px;"
+          >
+            SignUp
           </v-btn>
+
           <div class="text-center">
             <v-dialog v-model="dialog" width="400">
               <template v-slot:activator="{ on }">
-                <v-btn text v-on="on">
-                  로그인
+                <v-btn
+                  text
+                  v-on="on"
+                  class="btn btn-outline-secondary ma-6 rounded-pill "
+                  style="border-width : 3px; font-size : 15px; pont-color : "
+                >
+                  Login
                 </v-btn>
               </template>
               <!-- 로그인모달 시작 -->
@@ -46,10 +50,10 @@
                   <div class="card-header">
                     <h3>서비스이름</h3>
                     <!-- <div class="d-flex justify-content-end social_icon">
-                        <span><i class="fab fa-facebook-square"></i></span>
-                        <span><i class="fab fa-google-plus-square"></i></span>
-                        <span><i class="fab fa-twitter-square"></i></span>
-                      </div> -->
+                      <span><i class="fab fa-facebook-square"></i></span>
+                      <span><i class="fab fa-google-plus-square"></i></span>
+                      <span><i class="fab fa-twitter-square"></i></span>
+                    </div> -->
                   </div>
                   <div class="card-body">
                     <form>
@@ -112,11 +116,21 @@
         </template>
         <template v-else>
           <v-spacer />
-          <span>{{ getUserName }}님 환영합니다.</span>
-          <v-btn text @click="myPageForm"
+          <span class="">{{ getUserName }}님 환영합니다.</span>
+          <v-btn
+            text
+            @click="myPageForm"
+            class="btn btn-outline-secondary rounded-pill ma-6 "
+            style="border-width : 3px;"
             >마이페이지</v-btn
           >
-          <v-btn text @click="logout">로그아웃</v-btn>
+          <v-btn
+            text
+            @click="logout"
+            class="btn btn-outline-secondary rounded-pill"
+            style="border-width : 3px;"
+            >로그아웃</v-btn
+          >
         </template>
       </v-row>
     </v-container>
@@ -125,19 +139,19 @@
 
 <script>
 // Utilities
-import { mapGetters, mapMutations } from "vuex";
-import axios from "axios";
+import { mapGetters, mapMutations } from 'vuex';
+import axios from 'axios';
 
 export default {
-  name: "CoreAppBar",
+  name: 'CoreAppBar',
 
   computed: {
     ...mapGetters([
-      "links",
-      "getAccessToken",
-      "getUserEmail",
-      "getUserName",
-      "getRole",
+      'links',
+      'getAccessToken',
+      'getUserEmail',
+      'getUserName',
+      'getRole',
     ]),
   },
 
@@ -155,10 +169,10 @@ export default {
         this.availableEmailForm = true;
       }
     },
-    ...mapMutations(["toggleDrawer"]),
+    ...mapMutations(['toggleDrawer']),
     onClick(e, item) {
-      this.$router.push(item.href).catch(error => {
-        if(error.name === "NavigationDuplicated" ){
+      this.$router.push(item.href).catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
           // 같은 경로 클릭시 새로고침 되게
           location.reload();
         }
@@ -166,57 +180,54 @@ export default {
     },
     searchPwd() {
       this.dialog = false;
-      this.$router.push("/searchPwd");
+      this.$router.push('/searchPwd');
     },
     login: function() {
       event.preventDefault();
       this.dialog = false;
       // LOGIN 액션 실행
       // 서버와 통신(axios)을 해 토큰값을 얻어야 하므로 Actions를 호출.
-      this.$store.dispatch("LOGIN", this.user);
+      this.$store.dispatch('LOGIN', this.user);
       console.log(this.$store.getters.getAccessToken);
-      this.user.email = "";
-      this.user.pwd = "";
+      this.user.email = '';
+      this.user.pwd = '';
     },
     logout() {
       this.$store
-        .dispatch("LOGOUT")
-        .then(() => this.$router.replace("/").catch(() => {}));
+        .dispatch('LOGOUT')
+        .then(() => this.$router.replace('/').catch(() => {}));
     },
     registForm() {
-      this.$router.push("/regist");
+      this.$router.push('/regist');
     },
     myPageForm() {
-      this.$router.push("/myPage");
+      this.$router.push('/myPage');
     },
     toHome() {
       // 같은 경로로 이동시에 충돌 안나게
-      this.$router.push("/").catch(error => {
-        if(error.name === "NavigationDuplicated" ){
-            location.reload();
+      this.$router.push('/').catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
+          location.reload();
         }
       });
       // this.$router.push("/");
     },
     boardForm() {
       // 같은 경로로 이동시에 충돌 안나게
-      this.$router.push("/board").catch(error => {
-        if(error.name === "NavigationDuplicated" ){
-            location.reload();
+      this.$router.push('/board').catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
+          location.reload();
         }
       });
       // this.$router.push("/board");
     },
-    editorForm(){
-      this.$router.push("/editor");
-    }
   },
   data() {
     return {
       dialog: false,
       user: {
-        email: "",
-        pwd: "",
+        email: '',
+        pwd: '',
       },
       availableEmailForm: true,
     };
@@ -224,13 +235,14 @@ export default {
 };
 </script>
 <style scoped>
+@import '../../assets/style.css';
 /* 모달창 스타일 */
 .card {
   height: 350px;
   margin-top: auto;
   margin-bottom: auto;
   width: 400px;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.726);
 }
 .social_icon span {
   font-size: 45px;

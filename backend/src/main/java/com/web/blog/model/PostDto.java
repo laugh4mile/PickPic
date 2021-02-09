@@ -4,45 +4,20 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel(value = "PostDto : 게시글 정보", description = "게시글 상세 정보")
 public class PostDto {
-
-	@ApiModelProperty(value = "글번호", example = "1")
 	private int postNo;
-	@ApiModelProperty(value = "글제목")
 	private String title;
-	@ApiModelProperty(value = "글내용")
 	private String content;
-	@ApiModelProperty(value = "작성일")
 	private String uploadDate;
-	@ApiModelProperty(value = "수정일")
 	private String modifyDate;
-	@ApiModelProperty(value = "좋아요", example = "0")
 	private int likeCnt;
-	@ApiModelProperty(value = "작성자 이메일 아이디")
 	private String email;
-	@ApiModelProperty(value = "작성자 이름")
 	private String name;
-	@ApiModelProperty(value = "임시저장용", example = "0")
 	private int temp;
-	@ApiModelProperty(value = "업로드할 파일들")
 	private List<MultipartFile> files;
-	@ApiModelProperty(value = "바뀐 파일들")
 	private List<String> unmodified;
-	@ApiModelProperty(value = "썸네일1")
 	private String thumbnail;
-	@ApiModelProperty(value = "썸네일2")
 	private String thumbnailTwo;
-
-	@Override
-	public String toString() {
-		return "PostDto [postNo=" + postNo + ", title=" + title + ", content=" + content + ", uploadDate=" + uploadDate
-				+ ", modifyDate=" + modifyDate + ", likeCnt=" + likeCnt + ", email=" + email + ", name=" + name
-				+ ", temp=" + temp + ", files=" + files + ", unmodified=" + unmodified + "]";
-	}
 
 	public List<String> getUnmodified() {
 		return unmodified;

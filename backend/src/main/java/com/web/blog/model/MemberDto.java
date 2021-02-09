@@ -15,8 +15,6 @@ public class MemberDto {
 		super();
 	}
 
-	
-
 	public MemberDto(String email, String name, String pwd, String role, String joinDate, String introduce,
 			String profileImg, String profileImgName, String prePwd) {
 		super();
@@ -30,8 +28,6 @@ public class MemberDto {
 		this.profileImgName = profileImgName;
 		this.prePwd = prePwd;
 	}
-
-
 
 	public String getProfileImgName() {
 		return profileImgName;
@@ -97,26 +93,12 @@ public class MemberDto {
 		this.pwd = pwd;
 	}
 
-	
-	
 	public String getPrePwd() {
 		return prePwd;
 	}
 
-
-
 	public void setPrePwd(String prePwd) {
 		this.prePwd = prePwd;
 	}
-
-
-
-	@Override
-	public String toString() {
-		return "MemberDto [email=" + email + ", name=" + name + ", pwd=" + pwd + ", role=" + role + ", joinDate="
-				+ joinDate + ", introduce=" + introduce + ", profileImg=" + profileImg + ", profileImgName="
-				+ profileImgName + ", prePwd=" + prePwd + "]";
-	}
-
 
 }
