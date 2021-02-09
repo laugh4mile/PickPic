@@ -26,7 +26,7 @@
           <v-btn
             text
             @click="registForm"
-            class="btn btn-outline-primary rounded-pill"
+            class="btn btn-outline-secondary rounded-pill"
             style="border-width : 3px; font-size : 15px;"
           >
             SignUp
@@ -38,7 +38,7 @@
                 <v-btn
                   text
                   v-on="on"
-                  class="btn btn-outline-primary ma-6 rounded-pill "
+                  class="btn btn-outline-secondary ma-6 rounded-pill "
                   style="border-width : 3px; font-size : 15px; pont-color : "
                 >
                   Login
@@ -50,10 +50,10 @@
                   <div class="card-header">
                     <h3>서비스이름</h3>
                     <!-- <div class="d-flex justify-content-end social_icon">
-                        <span><i class="fab fa-facebook-square"></i></span>
-                        <span><i class="fab fa-google-plus-square"></i></span>
-                        <span><i class="fab fa-twitter-square"></i></span>
-                      </div> -->
+                      <span><i class="fab fa-facebook-square"></i></span>
+                      <span><i class="fab fa-google-plus-square"></i></span>
+                      <span><i class="fab fa-twitter-square"></i></span>
+                    </div> -->
                   </div>
                   <div class="card-body">
                     <form>
@@ -116,9 +116,21 @@
         </template>
         <template v-else>
           <v-spacer />
-          <span>{{ getUserName }}님 환영합니다.</span>
-          <v-btn text @click="myPageForm">마이페이지</v-btn>
-          <v-btn text @click="logout">로그아웃</v-btn>
+          <span class="">{{ getUserName }}님 환영합니다.</span>
+          <v-btn
+            text
+            @click="myPageForm"
+            class="btn btn-outline-secondary rounded-pill ma-6 "
+            style="border-width : 3px;"
+            >마이페이지</v-btn
+          >
+          <v-btn
+            text
+            @click="logout"
+            class="btn btn-outline-secondary rounded-pill"
+            style="border-width : 3px;"
+            >로그아웃</v-btn
+          >
         </template>
       </v-row>
     </v-container>

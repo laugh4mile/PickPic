@@ -13,62 +13,96 @@
       @sliding-start="onSlideStart"
       @sliding-end="onSlideEnd"
     >
-      <!-- Text slides with image -->
-      <b-carousel-slide
-        caption="First slide"
-        text="Nulla vitae elit libero, a pharetra augue mollis interdum."
-        img-src="https://picsum.photos/1024/480/?image=52"
-      ></b-carousel-slide>
-
-      <!-- Slides with custom text -->
-      <b-carousel-slide img-src="https://picsum.photos/1024/480/?image=54">
-        <h1>Hello world!</h1>
-      </b-carousel-slide>
-
-      <!-- Slides with image only -->
-      <b-carousel-slide
-        img-src="https://picsum.photos/1024/480/?image=58"
-      ></b-carousel-slide>
-
-      <!-- Slides with img slot -->
-      <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
       <b-carousel-slide>
         <template #img>
           <img
-            class="d-block img-fluid w-100"
+            class="d-block myStyle mx-auto"
             width="1024"
             height="480"
-            src="https://picsum.photos/1024/480/?image=55"
+            :src="imgurl[0]"
             alt="image slot"
           />
         </template>
       </b-carousel-slide>
-
-      <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-      <b-carousel-slide caption="Blank Image" img-blank img-alt="Blank image">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          eros felis, tincidunt a tincidunt eget, convallis vel est. Ut
-          pellentesque ut lacus vel interdum.
-        </p>
+      <b-carousel-slide>
+        <template #img>
+          <img
+            class="d-block myStyle mx-auto"
+            width="1024"
+            height="480"
+            :src="imgurl[1]"
+            alt="image slot"
+          />
+        </template>
+      </b-carousel-slide>
+      <b-carousel-slide>
+        <template #img>
+          <img
+            class="d-block myStyle mx-auto"
+            width="1024"
+            height="480"
+            :src="imgurl[2]"
+            alt="image slot"
+          />
+        </template>
+      </b-carousel-slide>
+      <b-carousel-slide>
+        <template #img>
+          <img
+            class="d-block myStyle mx-auto"
+            width="1024"
+            height="480"
+            :src="imgurl[3]"
+            alt="image slot"
+          />
+        </template>
+      </b-carousel-slide>
+      <b-carousel-slide>
+        <template #img>
+          <img
+            class="d-block myStyle mx-auto"
+            width="1024"
+            height="480"
+            :src="imgurl[4]"
+            alt="image slot"
+          />
+        </template>
       </b-carousel-slide>
     </b-carousel>
 
-    <p class="mt-4">
+    <!-- <p class="mt-4">
       Slide #: {{ slide }}<br />
       Sliding: {{ sliding }}
-    </p>
+    </p> -->
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'aaa',
   data() {
     return {
       slide: 0,
       sliding: null,
+      imgurl: [],
     };
+  },
+  created() {
+    for (var i = 1; i <= 5; i++) {
+      axios
+        .get('http://localhost:3050/sub/post/list/' + i)
+        .then((response) => {
+          console.log(response);
+          this.imgurl.push(
+            'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+              response.data.thumbnail
+          );
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
   },
   methods: {
     onSlideStart(slide) {
@@ -98,5 +132,10 @@ export default {
 
 .blog .carousel-indicators .active {
   background: #707070;
+}
+
+.myStyle {
+  height: 480px;
+  width: auto;
 }
 </style>

@@ -59,7 +59,7 @@ public class PostController {
 		return new ResponseEntity<List<PostDto>>(postService.getList(postParameterDto), HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "해당 숫자의 순서의 Post", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
+	@ApiOperation(value = "해당 숫자의 순서의 Post", notes = "해당 게시글의 정보 반환한다.", response = List.class)
 	@GetMapping("/list/{no}")
 	public ResponseEntity<PostDto> getLikePost(@PathVariable int no) throws Exception {
 		logger.info("getOne - 호출, " + no);

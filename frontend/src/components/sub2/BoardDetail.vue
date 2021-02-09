@@ -37,25 +37,31 @@
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="modifyForm"  :contents="this.cont"
+        @click="modifyForm"
+        :contents="this.cont"
         >수정</v-btn
       >
       <v-dialog v-model="dialog1" width="230">
         <template v-slot:activator="{ on, attrs }" @click="dialog1 = true">
-          <v-btn :disabled="board.postInfo.email != $store.getters.getUserEmail" variant="primary" v-bind="attrs" v-on="on">
+          <v-btn
+            :disabled="board.postInfo.email != $store.getters.getUserEmail"
+            variant="primary"
+            v-bind="attrs"
+            v-on="on"
+          >
             게시글삭제
           </v-btn>
         </template>
         <v-card>
           <v-card-title>
-              삭제하시겠습니까
-            </v-card-title>
+            삭제하시겠습니까
+          </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="red" @click="deleteForm">
               삭제
             </v-btn>
-            <v-btn color="primary" @click="dialog1=false">
+            <v-btn color="primary" @click="dialog1 = false">
               취소
             </v-btn>
           </v-card-actions>
@@ -97,8 +103,8 @@ export default {
       heartIcon: '',
       like: false,
       dialog1: false,
-      items: ["취소", "삭제"],
-      cont:'',
+      items: ['취소', '삭제'],
+      cont: '',
     };
   },
   computed: {
@@ -121,7 +127,7 @@ export default {
         this.board = response.data;
         this.cont = this.board.postInfo.content;
         console.log(this.cont);
-        document.getElementById("editor").innerHTML = this.cont;
+        document.getElementById('editor').innerHTML = this.cont;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
@@ -136,8 +142,8 @@ export default {
   },
   methods: {
     menuclick(event, cmt) {
-      if (event.target.innerText == "삭제") {
-        this.deleteForm()
+      if (event.target.innerText == '삭제') {
+        this.deleteForm();
       }
     },
     toBoard() {
