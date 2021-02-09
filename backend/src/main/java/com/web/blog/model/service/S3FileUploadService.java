@@ -61,7 +61,7 @@ public class S3FileUploadService {
 
 		// 파일 변환
 		File file = new File(IMAGE_DIR + saveFileName);
-		if (file.getParent() != null) {
+		if (!file.exists()) {
 			file.mkdirs();
 		}
 
@@ -97,7 +97,7 @@ public class S3FileUploadService {
 		File file = new File(IMAGE_DIR + saveFileName);
 		File thumb = new File(IMAGE_DIR + thumbFileName);
 
-		if (file.getParent() != null) {
+		if (!file.exists()) {
 			file.mkdirs();
 		}
 

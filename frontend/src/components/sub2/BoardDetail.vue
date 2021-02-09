@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!loading">
     <div>
       <v-row>
         <v-col>
@@ -33,7 +33,7 @@
     </div>
     <hr />
     <div class="contents" v-html="cont"></div>
-    <vote :no="board.postInfo.postNo" />
+    <Vote :no="board.postInfo.postNo" />
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
@@ -105,6 +105,7 @@ export default {
       dialog1: false,
       items: ['취소', '삭제'],
       cont: '',
+      loading: false,
     };
   },
   computed: {
@@ -115,6 +116,7 @@ export default {
     Comment,
   },
   created() {
+    this.loading = true;
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -126,6 +128,7 @@ export default {
         console.log(response.data);
         this.board = response.data;
         this.cont = this.board.postInfo.content;
+        this.loading = false;
         console.log(this.cont);
         document.getElementById('editor').innerHTML = this.cont;
         if (this.board.likeCheck == 'N') {
