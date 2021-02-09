@@ -62,7 +62,6 @@
 
     <v-btn @click="completeUpload">작성 완료</v-btn>
     <v-btn @click="tempUpload">임시저장</v-btn>
-    <p>{{imgUrl}}</p>
     <div class="card">
       <v-row>
         <v-col v-for="(item, idx) in imgUrl" :key="idx">
@@ -115,7 +114,6 @@ export default {
     emitedData(event){
       this.content = event.content;
       this.title = event.title;
-      console.log("emitted",event);
     },
     modiImg(item, index) {
       this.deleted.push(item.picNo)
