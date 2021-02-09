@@ -50,40 +50,33 @@
     </insert>
     
     <update id="commentUpdate" parameterType="CommentDto">
-        UPDATE comment
-            SET
-            CONTENT = #{content}
-        WHERE COMMENTNO = #{commentNo}
+        update comment
+        set content = #{content}
+        where commentNo = #{commentNo}
     </update>
     
     <delete id="commentDelete" parameterType="int">
-        DELETE FROM comment WHERE COMMENTNO = #{commentNo}
+        delete 
+        from comment 
+        where commentNo = #{commentNo}
     </delete>
     
-    
-    <!-- LIKE 처리 -->
-    <!-- 	게시글 like 수 -->
  	<select id="likeCount" parameterType="int" resultType="int">
  		select count(cmLikeNo)
  		from comment_member_like
- 		where commentNo = #{commentNo}
- 			and likeCheck = 'Y'
+ 		where commentNo = #{commentNo} and likeCheck = 'Y'
  	</select>
 	
-<!-- 	한 사용자가 특정 게시물에 좋아요 했었는지  -->
 	<select id="likeCheck" parameterType="map" resultType="int">
 	    select count(cmLikeNo)
 	    from comment_member_like
-	    where commentNo=#{commentNo}
-			and email=#{email}
+	    where commentNo=#{commentNo} and email=#{email}
 	</select>
 	
-<!-- 	한 사용자가 특정 게시물에 좋아요 했었던 정보 -->
 	<select id="likeInfo" parameterType="map" resultType="CommentLikeDto">
 	    select cmLikeNo, commentNo, email, likeCheck
 	    from comment_member_like
-	    where commentNo=#{commentNo}
-			and email=#{email}
+	    where commentNo=#{commentNo} and email=#{email}
 	</select>
 	
 	<insert id="insertLike" parameterType="map">
@@ -91,22 +84,12 @@
 		values (#{commentNo}, #{email})
 	</insert>
 	
-<!-- 	<update id="like" parameterType="int"> -->
-<!-- 		update post -->
-<!-- 		set likeCnt = likeCnt + 1 -->
-<!-- 		where postNo = #{postNo} -->
-<!-- 	</update> -->
 	<update id="like" parameterType="map">
 		update comment_member_like
 		set likeCheck = 'Y'
 		where commentNo = #{commentNo} and email = #{email}
 	</update>
 	
-<!-- 	<update id="unlike" parameterType="int"> -->
-<!-- 		update post -->
-<!-- 		set likeCnt = likeCnt - 1 -->
-<!-- 		where postNo = #{postNo} -->
-<!-- 	</update> -->
 	<update id="unlike" parameterType="map">
 		update comment_member_like
 		set likeCheck = 'N'
@@ -137,4 +120,3 @@
 	</update>
     
 </mapper>
-
