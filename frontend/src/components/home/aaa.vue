@@ -79,6 +79,7 @@
 
 <script>
 import axios from 'axios';
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   name: 'aaa',
   data() {
@@ -91,7 +92,7 @@ export default {
   created() {
     for (var i = 1; i <= 5; i++) {
       axios
-        .get('http://localhost:3050/sub/post/list/' + i)
+        .get(`${SERVER_URL}/post/list/` + i)
         .then((response) => {
           console.log(response);
           this.imgurl.push(
