@@ -90,27 +90,24 @@ export default new Vuex.Store({
       params.append('email', user.email);
       params.append('pwd', user.pwd);
 
-      return axios
-        .post(
-          `${SERVER_URL}/login/confirm/login`,
-          params // pwd: user.pwd,
-          // name:'',
-          // role:''
-        )
-        .then((response) => {
-          if (response.data.message) {
-            console.log(response);
-            alert('아이디 또는 비밀번호를 틀렸습니다.');
-          } else {
-            console.log(response);
-            context.commit('LOGIN', response.data);
-            axios.defaults.headers.common[
-              'auth-token'
-            ] = `${response.data['auth-token']}`;
-            alert('로그인 성공');
-          }
-        })
-        .catch((error) => {});
+      return axios.post(`${SERVER_URL}/login/confirm/login`, params // pwd: user.pwd,
+        // name:'',
+        // role:''
+      ).then((response) => {
+        if (response.data.message) {
+          console.log("받았다",response);
+          alert('아이디 또는 비밀번호를 틀렸습니다.');
+        }else{
+          console.log(response);
+          context.commit('LOGIN', response.data);
+          axios.defaults.headers.common['auth-token'] = `${response.data['auth-token']}`;
+          alert('로그인 성공');
+        }
+
+      })
+      .catch(error => {
+        
+      });
     },
     LOGOUT(context) {
       context.commit('LOGOUT');
