@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 import SearchPwd from '../components/sub1/searchPwd.vue'
 import regist from '../components/sub1/regist.vue'
 import myPage from '../components/sub1/myPage.vue'
-import modifyProfile from "../components/sub1/modifyProfile.vue"
 import notFound from "../components/sub1/notFound.vue"
 import Error from "../components/sub1/Error.vue"
 import Board from "../components/sub2/Board.vue"
@@ -85,10 +84,5 @@ export default new Router({
       name: 'myPage',
       component: myPage
     },
-    {
-      path: '/modify',
-      name: 'modify',
-      component: modifyProfile,
-  },
   ],
 })

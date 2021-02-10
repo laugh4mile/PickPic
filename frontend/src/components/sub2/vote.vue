@@ -10,7 +10,7 @@
         </label>
       </v-row>
     </v-radio-group>
-    <v-btn @click="vote">투표하기</v-btn>
+    <v-btn color="secondary" outlined @click="vote">투표하기</v-btn>
     <hr />
     <poll v-bind="options" />
   </div>

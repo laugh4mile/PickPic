@@ -37,7 +37,9 @@
     <div>
       <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
+        color="secondary" outlined
         @click="modifyForm"
+        class="mr-2"
         :contents="this.cont"
         >수정</v-btn
       >
@@ -45,7 +47,8 @@
         <template v-slot:activator="{ on, attrs }" @click="dialog1 = true">
           <v-btn
             :disabled="board.postInfo.email != $store.getters.getUserEmail"
-            variant="primary"
+            color="secondary" outlined
+            class="mr-2"
             v-bind="attrs"
             v-on="on"
           >
@@ -58,10 +61,10 @@
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="red" @click="deleteForm">
+            <v-btn color="red" outlined @click="deleteForm">
               삭제
             </v-btn>
-            <v-btn color="primary" @click="dialog1 = false">
+            <v-btn color="primary" outlined @click="dialog1 = false">
               취소
             </v-btn>
           </v-card-actions>
@@ -84,7 +87,7 @@
         @click="deleteForm"
         >삭제</v-btn
       > -->
-      <v-btn @click="toBoard">홈으로</v-btn>
+      <v-btn color="secondary" outlined @click="toBoard">홈으로</v-btn>
     </div>
     <comment />
   </div>
@@ -117,6 +120,7 @@ export default {
   },
   created() {
     this.loading = true;
+    console.log("created");
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -130,11 +134,13 @@ export default {
         this.cont = this.board.postInfo.content;
         this.loading = false;
         console.log(this.cont);
+          console.log("board", this.board)
         document.getElementById('editor').innerHTML = this.cont;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
         } else {
+          console.log("들어가니")
           this.heartIcon = require('@/assets/heart.jpg');
           this.like = true;
         }
@@ -185,6 +191,7 @@ export default {
                   this.heartIcon = require('@/assets/blank heart.png');
                   this.like = false;
                 } else {
+
                   this.heartIcon = require('@/assets/heart.jpg');
                   this.like = true;
                 }
