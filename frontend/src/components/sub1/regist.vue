@@ -1,7 +1,5 @@
 <template>
   <v-form class="container" action="/" ref="form" v-model="valid" lazy-validation>
-    
-    
     <v-row>
       <v-col cols="12" md="10">
         <v-text-field
@@ -12,7 +10,7 @@
           required
         ></v-text-field>
       </v-col>
-      <v-btn class="mt-10" @click="checkNameDuplicate">이름 중복검사</v-btn>
+      <v-btn color="secondary" outlined class="mt-10" @click="checkNameDuplicate">이름 중복검사</v-btn>
     </v-row>
     <v-row>
       <v-col cols="12" md="10">
@@ -23,14 +21,14 @@
           required
         ></v-text-field>
       </v-col>
-      <v-btn class="mt-10" @click="checkEmailDuplicate">메일 중복검사</v-btn>
-      <v-btn class="mt-10" @click="sendVerifyCode">이메일 인증</v-btn>
+      <v-btn color="secondary" outlined  class="mt-10" @click="checkEmailDuplicate">메일 중복검사</v-btn>
+      <v-btn color="secondary" outlined  @click="sendVerifyCode">이메일 인증</v-btn>
     </v-row>
     <v-row>
       <v-col cols="12" md="10">
         <v-text-field v-model="verityCode" label="인증번호 입력" required />
       </v-col>
-      <v-btn class="mt-10" @click="verifyBtn">인증</v-btn>
+      <v-btn color="secondary" outlined class="mt-10" @click="verifyBtn">인증</v-btn>
     </v-row>
     <span v-if="verifys" class="valid">인증 완료</span>
 
@@ -63,21 +61,24 @@
       required
     ></v-checkbox>
 
-    <v-btn :disabled="!valid" color="success" class="mr-4" type="submit" @click="onSubmit($event)">
+    <v-btn color="success" outlined :disabled="!valid"  class="mr-4" type="submit" @click="onSubmit($event)">
       회원가입
     </v-btn>
 
-    <v-btn color="error" class="mr-4" @click="reset">
+    <v-btn color="error" outlined class="mr-4" @click="reset">
       초기화
     </v-btn>
   </v-form>
 </template>
 <script>
 import axios from "axios";
-
+import customButton from "../design/btn.vue"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
+  components:{
+    customButton,
+  },
   data: () => ({
     valid: false,
     name: "",

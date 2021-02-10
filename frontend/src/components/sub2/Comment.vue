@@ -10,7 +10,7 @@
             rows="2"
             v-model="userComment"
           ></v-textarea>
-          <v-btn dark @click="writeComment">작성</v-btn>
+          <v-btn color="secondary" outlined @click="writeComment">작성</v-btn>
         </v-row>
       </div>
     </div>
@@ -40,6 +40,7 @@
               <v-list-item v-for="(item, i) in items" :key="i">
                 <v-btn
                   :disabled="comment.Comment.email != getUserEmail"
+                  color="secondary" outlined
                   @click="menuclick($event, comment)"
                   >{{ item }}</v-btn
                 >
