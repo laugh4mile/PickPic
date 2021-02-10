@@ -146,7 +146,7 @@ public class CommentController {
 
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
-
+	
 	@ApiOperation(value = "댓글 목록", notes = "댓글의 목록을 가지고 온다.", response = List.class)
 	@GetMapping("/{postNo}")
 	public ResponseEntity<List<Map<String, Object>>> commentList(@PathVariable int postNo, @RequestParam String email,

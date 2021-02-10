@@ -47,4 +47,5 @@ public interface CommentService {
 	public int likeCntUp(int commentNo) throws Exception;
 
 	public int likeCntDown(int commentNo) throws Exception;
+
 }

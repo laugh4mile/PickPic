@@ -86,4 +86,5 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.likeCntDown(commentNo);
 	}
 
+
 }
