@@ -3,8 +3,9 @@
     <div>
       <v-row align="center">
         <v-btn @click="uploadForm" class="mr-2">작성</v-btn>
-        <v-text-field label="제목 검색" v-model="search"></v-text-field>
-        <v-btn class="ml-2" @click="searchBoard">검색</v-btn>
+        <VoteSearch @filter-vote="filterVote" @no-searching="noSearching" :boards="boards" />
+        <!-- <v-text-field label="제목 검색" v-model="search"></v-text-field> -->
+        <!-- <v-btn class="ml-2" @click="searchBoard">검색</v-btn> -->
       </v-row>
     </div>
     <div>
@@ -12,7 +13,7 @@
         <Board-design v-for="(item, i) in board" :key="i" :value="item" />
       </v-row>
     </div>
-    <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+    <infinite-loading v-if="!searching" @infinite="infiniteHandler" spinner="waveDots">
       <div
         slot="no-more"
         style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
@@ -26,11 +27,14 @@
 import BoardDesign from "./BoardDesign.vue";
 import axios from "axios";
 import InfiniteLoading from "vue-infinite-loading";
+import VoteSearch from '@/components/sub2/VoteSearch.vue'
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   components: {
     BoardDesign,
     InfiniteLoading,
+    VoteSearch
+    
   },
   created() {
     console.log(process.env.VUE_APP_SERVER_URL);
@@ -47,6 +51,14 @@ export default {
       });
   },
   methods: {
+    noSearching: function() {
+      this.searching = false
+      this.board = this.boards;
+    },
+    filterVote: function (res) {
+      this.board = res
+      this.searching = true
+    },
     infiniteHandler($state) {
       const params = new URLSearchParams();
       params.append("pg", this.limit);
@@ -56,6 +68,7 @@ export default {
           setTimeout(() => {
             if (response.data.length) {
               this.board = this.board.concat(response.data);
+              this.boards = this.boards.concat(response.data);
               $state.loaded();
               this.limit += 1;
               // 끝 지정(No more data) - 데이터가 EACH_LEN개 미만이면
@@ -73,6 +86,9 @@ export default {
         });
     },
     searchBoard() {
+      if (this.search){
+      this.searching = true
+      }
       this.board = [];
       for (let i = 0; i < this.boards.length; i++) {
         if (this.boards[i].title.includes(this.search)) {
@@ -90,6 +106,7 @@ export default {
       board: [],
       search: "",
       limit: 2,
+      searching: false,
     };
   },
 };
