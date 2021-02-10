@@ -95,7 +95,7 @@ export default new Vuex.Store({
         // role:''
       ).then((response) => {
         if (response.data.message) {
-          console.log(response);
+          console.log("받았다",response);
           alert('아이디 또는 비밀번호를 틀렸습니다.');
         }else{
           console.log(response);
