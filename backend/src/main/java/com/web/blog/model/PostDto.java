@@ -18,6 +18,7 @@ public class PostDto {
 	private List<String> unmodified;
 	private String thumbnail;
 	private String thumbnailTwo;
+	private int commentCnt;
 
 	public List<String> getUnmodified() {
 		return unmodified;
@@ -123,4 +124,11 @@ public class PostDto {
 		this.thumbnailTwo = thumbnailTwo;
 	}
 
+	public int getCommentCnt() {
+		return commentCnt;
+	}
+
+	public void setCommentCnt(int commentCnt) {
+		this.commentCnt = commentCnt;
+	}
 }

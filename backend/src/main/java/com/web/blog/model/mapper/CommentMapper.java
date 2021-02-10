@@ -51,4 +51,5 @@ public interface CommentMapper {
 	public int likeCntUp(int commentNo) throws SQLException;
 
 	public int likeCntDown(int commentNo) throws SQLException;
+
 }

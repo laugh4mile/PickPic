@@ -1,7 +1,7 @@
 <template>
-  <div class="col-md-3 col-sm-6" @click="goDetail">
-    <div class="product-grid6 h-100">
-      <div class="product-image6 h-70">
+  <div class="col-md-3 col-sm-6 ma-0.5" @click="goDetail">
+    <div class="product-grid6 h-100 border rounded-xl">
+      <div class="product-image6 h-70" style="position: relative;">
         <img
           class="pic-1"
           :src="imgSrc1"
@@ -14,13 +14,22 @@
           onerror="this.src=`https://apfbucket.s3.ap-northeast-2.amazonaws.com/c8c25cb23bdd4aa9a5c4608b7fa243ef.png`"
           alt="이미지"
         />
+        <div
+          style="top:10px; right:10px; font-size: 1.2em; font-weight: bold; position: absolute; sans-serif;"
+        >
+          <i class="fas fa-heart fa-1x" style="color:red;"></i>
+          {{ value.likeCnt }}
+          <br />
+          <i class="fa fa-commenting-o" aria-hidden="true"></i>
+          {{ value.commentCnt }}
+        </div>
       </div>
       <div class="product-content">
         <h3 class="title">
-          <a href="#">title : {{ value.title }}</a>
+          <a href="#">{{ value.title }}</a>
         </h3>
         <div class="price">
-          작성자 : {{ value.name }}
+          {{ value.name }}
           <!-- <span>{{value.name}}</span> -->
         </div>
       </div>
@@ -60,6 +69,9 @@
 export default {
   data() {
     return {};
+  },
+  created() {
+    // console.log(this.value);
   },
   props: {
     value: {

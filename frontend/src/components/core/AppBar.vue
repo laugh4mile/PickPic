@@ -33,7 +33,7 @@
           </v-btn>
 
           <div class="text-center">
-            <v-dialog v-model="dialog" width="400">
+            <v-dialog v-model="dialog" width="300" content-class="elevation-0">
               <template v-slot:activator="{ on }">
                 <v-btn
                   text
@@ -46,17 +46,19 @@
               </template>
 
               <!-- 로그인모달 시작 -->
-              <div class="d-flex justify-content-center h-100 w-100">
-                <div class="card">
-                  <div class="card-header">
-                    <h3>서비스이름</h3>
+              <div class="d-flex justify-content-center h-100 w-100 rounded-xl">
+                <div class="card rounded-xl" style="background : white;">
+                  <div class="card-header ">
+                    <h3 style="color:black; text-align:center" class="ma-0">
+                      PickPic
+                    </h3>
                     <!-- <div class="d-flex justify-content-end social_icon">
                       <span><i class="fab fa-facebook-square"></i></span>
                       <span><i class="fab fa-google-plus-square"></i></span>
                       <span><i class="fab fa-twitter-square"></i></span>
                     </div> -->
                   </div>
-                  <div class="card-body">
+                  <div class="card-body ">
                     <form>
                       <span
                         class="badge badge-danger mt-1"
@@ -64,30 +66,30 @@
                         >이메일 형식이 다릅니다.</span
                       >
                       <div class="input-group form-group">
-                        <div class="input-group-prepend">
+                        <!-- <div class="input-group-prepend">
                           <span class="input-group-text"
                             ><i class="fas fa-user"></i
                           ></span>
-                        </div>
+                        </div> -->
                         <input
                           type="email"
-                          class="form-control"
+                          class="form-control rounded-xl"
                           v-model="user.email"
-                          placeholder="이메일"
+                          placeholder="Email"
                           @blur="checkDuplicate"
                         />
                       </div>
                       <div class="input-group form-group">
-                        <div class="input-group-prepend">
+                        <!-- <div class="input-group-prepend">
                           <span class="input-group-text"
                             ><i class="fas fa-key"></i
                           ></span>
-                        </div>
+                        </div> -->
                         <input
                           type="password"
-                          class="form-control"
+                          class="form-control rounded-xl"
                           v-model="user.pwd"
-                          placeholder="비밀번호"
+                          placeholder="Password"
                         />
                       </div>
                       <!-- <div class="row align-items-center remember">
@@ -96,17 +98,19 @@
                       <input
                         type="submit"
                         @click="login"
-                        value="로그인"
-                        class="btn float-right login_btn"
+                        value="LOGIN"
+                        class="btn btn-secondary rounded-pill form-control"
                       />
                     </form>
                   </div>
-                  <div class="card-footer">
-                    <div class="d-flex justify-content-center links">
-                      계정이 없으신가요?<a href="regist">회원가입</a>
+                  <div class="card-footer rounded-b-xl">
+                    <div
+                      class="d-flex justify-content-center links text-secondary"
+                    >
+                      New to PickPic?<a href="regist">Create an account.</a>
                     </div>
                     <div class="d-flex justify-content-center">
-                      <a href="#">비밀번호 찾기</a>
+                      <a href="#">Forgot password?</a>
                     </div>
                   </div>
                 </div>
@@ -244,6 +248,7 @@ export default {
   margin-bottom: auto;
   width: 400px;
   background-color: rgba(0, 0, 0, 0.726);
+  /* border-radius: 5px; */
 }
 .social_icon span {
   font-size: 45px;
@@ -307,5 +312,14 @@ input:focus {
 .links a {
   margin-left: 4px;
 }
+.test {
+  box-shadow: none;
+}
+/* .v-dialog {
+  box-shadow: none;
+} */
+/* .v-dialog--active {
+  box-shadow: none;
+} */
 /* 모달창 스타일 끝 */
 </style>

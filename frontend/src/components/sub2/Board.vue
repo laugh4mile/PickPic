@@ -23,9 +23,9 @@
   </div>
 </template>
 <script>
-import BoardDesign from "./BoardDesign.vue";
-import axios from "axios";
-import InfiniteLoading from "vue-infinite-loading";
+import BoardDesign from './BoardDesign.vue';
+import axios from 'axios';
+import InfiniteLoading from 'vue-infinite-loading';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   components: {
@@ -34,22 +34,24 @@ export default {
   },
   created() {
     console.log(process.env.VUE_APP_SERVER_URL);
+
     axios
       .get(`${SERVER_URL}/post/list`)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         this.boards = response.data;
         this.board = this.boards;
       })
       .catch((error) => {
         alert(error);
-        this.$router.push("/Error");
+        this.$router.push('/Error');
       });
+    // console.log(board);
   },
   methods: {
     infiniteHandler($state) {
       const params = new URLSearchParams();
-      params.append("pg", this.limit);
+      params.append('pg', this.limit);
       axios
         .get(`${SERVER_URL}/post/list`, { params })
         .then((response) => {
@@ -81,14 +83,14 @@ export default {
       }
     },
     uploadForm() {
-      this.$router.push("/board/upload");
+      this.$router.push('/board/upload');
     },
   },
   data() {
     return {
       boards: [],
       board: [],
-      search: "",
+      search: '',
       limit: 2,
     };
   },
