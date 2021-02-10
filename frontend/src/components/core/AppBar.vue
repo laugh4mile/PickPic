@@ -44,6 +44,7 @@
                   Login
                 </v-btn>
               </template>
+
               <!-- 로그인모달 시작 -->
               <div class="d-flex justify-content-center h-100 w-100">
                 <div class="card">
@@ -122,14 +123,14 @@
             @click="myPageForm"
             class="btn btn-outline-secondary rounded-pill ma-6 "
             style="border-width : 3px;"
-            >마이페이지</v-btn
+            >MyPage</v-btn
           >
           <v-btn
             text
             @click="logout"
             class="btn btn-outline-secondary rounded-pill"
             style="border-width : 3px;"
-            >로그아웃</v-btn
+            >LOGOUT</v-btn
           >
         </template>
       </v-row>
