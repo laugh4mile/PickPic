@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 import axios from 'axios';
 import createPersistedState from 'vuex-persistedstate';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
@@ -48,7 +48,7 @@ export default new Vuex.Store({
     //   return categories.sort().slice(0, 4)
     // },
     links: (state, getters) => {
-      return state.items
+      return state.items;
     },
     getAccessToken(state) {
       return state.accessToken;
@@ -65,7 +65,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setDrawer: (state, payload) => (state.drawer = payload),
-    toggleDrawer: state => (state.drawer = !state.drawer),
+    toggleDrawer: (state) => (state.drawer = !state.drawer),
     LOGIN(state, payload) {
       state.accessToken = payload['auth-token'];
       state.userEmail = payload['user-email'];
@@ -95,7 +95,7 @@ export default new Vuex.Store({
         // role:''
       ).then((response) => {
         if (response.data.message) {
-          console.log(response);
+          console.log("받았다",response);
           alert('아이디 또는 비밀번호를 틀렸습니다.');
         }else{
           console.log(response);
@@ -119,9 +119,11 @@ export default new Vuex.Store({
         .then((response) => {
           console.log(response);
           context.commit('REGIST', response.data);
-          axios.defaults.headers.common['auth-token'] = `${response.data['auth-token']}`;
+          axios.defaults.headers.common[
+            'auth-token'
+          ] = `${response.data['auth-token']}`;
         })
         .error(() => {});
     },
   },
-})
+});

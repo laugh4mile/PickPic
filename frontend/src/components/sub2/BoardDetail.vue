@@ -28,14 +28,8 @@
           <span class="d-flex justify-content-end" style="font-size:15px">
             좋아요 {{ this.board.postInfo.likeCnt }}
           </span>
-        </v-col>
-      </v-row>
-    </div>
-    <hr />
-    <div class="contents" v-html="cont"></div>
-    <Vote :no="board.postInfo.postNo" />
-    <div>
-      <v-btn
+          <div class="d-flex justify-content-end">
+            <v-btn
         :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
         color="secondary" outlined
         @click="modifyForm"
@@ -52,7 +46,7 @@
             v-bind="attrs"
             v-on="on"
           >
-            게시글삭제
+          삭제
           </v-btn>
         </template>
         <v-card>
@@ -70,24 +64,15 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <!-- <v-menu transition="offset-y" bottom >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn :disabled="board.postInfo.email != $store.getters.getUserEmail" v-bind="attrs" v-on="on">
-            삭제
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item v-for="(item, i) in items" :key="i" @click="menuclick($event)">
-            {{ item }}
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
-      <!-- <v-btn
-        :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="deleteForm"
-        >삭제</v-btn
-      > -->
-      <v-btn color="secondary" outlined @click="toBoard">홈으로</v-btn>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+    <hr />
+    <div class="contents" v-html="cont"></div>
+    <Vote v-if="isPic" :no="board.postInfo.postNo" @no-pic="isPic = false"/>
+    <div>
+    <v-btn color="secondary" outline @click="toBoard">홈으로</v-btn>
     </div>
     <comment />
   </div>
@@ -109,6 +94,7 @@ export default {
       items: ['취소', '삭제'],
       cont: '',
       loading: false,
+      isPic: true,
     };
   },
   computed: {

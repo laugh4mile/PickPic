@@ -41,7 +41,12 @@
 						order by count desc
 						) as temp
 					limit 1, 1
-				) as thumbnailTwo
+				) as thumbnailTwo,
+				(
+					select count(*)
+					from comment
+		            where post.postNo = comment.postNo
+				) as commentCnt 
 		from post join member using(email)
 		where temp = 0
 		<if test="word != null and word != ''">
