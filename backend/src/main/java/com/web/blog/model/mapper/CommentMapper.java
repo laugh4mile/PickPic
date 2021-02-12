@@ -15,10 +15,10 @@ public interface CommentMapper {
 	public CommentDto getOne(int commentNo) throws Exception;
 
 	/** 댓글 목록 호출 */
-	public List<CommentDto> commentList(int postNo) throws Exception;
+	public List<CommentDto> commentList(Map<String, Object> map) throws Exception;
 
 	/** 댓글 목록 무한 스크롤링 */
-	public List<CommentDto> infiniteScrollDown(int postNo, int pg) throws Exception;
+	public List<CommentDto> infiniteScrollDown(Map<String, Object> map) throws Exception;
 
 	/** 인자로 받은 CommentDto를 작성하고, 성공 여부를 반환 */
 	public boolean commentWrite(CommentDto dto) throws Exception;

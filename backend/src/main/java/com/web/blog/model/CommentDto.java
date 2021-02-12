@@ -91,4 +91,10 @@ public class CommentDto {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "CommentDto [commentNo=" + commentNo + ", content=" + content + ", email=" + email + ", postNo=" + postNo
+				+ ", uploadDate=" + uploadDate + ", modifyDate=" + modifyDate + ", likeCnt=" + likeCnt + ", name="
+				+ name + "]";
+	}
 }

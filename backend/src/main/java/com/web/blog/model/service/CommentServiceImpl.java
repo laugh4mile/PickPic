@@ -22,13 +22,15 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public List<CommentDto> commentList(int postNo) throws Exception {
-		return commentMapper.commentList(postNo);
+	public List<CommentDto> commentList(Map<String, Object> map) throws Exception {
+		System.out.println(map.get("postNo"));
+		System.out.println(map.get("sortBy"));
+		return commentMapper.commentList(map);
 	}
 
 	@Override
-	public List<CommentDto> infiniteScrollDown(int postNo, int pg) throws Exception {
-		return commentMapper.infiniteScrollDown(postNo, pg);
+	public List<CommentDto> infiniteScrollDown(Map<String, Object> map) throws Exception {
+		return commentMapper.infiniteScrollDown(map);
 	}
 
 	@Override
