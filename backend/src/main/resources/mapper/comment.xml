@@ -24,6 +24,9 @@
 				likeCnt, email, name
 		from comment join member using(email)
 		where postNo = #{postNo}
+        <if test="sortBy == 'like'">
+            order by likeCnt desc
+        </if>
 		limit 0,10;
 	</select>
 
@@ -40,6 +43,9 @@
 				likeCnt, email, name
 		from comment join member using(email)
 		where postNo = #{postNo}
+		<if test="sortBy == 'like'">
+            order by likeCnt desc
+        </if>
 		limit #{pg}, 10
 	</select>
 
