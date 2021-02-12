@@ -47,7 +47,8 @@
       </div>
     </v-row>
     <hr />
-    <editor id="editor" @text="emitedData"></editor>
+    <editor v-if="!temp" id="editor" @text="emitedData" :contents="{title:'', content:''}"></editor>
+    <editor v-else id="editor" @text="emitedData" :contents="tempBoard"></editor>
     <!-- <v-textarea label="본문" v-model="content"></v-textarea> -->
     <input
       multiple="multiple"
@@ -108,6 +109,8 @@ export default {
       imgUrl: [],
       deleted: [],
       board: [],
+      temp: false,
+      tempBoard:{},
     };
   },
   components: {
@@ -117,7 +120,7 @@ export default {
     emitedData(event) {
       this.content = event.content;
       this.title = event.title;
-      console.log(event);
+      console.log("event",event);
     },
     modiImg(item, index) {
       this.deleted.push(item.picNo);
@@ -155,14 +158,21 @@ export default {
         .get(`${SERVER_URL}/post`, { params })
         .then((response) => {
           console.log(response);
-          this.postNo = response.data.postInfo.postNo;
-          this.title = response.data.postInfo.title;
-          this.content = response.data.postInfo.content;
+          this.tempBoard.postNo = response.data.postInfo.postNo;
+          this.tempBoard.title = response.data.postInfo.title;
+          this.tempBoard.content = response.data.postInfo.content;
+          this.content = response.data.postInfo.content
+          this.title = response.data.postInfo.title
+          this.postNo = response.data.postInfo.postNo
+          // this.postNo = response.data.postInfo.postNo;
+          // this.title = response.data.postInfo.title;
+          // this.content = response.data.postInfo.content;
           this.imgUrl = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
             console.log(response.data.fileList[i].modPicName);
             this.imgUrl.push(response.data.fileList[i]);
           }
+          this.temp = true;
         })
         .catch((error) => {
           alert(error);
@@ -217,6 +227,7 @@ export default {
         let file = this.myfile[i];
         frm.append('files', file);
       }
+      console.log('저장된거바바',this.content)
       frm.append('postNo', this.postNo);
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
