@@ -1,65 +1,7 @@
 <template>
   <div class="container">
     <head> </head>
-    <!-- <v-row align="center"> -->
-
-    <v-text-field label="제목" @change="getTitle" v-model="content.title"></v-text-field>
-
-    <!-- <div class="text-center">
-              <v-dialog
-      v-model="dialog"
-      scrollable
-      max-width="290"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          @click="getTemp"
-        >
-          임시저장 목록
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title class="headline">
-          임시저장 목록
-        </v-card-title>
-                <v-card-text style="height: 300px;">
-          <v-radio-group
-            v-model="dialogm1"
-            column
-          >
-            <v-radio
-            v-for="(item, index) in tempPost" :key="index"
-              :label="item.title"
-              :value="item.postNo"
-            />
-          </v-radio-group>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="dialog = false"
-          >
-            Disagree
-          </v-btn>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="getTempPost"
-          >
-            Agree
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-          </div>
-      </v-row>
-    <hr /> -->
+    <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
     <v-row align="center" class="mb-3">
       <select class="ml-2" id="select_font" v-model="font" @change="cng">
         <option value="Arial">Arial</option>
@@ -161,6 +103,7 @@
       @change="getText"
       contenteditable="true"
       label="본문"
+      v-html="contents.content"
     >
     <!-- <video src="https://tv.naver.com/v/18161441"></video> -->
     <!-- https://youtu.be/70ip9Ug8DHs -->
@@ -175,6 +118,7 @@
       v-html="sendText"
     ></div>
     <br />
+    <v-btn @click="alertFunc">버튼</v-btn>
   </div>
 </template>
 
@@ -273,20 +217,16 @@ var pasteHtmlAtCaret = function(html) {
 };
 
 export default {
-  // created(){
-  //   this.temp = this.contents;
-  //   console.log("temp : " + this.temp);
-  //   // this.content = this.contents;
-  //   // console.log(this.content);
-  //   $("#editor").innerHTML = this.contents;
-  // },
+  created(){
+    // this.content = this.contents;
+  },
   mounted(){
-    console.log('mounted')
     if(this.contents){
       this.content = this.contents;
-      $("#editors").append(this.contents.content);
+      console.log('mounted');
+      $("#editors").append(this.content.content);
+      this.getTitle();
       this.sendText = marked($("#editors")[0].innerText + '', { sanitize: true });
-      console.log(this.temp);
     }
   },
   data() {
@@ -323,10 +263,13 @@ export default {
   },
   props:{
     contents:{
-      type:Object
+      type:Object,
     }
   },
   methods: {
+    alertFunc(){
+      console.log(this.contents);
+    },
     preview(){
       $("#preview").addClass('hidden');
       $("#edit").removeClass('hidden');
@@ -343,11 +286,13 @@ export default {
       this.changeFont();
     },
     getTitle(){
-      this.$emit('text', this.content);
+      this.$emit('text', this.contents);
+      console.log("getTitle", this.contents);
     },
     getText(event){
-      this.content.content = document.getElementById('editors').innerHTML;
-      this.$emit('text', this.content);
+      this.contents.content = document.getElementById('editors').innerHTML;
+      console.log("getText", this.contents);
+      this.$emit('text', this.contents);
       this.update(event);
     },
     update: _.debounce(function(e) {
