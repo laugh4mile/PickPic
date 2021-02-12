@@ -72,6 +72,10 @@ export default {
   },
   methods: {
     vote() {
+      if(this.selected == -1) {
+        alert("사진을 선택해 주세요!");
+        return;
+      }
       alert(this.selected+1+'번째 사진에 투표하였습니다.')
       this.selected = -1
       console.log('투표', this.item);

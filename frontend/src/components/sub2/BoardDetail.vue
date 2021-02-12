@@ -72,7 +72,7 @@
     <div class="contents" v-html="cont"></div>
     <Vote v-if="isPic" :no="board.postInfo.postNo" @no-pic="isPic = false"/>
     <div>
-    <v-btn color="secondary" outline @click="toBoard">홈으로</v-btn>
+    <v-btn color="secondary" outlined @click="toBoard">홈으로</v-btn>
     </div>
     <comment />
   </div>
@@ -119,14 +119,10 @@ export default {
         this.board = response.data;
         this.cont = this.board.postInfo.content;
         this.loading = false;
-        console.log(this.cont);
-          console.log("board", this.board)
-        document.getElementById('editor').innerHTML = this.cont;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
         } else {
-          console.log("들어가니")
           this.heartIcon = require('@/assets/heart.jpg');
           this.like = true;
         }
