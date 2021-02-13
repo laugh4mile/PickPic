@@ -6,10 +6,13 @@
           v-model="user.name"
           :counter="10"
           :rules="nameRules"
+          :append-icon="marker.nameMarker ? 'mdi-check' : ''"
+          :error-messages="!arletName ? '중복검사를 해주세요': ''"
           label="Name"
           required
         ></v-text-field>
       </v-col>
+      <!-- <i v-show="marker" class="fas fa-check align-self-center" style="color:green"></i> -->
       <v-btn color="secondary" outlined class="mt-10" @click="checkNameDuplicate">이름 중복검사</v-btn>
     </v-row>
     <v-row>
@@ -17,6 +20,8 @@
         <v-text-field
           v-model="user.email"
           :rules="emailRules"
+          :append-icon="marker.emailMarker ? 'mdi-check' : ''"
+          :error-messages="!arletEmail ? '중복검사를 해주세요': ''"
           label="E-mail"
           required
         ></v-text-field>
@@ -26,34 +31,42 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="10">
-        <v-text-field v-model="verityCode" label="인증번호 입력" required />
+        <v-text-field v-model="verityCode" label="인증번호 입력" required :error-messages="!arletCode ? '코드를 확인해주세요': ''"/>
       </v-col>
       <v-btn color="secondary" outlined class="mt-10" @click="verifyBtn">인증</v-btn>
     </v-row>
     <span v-if="verifys" class="valid">인증 완료</span>
-
-    <v-text-field
-      v-model="user.pwd"
-      :rules="pwdRules"
-      type="password"
-      label="Password"
-      required
-    ></v-text-field>
-
-    <v-text-field
-      v-model="chkpwd"
-      :rules="[(user.pwd === chkpwd) || '페스워드가 불일치합니다.']"
-      type="password"
-      label="Check Password"
-      required
-    ></v-text-field>
-
+    <v-row>
+      <v-col cols="12" md="10">
         <v-text-field
-      v-model="user.introduce"
-      type="text"
-      label="자기소개"
-    ></v-text-field>
-
+          v-model="user.pwd"
+          :rules="pwdRules"
+          type="password"
+          label="Password"
+          required
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="10">
+        <v-text-field
+          v-model="chkpwd"
+          :rules="[(user.pwd === chkpwd) || '페스워드가 불일치합니다.']"
+          type="password"
+          label="Check Password"
+          required
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="10">
+        <v-text-field
+          v-model="user.introduce"
+          type="text"
+          label="자기소개"
+        ></v-text-field>
+      </v-col>
+    </v-row>
     <v-checkbox
       v-model="checkbox"
       :rules="[v => !!v || 'You must agree to continue!']"
@@ -81,10 +94,17 @@ export default {
   },
   data: () => ({
     valid: false,
+    marker: {
+      nameMarker: false,
+      emailMarker: false,
+      codeMarker: false,
+      passwordMarker: false,
+      passwordCheckMarker: false,
+    },
     name: "",
     nameRules: [
       v => !!v || "Name is required",
-      v => (v && v.length <= 10) || "Name must be less than 10 characters"
+      v => (v && v.length <= 10) || "Name must be less than 10 characters",
     ],
     email: "",
     emailRules: [
@@ -112,6 +132,9 @@ export default {
     },
     chkname: false,
     chkemail: false,
+    arletName: true,
+    arletEmail: true,
+    arletCode: true,
   }),
 
   methods: {
@@ -123,12 +146,19 @@ export default {
         if (this.user.name) {
           if (response.data) {
             alert('중복된이름')
+            this.chkname = false
+            this.marker.nameMarker = false
+            this.arletName = false
           } else {
             alert('사용가능')
             this.chkname = true
+            this.marker.nameMarker = true
+            this.arletName = true
           }
         } else {
           alert('이름을 입력해주세요')
+          this.chkname = false
+          this.marker.nameMarker = false
         }
       
       })
@@ -137,24 +167,38 @@ export default {
       });
     },
     checkEmailDuplicate() {
-      const params = new URLSearchParams();
-      params.append("email", this.user.email);
-      axios.get(`${SERVER_URL}/member/emailCheck`, {params})
-      .then((response) => {
-        if (this.user.email) {
-          if (response.data) {
-            alert('중복된메일')
+      if (/.+@.+\..+/.test(this.user.email)) {
+        const params = new URLSearchParams();
+        params.append("email", this.user.email);
+        axios.get(`${SERVER_URL}/member/emailCheck`, {params})
+        .then((response) => {
+          if (this.user.email) {
+            if (response.data) {
+              alert('중복된메일')
+              this.chkemail = false
+              this.marker.emailMarker = false
+              this.arletEmail = false
+            } else {
+              alert('사용가능')
+              this.chkemail = true
+              this.marker.emailMarker = true
+              this.arletEmail = true
+            }
           } else {
-            alert('사용가능')
+            alert('메일을 입력해주세요')
             this.chkemail = true
+            this.marker.emailMarker = false
           }
-        } else {
-          alert('메일을 입력해주세요')
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      });
+        })
+        .catch((err) => {
+          console.log(err)
+        });
+      } else {
+        alert('메일 형식에 맞게 입력해주세요')
+          this.chkemail = false
+          this.marker.emailMarker = false
+          this.arletEmail = false
+      }
     },
     validate() {
       this.$refs.form.validate();
@@ -184,8 +228,10 @@ export default {
           if (response.data == 1) {
             this.verifys = true;
             alert('인증 성공');
+            this.arletCode = true
           }else{
             alert('인증 번호가 틀립니다.');
+            this.arletCode = false
           }
         })
         .catch(error => {
@@ -199,12 +245,14 @@ export default {
         alert('이메일 인증 미완료');
       } else if (!this.chkname || !this.chkemail){
         alert('중복검사를 해주세요')
-      }else{
-          axios.post(`${SERVER_URL}/member`, this.user).then((response) => {
-            alert('회원가입 완료');
-            this.$router.push("/");
-            console.log(response);
-          })
+      } else if (!this.checkbox){
+        alert('약관에 동의해주세요')
+      } else {
+        axios.post(`${SERVER_URL}/member`, this.user).then((response) => {
+          alert('회원가입 완료');
+          this.$router.push("/");
+          console.log(response);
+        })
       .catch(error => {
         this.$router.push("/Error");
       });
