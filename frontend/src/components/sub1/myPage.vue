@@ -93,45 +93,46 @@ export default {
   methods: {
     
     addProfile: function(input) {
-      console.log(input.target.files[0]);
-      if (this.user.profileImg) {
-        const params = new URLSearchParams();
-        params.append("email", this.user.email);
-        axios.get(`${SERVER_URL}/member/delete`, {params})
-        .then((response) => {
-          console.log('기존이미지 삭제')
+      if (input.target.files[0]) {
+        if (this.user.profileImg) {
+          const params = new URLSearchParams();
+          params.append("email", this.user.email);
+          axios.get(`${SERVER_URL}/member/delete`, {params})
+          .then((response) => {
+            console.log('기존이미지 삭제')
+          })
+          .catch((err) => {
+            console.log(err)
+          });
+        }
+        var frm = new FormData();
+        var photoFile = input.target.files[0]
+        frm.append("profileImg", photoFile);
+        frm.append("email", this.user.email);
+        axios.post(`${SERVER_URL}/member/upload`, frm,{
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         })
-        .catch((err) => {
-          console.log(err)
+        .then((response) => {
+          alert('프로필 업로드 완료');
+          const params = new URLSearchParams();
+          params.append("email", this.getUserEmail);
+          axios
+            .get(`${SERVER_URL}/member`, { params })
+            .then((response) => {
+              this.user = null;
+              this.user = response.data.info;
+              this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
+            })
+            .catch(() => {
+              // this.$router.push("/Error");
+            });
+        })
+        .catch(error => {
+          this.$router.push("/Error");
         });
       }
-      var frm = new FormData();
-      var photoFile = input.target.files[0]
-      frm.append("profileImg", photoFile);
-      frm.append("email", this.user.email);
-      axios.post(`${SERVER_URL}/member/upload`, frm,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        alert('프로필 업로드 완료');
-        const params = new URLSearchParams();
-        params.append("email", this.getUserEmail);
-        axios
-          .get(`${SERVER_URL}/member`, { params })
-          .then((response) => {
-            this.user = null;
-            this.user = response.data.info;
-            this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
-          })
-          .catch(() => {
-            // this.$router.push("/Error");
-          });
-      })
-      .catch(error => {
-        this.$router.push("/Error");
-      });
     },
     showmodifyForm: function() {
       this.modify = true;

@@ -28,7 +28,10 @@
             <v-divider></v-divider>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <custom-button :title="'탈퇴'" @click="DeleteUser"/>
+              <!-- <custom-button :title="'탈퇴'" @click="DeleteUser"/> -->
+              <v-btn color="secondary" outlined @click="DeleteUser">
+                탈퇴
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
