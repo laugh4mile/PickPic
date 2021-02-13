@@ -10,7 +10,10 @@ public interface MemberService {
 
 	// MemberController
 	/** 회원 목록을 List로 반환 */
-	public List<MemberDto> getAllMember();
+	public List<MemberDto> getAllMember() throws Exception;
+	
+	/** 회원의 권한 반환 */
+	public String getRole(String email) throws Exception;
 
 	/** 인자로 MemberDto를 생성 */
 	public void join(MemberDto dto) throws Exception;
