@@ -47,9 +47,10 @@ public interface CommentMapper {
 	/** 좋아요 체크 해제 */
 	public int unlike(Map<String, Object> map) throws SQLException;
 
-	/** 게시글의 좋아요 수 갱신 */
+	/** 게시글의 좋아요 수 갱신Up */
 	public int likeCntUp(int commentNo) throws SQLException;
 
+	/** 게시글의 좋아요 수 갱신Down */
 	public int likeCntDown(int commentNo) throws SQLException;
 
 }

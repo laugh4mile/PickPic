@@ -33,7 +33,8 @@
         <div class="thumbnail">
           <img
             class="img-responsive user-photo"
-            src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"
+            :src="comment.Comment.profileImg"
+            onerror='this.src ="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"'
           />
         </div>
         <!-- /thumbnail -->
@@ -70,6 +71,7 @@
               </v-list>
             </v-menu>
           </div>
+
           <div class="panel-body">
             <span v-if="dis != comment.Comment.commentNo">{{
               comment.Comment.content
@@ -81,6 +83,38 @@
               rows="1"
               :value="comment.Comment.content"
             />
+            <v-row>
+              <v-spacer />
+              <span style="font-size:13px">
+                좋아요 {{ comment.Comment.likeCnt }}개
+              </span>
+              <!-- <img
+                :src="heart(comment)"
+                @click="heartClick(comment)"
+                width="30px"
+                alt=""
+              /> -->
+              <div v-if="comment.likeCheck == 'Y'">
+                <i
+                  class="fas fa-heart fa-2x"
+                  style="color:red"
+                  @click="heartClick(comment)"
+                ></i>
+              </div>
+              <div v-else>
+                <i
+                  class="far fa-heart fa-2x"
+                  style="color:red"
+                  @click="heartClick(comment)"
+                ></i>
+              </div>
+              <!-- <i
+                class="far fa-heart fa-2x"
+                style="color:red"
+                v-if="comment.Comment.likeCheck == 'N'"
+                @click="heartClick(comment)"
+              ></i> -->
+            </v-row>
           </div>
           <!-- /panel-body -->
         </div>
@@ -190,6 +224,8 @@ export default {
       items: ['수정', '삭제'],
       limit: 1,
       sortBy: '',
+      profileImg: 'sibal',
+      like: false,
     };
   },
   components: {
@@ -217,6 +253,11 @@ export default {
           setTimeout(() => {
             if (response.data.length) {
               console.log(response.data);
+              for (var i = 0; i < response.data.length; i++) {
+                response.data[i].Comment.profileImg =
+                  'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+                  response.data[i].Comment.profileImg;
+              }
               this.comments = this.comments.concat(response.data);
               console.log(this.comments);
               $state.loaded();
@@ -241,6 +282,7 @@ export default {
       const params = new URLSearchParams();
       params.append('email', this.getUserEmail);
       params.append('sortBy', this.sortBy);
+
       axios
         .get(`${SERVER_URL}/comment/` + this.$route.params.no, {
           params,
@@ -248,6 +290,15 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.comments = response.data;
+          // this.comments.profileImg =
+          //   'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+          //   this.comment.profileImg;
+          for (var i = 0; i < this.comments.length; i++) {
+            this.comments[i].Comment.profileImg =
+              'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+              this.comments[i].Comment.profileImg;
+          }
+          console.log(this.comments);
         })
         .catch((error) => {
           console.log(error);
@@ -255,9 +306,11 @@ export default {
     },
     heart(cmt) {
       if (cmt.likeCheck == 'Y') {
-        return require('@/assets/heart.jpg');
+        this.like = !this.like;
+        // return require('@/assets/heart.jpg');
       } else {
-        return require('@/assets/blank heart.png');
+        this.like = !this.like;
+        // return require('@/assets/blank heart.png');
       }
     },
     modifyCommentBtn(event) {
@@ -336,7 +389,16 @@ export default {
       axios
         .put(`${SERVER_URL}/comment/like`, params)
         .then((res) => {
+          console.log(res);
           if (res.data.likeCheck == 'Y') {
+            // console.log('this.like : ' + this.like);
+            // this.like = true;
+            this.like = false;
+            console.log(this.like);
+          } else {
+            // console.log('this.like : ' + this.like);
+            this.like = true;
+            console.log(this.like);
           }
           this.refreshData();
         })

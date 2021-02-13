@@ -9,9 +9,11 @@ public class CommentDto {
 	private String modifyDate;
 	private int likeCnt;
 	private String name;
+	private String profileImg;
 
+	
 	public CommentDto(int commentNo, String content, String email, int postNo, String uploadDate, String modifyDate,
-			int likeCnt, String name) {
+			int likeCnt, String name, String profileImg) {
 		super();
 		this.commentNo = commentNo;
 		this.content = content;
@@ -21,6 +23,7 @@ public class CommentDto {
 		this.modifyDate = modifyDate;
 		this.likeCnt = likeCnt;
 		this.name = name;
+		this.profileImg = profileImg;
 	}
 
 	public CommentDto() {
@@ -91,10 +94,18 @@ public class CommentDto {
 		this.name = name;
 	}
 
+	public String getProfileImg() {
+		return profileImg;
+	}
+
+	public void setProfileImg(String profileImg) {
+		this.profileImg = profileImg;
+	}
+
 	@Override
 	public String toString() {
 		return "CommentDto [commentNo=" + commentNo + ", content=" + content + ", email=" + email + ", postNo=" + postNo
 				+ ", uploadDate=" + uploadDate + ", modifyDate=" + modifyDate + ", likeCnt=" + likeCnt + ", name="
-				+ name + "]";
+				+ name + ", profileImg=" + profileImg + "]";
 	}
 }
