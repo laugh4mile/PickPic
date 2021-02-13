@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
 	MemberMapper memberMapper;
 
 	@Override
-	public List<MemberDto> getAllMember() {
+	public List<MemberDto> getAllMember() throws Exception {
 		return memberMapper.getAllMember();
 	}
 
@@ -31,6 +31,11 @@ public class MemberServiceImpl implements MemberService {
 		String encodePassword = passwordEncoder.encode(dto.getPwd());
 		dto.setPwd(encodePassword);
 		memberMapper.join(dto);
+	}
+	
+	@Override
+	public String getRole(String email) throws Exception {
+		return memberMapper.getRole(email);
 	}
 
 	@Override

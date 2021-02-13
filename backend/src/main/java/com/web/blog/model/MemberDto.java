@@ -8,15 +8,16 @@ public class MemberDto {
 	private String joinDate;
 	private String introduce;
 	private String profileImg;
-	private String profileImgName;
 	private String prePwd;
+	private int postCnt;
+	private int commentCnt;
 
 	public MemberDto() {
 		super();
 	}
 
-	public MemberDto(String email, String name, String pwd, String role, String joinDate, String introduce,
-			String profileImg, String profileImgName, String prePwd) {
+	protected MemberDto(String email, String name, String pwd, String role, String joinDate, String introduce,
+			String profileImg, String prePwd, int postCnt, int commentCnt) {
 		super();
 		this.email = email;
 		this.name = name;
@@ -25,16 +26,9 @@ public class MemberDto {
 		this.joinDate = joinDate;
 		this.introduce = introduce;
 		this.profileImg = profileImg;
-		this.profileImgName = profileImgName;
 		this.prePwd = prePwd;
-	}
-
-	public String getProfileImgName() {
-		return profileImgName;
-	}
-
-	public void setProfileImgName(String profileImgName) {
-		this.profileImgName = profileImgName;
+		this.postCnt = postCnt;
+		this.commentCnt = commentCnt;
 	}
 
 	public String getProfileImg() {
@@ -99,6 +93,22 @@ public class MemberDto {
 
 	public void setPrePwd(String prePwd) {
 		this.prePwd = prePwd;
+	}
+
+	public int getPostCnt() {
+		return postCnt;
+	}
+
+	public void setPostCnt(int postCnt) {
+		this.postCnt = postCnt;
+	}
+
+	public int getCommentCnt() {
+		return commentCnt;
+	}
+
+	public void setCommentCnt(int commentCnt) {
+		this.commentCnt = commentCnt;
 	}
 
 }
