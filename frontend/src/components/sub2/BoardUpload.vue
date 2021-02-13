@@ -186,11 +186,7 @@ export default {
       }
 
       console.log(this.postNo);
-      if (this.postNo != -1) {
-        frm.append('postNo', this.postNo);
-      } else {
-        frm.append('postNo', -1);
-      }
+      frm.append('postNo', this.postNo);
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
       frm.append('title', this.title);
@@ -222,6 +218,10 @@ export default {
         });
     },
     completeUpload() {
+      if(this.myfile.length + this.imgUrl.length < 2) {
+        alert("사진을 두 장 이상 업로드해 주세요!");
+        return;
+      } 
       var frm = new FormData();
       for (var i = 0; i < this.myfile.length; i++) {
         let file = this.myfile[i];
