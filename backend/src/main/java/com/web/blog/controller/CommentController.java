@@ -149,8 +149,8 @@ public class CommentController {
 	
 	@ApiOperation(value = "댓글 목록", notes = "댓글의 목록을 가지고 온다.", response = List.class)
 	@GetMapping("/{postNo}")
-	public ResponseEntity<List<Map<String, Object>>> commentList(@PathVariable int postNo, @RequestParam String email,  @RequestParam(required = false) String sortBy,
-			HttpServletRequest req) throws Exception {
+	public ResponseEntity<List<Map<String, Object>>> commentList(@PathVariable int postNo, @RequestParam String email,  @RequestParam(required = false) String sortBy
+			) throws Exception {
 		logger.info("commentList - 호출");
 
 		HttpStatus status = HttpStatus.OK;
@@ -188,7 +188,7 @@ public class CommentController {
 	@ApiOperation(value = "댓글 무한 스크롤", notes = "댓글 창을 무한으로 스크롤 할 수 있도록 한다.", response = List.class)
 	@PostMapping("/{postNo}")
 	public ResponseEntity<List<Map<String, Object>>> infiniteScrollDownComment(@PathVariable int postNo,
-			@RequestParam String email, @RequestParam int pg, @RequestParam String sortBy, HttpServletRequest req) throws Exception {
+			@RequestParam String email, @RequestParam int pg, @RequestParam String sortBy) throws Exception {
 		logger.info("infiniteScrollDownComment - 호출");
 
 		HttpStatus status = HttpStatus.OK;
