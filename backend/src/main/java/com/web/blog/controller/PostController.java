@@ -107,7 +107,17 @@ public class PostController {
 			}
 			resultMap.put("voteCount", voteService.getVoteCountofPost(postNo));
 			resultMap.put("fileList", postImgs);
+			
 
+			// 투표했었는지 찾기
+			PostVoteDto voteSearch = new PostVoteDto();
+			voteSearch.setEmail(email);
+			voteSearch.setPostNo(postNo);
+			PostVoteDto voteCheck = voteService.getVoteInfo(voteSearch);
+			// 투표한 적 있으면 투표한 사진 번호 체크
+			if(voteCheck != null) {
+				resultMap.put("votedPicNo", voteCheck.getPicNo());
+			}
 			status = HttpStatus.OK;
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
