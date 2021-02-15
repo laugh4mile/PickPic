@@ -3,20 +3,8 @@
     <head> </head>
     <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
     <v-row align="center" class="mb-3">
-      <select class="ml-2" id="select_font" v-model="font" @change="cng">
-        <option value="Arial">Arial</option>
-        <option value="Sans Serif" selected>Sans Serif</option>
-        <option value="Comic Sans MS">Comic Sans MS</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Verdana">Verdana</option>
-        <option value="Trebuchet MS">Trebuchet MS</option>
-        <option value="Arial Black">Arial Black</option>
-        <option value="Impact">Impact</option>
-        <option value="Bookman">Bookman</option>
-        <option value="Garamond">Garamond</option>
-        <option value="Palatino">Palatino</option>
-        <option value="Georgia">Georgia</option>
+      <select class="ml-2" id="select_font" v-model="font" @change="cng()">
+        <option :value="item" v-for="(item, index) in fonts" :key="index">{{item}}</option>
       </select>
       <button class="mr-2" onclick="document.execCommand('Bold')">
         <i class="fas fa-bold fa-lg fa-border"></i>
@@ -40,7 +28,7 @@
           <v-list-item
             v-for="(item, index) in size"
             :key="index"
-            @click="ColorizeSelection(item)"
+            @click="ColorizeSelection(font, item)"
           >
             <v-list-item-title>{{ item }}</v-list-item-title>
           </v-list-item>
@@ -96,11 +84,12 @@
     <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
     </v-row>
 
+      <!-- @input="getText"
+      @change="getText" -->
     <div
       style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto; padding: 10px;"
       id="editors"
-      @input="getText"
-      @change="getText"
+      @blur="getText"
       contenteditable="true"
       label="본문"
       v-html="contents.content"
@@ -117,13 +106,12 @@
       label="본문"
       v-html="sendText"
     ></div>
-    <br />
-    <v-btn @click="alertFunc">버튼</v-btn>
   </div>
 </template>
 
 <script>
 var font_size = 12;
+var font = "Arial"
 var selection_range;
 
 
@@ -132,53 +120,34 @@ var clickHandler = function(event) {
     .getElementById("editors")
     .removeEventListener("keypress", clickHandler);
   updateFontSizeForNewText(event);
-  updateFontStyleForNewText(event);
 };
 
-var isValidKeyPress = function(e) {
-  var keycode = e.keyCode;
-  var valid =
-    (keycode > 47 && keycode < 58) || // number keys
-    (keycode > 64 && keycode < 91) || // letter keys
-    (keycode > 95 && keycode < 112) || // numpad keys
-    (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-    (keycode > 218 && keycode < 223); // [\]' (in order)
-  return valid;
-};
+
 
 var updateFontSizeForNewText = function(e) {
-  var timestamp = new Date().getUTCMilliseconds();
   var key = "";
   if (isValidKeyPress(e)) {
-    event.preventDefault();
     key = e.key;
-    var span = document.createElement("span");
-    span.id = timestamp;
-    var txt = document.createTextNode(key);
-    span.style.fontSize = font_size + "px";
-    span.appendChild(txt);
-    var wrap = document.createElement("div");
-    wrap.appendChild(span.cloneNode(true));
-    pasteHtmlAtCaret(wrap.innerHTML);
+  var span = document.createElement("span");
+  var txt = document.createTextNode(key);
+  span.style.fontSize = font_size + "px";
+  span.style.fontFamily = font;
+  span.appendChild(txt);
+  var wrap = document.createElement("div");
+  wrap.appendChild(span.cloneNode(true));
+  pasteHtmlAtCaret(wrap.innerHTML);
   }
 };
-
-var updateFontStyleForNewText = function(e) {
-  var timestamp = new Date().getUTCMilliseconds();
-  var key = "";
-  if (isValidKeyPress(e)) {
-    event.preventDefault();
-    key = e.key;
-    var span = document.createElement("span");
-    span.id = timestamp;
-    var txt = document.createTextNode(key);
-    span.style.fontFamily = this.font;
-    span.appendChild(txt);
-    var wrap = document.createElement("div");
-    wrap.appendChild(span.cloneNode(true));
-    pasteHtmlAtCaret(wrap.innerHTML);
-  }
-};
+  var isValidKeyPress = function(e) {
+    var keycode = e.keyCode;
+    var valid =
+      (keycode > 47 && keycode < 58) || // number keys
+      (keycode > 64 && keycode < 91) || // letter keys
+      (keycode > 95 && keycode < 112) || // numpad keys
+      (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+      (keycode > 218 && keycode < 223); // [\]' (in order)
+    return valid;
+  };
 
 var pasteHtmlAtCaret = function(html) {
   var sel, range;
@@ -200,7 +169,7 @@ var pasteHtmlAtCaret = function(html) {
         lastNode = frag.appendChild(node);
       }
       range.insertNode(frag);
-
+      console.log(frag);
       // Preserve the selection
       if (lastNode) {
         range = range.cloneRange();
@@ -215,7 +184,6 @@ var pasteHtmlAtCaret = function(html) {
     document.selection.createRange().pasteHTML(html);
   }
 };
-
 export default {
   created(){
     // this.content = this.contents;
@@ -224,7 +192,7 @@ export default {
     if(this.contents){
       this.content = this.contents;
       console.log('mounted');
-      $("#editors").append(this.content.content);
+      $("#editors").html(this.content.content);
       this.getTitle();
       this.sendText = marked($("#editors")[0].innerText + '', { sanitize: true });
     }
@@ -267,9 +235,6 @@ export default {
     }
   },
   methods: {
-    alertFunc(){
-      console.log(this.contents);
-    },
     preview(){
       $("#preview").addClass('hidden');
       $("#edit").removeClass('hidden');
@@ -283,15 +248,18 @@ export default {
       $("#editors").removeClass('hidden');
     },
     cng() {
-      this.changeFont();
+      font = this.font;
+      console.log(font);
+      this.ColorizeSelection(font, font_size);
     },
     getTitle(){
       this.$emit('text', this.contents);
       console.log("getTitle", this.contents);
     },
     getText(event){
-      this.contents.content = document.getElementById('editors').innerHTML;
-      console.log("getText", this.contents);
+      this.content.content = event.target.innerHTML;
+      this.contents.content = event.target.innerHTML;
+      console.log(this.contents.content);
       this.$emit('text', this.contents);
       this.update(event);
     },
@@ -349,6 +317,7 @@ export default {
         if (parentNode.tagName.toLowerCase() == "span") {
           //parentNode.style.color = color;
           parentNode.style.fontSize = size + "px";
+          parentNode.style.fontFamily = font;
           return;
         }
       }
@@ -357,6 +326,7 @@ export default {
       var span = document.createElement("span");
       //span.style.color = color;
       span.style.fontSize = size + "px";
+      span.style.fontFamily = font;
       var nextSibling = node.nextSibling;
 
       parentNode.removeChild(node);
@@ -393,6 +363,7 @@ export default {
         var span = document.createElement("span");
         //span.style.color = color;
         span.style.fontSize = size + "px";
+        span.style.fontFamily = font;
         var textNode = document.createTextNode(part2);
         span.appendChild(textNode);
         parentNode.insertBefore(span, nextSibling);
@@ -430,7 +401,7 @@ export default {
       }
     },
 
-    ColorizeSelection(size) {
+    ColorizeSelection(font, size) {
       this.font_size = size;
       if (window.getSelection) {
         // all browsers, except IE before version 9
