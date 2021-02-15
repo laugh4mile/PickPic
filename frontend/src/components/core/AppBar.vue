@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat color="white-grey">
+  <v-app-bar app flat color="white">
     <v-app-bar-nav-icon class="hidden-md-and-up" @click="toggleDrawer" />
     <v-container class="mx-auto py-0">
       <v-row align="center">
@@ -7,11 +7,12 @@
           :src="require('@/assets/logo.png')"
           class="mr-5"
           contain
-          height="48"
-          width="48"
-          max-width="48"
+          height="55"
+          width="80"
+          max-width="110"
           @click="toHome"
         />
+
         <v-btn
           v-for="(link, i) in links"
           :key="i"
@@ -23,25 +24,25 @@
         </v-btn>
         <template v-if="!getAccessToken">
           <v-spacer />
+
           <v-btn
             text
             @click="registForm"
-            class="btn btn-outline-secondary rounded-pill"
-            style="border-width : 3px; font-size : 15px;"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
+            style="border-width : 3px; font-size : 12px;"
           >
-            SignUp
+            회원가입
           </v-btn>
-
           <div class="text-center">
             <v-dialog v-model="dialog" width="300" content-class="elevation-0">
               <template v-slot:activator="{ on }">
                 <v-btn
                   text
                   v-on="on"
-                  class="btn btn-outline-secondary ma-6 rounded-pill "
-                  style="border-width : 3px; font-size : 15px; pont-color : "
+                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan"
+                  style="border-width : 3px; font-size : 12 px; "
                 >
-                  Login
+                  로그인
                 </v-btn>
               </template>
 
@@ -121,20 +122,23 @@
         </template>
         <template v-else>
           <v-spacer />
-          <span class="">{{ getUserName }}님 환영합니다.</span>
+          <span class="font-yg-jalnan">
+            <span style="color: green">{{ getUserName }}</span
+            >님 환영합니다.</span
+          >
           <v-btn
             text
             @click="myPageForm"
-            class="btn btn-outline-secondary rounded-pill ma-6 "
+            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan"
             style="border-width : 3px;"
-            >MyPage</v-btn
+            >마이페이지</v-btn
           >
           <v-btn
             text
             @click="logout"
-            class="btn btn-outline-secondary rounded-pill"
-            style="border-width : 3px;"
-            >LOGOUT</v-btn
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
+            style="border-width : 3px; "
+            >로그아웃</v-btn
           >
         </template>
       </v-row>
@@ -201,6 +205,9 @@ export default {
       this.$store
         .dispatch('LOGOUT')
         .then(() => this.$router.replace('/').catch(() => {}));
+      console.log(localStorage);
+      localStorage.clear;
+      console.log(localStorage);
     },
     registForm() {
       this.$router.push('/regist');

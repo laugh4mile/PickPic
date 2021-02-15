@@ -25,12 +25,11 @@
         </div>
       </div>
       <div class="product-content">
-        <h3 class="title">
-          <a href="#">{{ value.title }}</a>
-        </h3>
+        <span class="title-style font-yg-jalnan">
+          {{ value.title }}
+        </span>
         <div class="price">
-          {{ value.name }}
-          <!-- <span>{{value.name}}</span> -->
+          <span class="font-ELAND_Choice_B">{{ value.name }}</span>
         </div>
       </div>
       <ul class="social">
@@ -160,10 +159,10 @@ h3.h3 {
   opacity: 0;
 }
 .product-grid6 .title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   text-transform: capitalize;
-  margin: 0 0 10px;
+  margin: 0 0 0rem;
   transition: all 0.3s ease 0s;
 }
 .product-grid6 .title a {
@@ -178,11 +177,11 @@ h3.h3 {
   color: black;
 }
 .product-grid6 .price span {
-  color: #999;
-  font-size: 15px;
+  color: rgb(71, 69, 69);
+  font-size: 13px;
   font-weight: 400;
-  text-decoration: line-through;
-  margin-left: 7px;
+  /* text-decoration: line-through; */
+  /* margin-left: 7px; */
   display: inline-block;
 }
 .product-grid6 .social {
@@ -254,5 +253,10 @@ h3.h3 {
 .product-grid6 .social li a:hover:after,
 .product-grid6 .social li a:hover:before {
   opacity: 1;
+}
+.title-style {
+  font-size: 18px;
+  /* font-weight: 700; */
+  color: #23232f;
 }
 </style>
