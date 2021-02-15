@@ -73,6 +73,7 @@
       </v-dialog>
       <v-btn class="ml-2" id="preview" dark @click="preview">Preview</v-btn>
       <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
+      <PostImageEditor/>
     </v-row>
 
     <div
@@ -188,6 +189,9 @@ var pasteHtmlAtCaret = function (html) {
 export default {
   created() {
     // this.content = this.contents;
+  },
+  components: {
+    PostImageEditor: () => import('@/components/sub3/ImageEditor.vue'),
   },
   mounted() {
     if (this.contents) {

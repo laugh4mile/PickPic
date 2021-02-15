@@ -8,6 +8,8 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import "@/fontAwesomeIcon.js";
+import "tui-image-editor/dist/tui-image-editor.css";
+
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
 
