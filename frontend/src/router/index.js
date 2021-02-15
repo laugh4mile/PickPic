@@ -12,6 +12,7 @@ import BoardUpdate from "../components/sub2/BoardUpdate.vue"
 import BoardUpload from "../components/sub2/BoardUpload.vue"
 import temp from "../components/sub2/temp.vue"
 import editor from "../components/sub3/Editor.vue";
+import admin from "../components/sub3/admin.vue";
 Vue.use(Router)
 
 export default new Router({
@@ -83,6 +84,11 @@ export default new Router({
       path: '/myPage',
       name: 'myPage',
       component: myPage
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin
     },
   ],
 })
