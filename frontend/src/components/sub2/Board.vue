@@ -1,12 +1,25 @@
 <template>
-  <div class="container">
+  <div class="container font-ELAND_Choice_B">
     <div>
       <v-row align="center">
+        <VoteSearch
+          class="mt-10"
+          @filter-vote="filterVote"
+          @no-searching="noSearching"
+          :boards="boards"
+        />
 
-        <v-btn color="secondary" outlined @click="uploadForm" class="mr-2">작성</v-btn>
-        <VoteSearch @filter-vote="filterVote" @no-searching="noSearching" :boards="boards" />
         <!-- <v-text-field label="제목 검색" v-model="search"></v-text-field> -->
         <!-- <v-btn class="ml-2" @click="searchBoard">검색</v-btn> -->
+        <div class="col-sm-12">
+          <v-btn
+            color="secondary"
+            outlined
+            @click="uploadForm"
+            class="btn-outline-info rounded-pill mb-10 pull-right"
+            >글쓰기</v-btn
+          >
+        </div>
       </v-row>
     </div>
     <div>
@@ -14,7 +27,11 @@
         <Board-design v-for="(item, i) in board" :key="i" :value="item" />
       </v-row>
     </div>
-    <infinite-loading v-if="!searching" @infinite="infiniteHandler" spinner="waveDots">
+    <infinite-loading
+      v-if="!searching"
+      @infinite="infiniteHandler"
+      spinner="waveDots"
+    >
       <div
         slot="no-more"
         style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
@@ -25,17 +42,16 @@
   </div>
 </template>
 <script>
-import BoardDesign from "./BoardDesign.vue";
-import axios from "axios";
-import InfiniteLoading from "vue-infinite-loading";
-import VoteSearch from '@/components/sub2/VoteSearch.vue'
+import BoardDesign from './BoardDesign.vue';
+import axios from 'axios';
+import InfiniteLoading from 'vue-infinite-loading';
+import VoteSearch from '@/components/sub2/VoteSearch.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   components: {
     BoardDesign,
     InfiniteLoading,
-    VoteSearch
-    
+    VoteSearch,
   },
   created() {
     console.log(process.env.VUE_APP_SERVER_URL);
@@ -55,12 +71,12 @@ export default {
   },
   methods: {
     noSearching: function() {
-      this.searching = false
+      this.searching = false;
       this.board = this.boards;
     },
-    filterVote: function (res) {
-      this.board = res
-      this.searching = true
+    filterVote: function(res) {
+      this.board = res;
+      this.searching = true;
     },
     infiniteHandler($state) {
       const params = new URLSearchParams();
@@ -89,8 +105,8 @@ export default {
         });
     },
     searchBoard() {
-      if (this.search){
-      this.searching = true
+      if (this.search) {
+        this.searching = true;
       }
       this.board = [];
       for (let i = 0; i < this.boards.length; i++) {

@@ -20,7 +20,7 @@
           text
           @click="onClick($event, link)"
         >
-          {{ link.text }}
+          <span class="font-yg-jalnan mx-2">{{ link.text }}</span>
         </v-btn>
         <template v-if="!getAccessToken">
           <v-spacer />
@@ -47,7 +47,9 @@
               </template>
 
               <!-- 로그인모달 시작 -->
-              <div class="d-flex justify-content-center h-100 w-100 rounded-xl">
+              <div
+                class="d-flex justify-content-center h-100 w-100 rounded-xl font-yg-jalnan"
+              >
                 <div class="card rounded-xl" style="background : white;">
                   <div class="card-header ">
                     <h3 style="color:black; text-align:center" class="ma-0">
@@ -59,7 +61,7 @@
                       <span><i class="fab fa-twitter-square"></i></span>
                     </div> -->
                   </div>
-                  <div class="card-body ">
+                  <div class="card-body font-ELAND_Choice_M">
                     <form>
                       <span
                         class="badge badge-danger mt-1"
@@ -76,7 +78,7 @@
                           type="email"
                           class="form-control rounded-xl"
                           v-model="user.email"
-                          placeholder="Email"
+                          placeholder="이메일"
                           @blur="checkDuplicate"
                         />
                       </div>
@@ -90,7 +92,7 @@
                           type="password"
                           class="form-control rounded-xl"
                           v-model="user.pwd"
-                          placeholder="Password"
+                          placeholder="비밀번호"
                         />
                       </div>
                       <!-- <div class="row align-items-center remember">
@@ -99,19 +101,22 @@
                       <input
                         type="submit"
                         @click="login"
-                        value="LOGIN"
-                        class="btn btn-secondary rounded-pill form-control"
+                        value="로그인"
+                        class="btn btn-secondary rounded-pill form-control font-yg-jalnan"
                       />
                     </form>
                   </div>
                   <div class="card-footer rounded-b-xl">
                     <div
-                      class="d-flex justify-content-center links text-secondary"
+                      class="d-flex justify-content-center links text-secondary font-ELAND_Choice_M"
                     >
-                      New to PickPic?<a href="regist">Create an account.</a>
+                      처음이신가요 ?
+                      <a href="regist" class="font-ELAND_Choice_B">회원가입</a>
                     </div>
-                    <div class="d-flex justify-content-center">
-                      <a href="#">Forgot password?</a>
+                    <div
+                      class="d-flex justify-content-center font-ELAND_Choice_B"
+                    >
+                      <a href="#">비밀번호 찾기</a>
                     </div>
                   </div>
                 </div>

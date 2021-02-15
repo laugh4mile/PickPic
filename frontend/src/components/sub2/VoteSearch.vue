@@ -1,17 +1,25 @@
 <template>
   <div class="wrap">
-    <div id="app" 
+    <div
+      id="app"
       v-on:keyup.down="selectValue('down')"
-      v-on:keyup.up="selectValue('up')">
+      v-on:keyup.up="selectValue('up')"
+    >
       <div class="search">
-        <v-text-field class="s" label="투표를 검색하세요" v-model="searchQuery" autocomplete="on"></v-text-field>
-        <ul class="r" tabindex="0" 
-          v-bind:class="{ show: isActive }">
-          <li tabindex="-1" 
-            v-for="(el, index) in filterList" 
+        <v-text-field
+          class="s"
+          label="게시글을 검색하세요"
+          v-model="searchQuery"
+          autocomplete="on"
+        ></v-text-field>
+        <ul class="r" tabindex="0" v-bind:class="{ show: isActive }">
+          <li
+            tabindex="-1"
+            v-for="(el, index) in filterList"
             :key="index"
             v-on:click="changeValue(el.title)"
-            v-on:keyup.enter="selectValue('enter', el.title)">
+            v-on:keyup.enter="selectValue('enter', el.title)"
+          >
             <span>{{ el.title }}</span>
           </li>
         </ul>
@@ -23,16 +31,16 @@
 <script>
 export default {
   name: 'VoteSearch',
-  data: function () {
+  data: function() {
     return {
       isActive: false,
       searchQuery: '',
       filterList: [],
       noserching: false,
-    }
+    };
   },
   props: {
-    boards: Array, 
+    boards: Array,
   },
   methods: {
     changeValue(str) {
@@ -90,35 +98,36 @@ export default {
     },
   },
   watch: {
-    searchQuery: function () {
-      if (this.searchQuery == ''){
-        this.filterList = this.boards
+    searchQuery: function() {
+      if (this.searchQuery == '') {
+        this.filterList = this.boards;
       }
       const str = this.searchQuery;
       const reg = /[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9|\s]/.test(str);
       // console.log(`typing value: ${str}`);
       if (reg === false && str !== '' && str !== ' ') {
         this.isActive = true;
-        this.filterList =  this.boards.filter((el) => {
+        this.filterList = this.boards.filter((el) => {
           return el.title.match(str);
         });
       } else {
         this.isActive = false;
       }
     },
-    filterList: function () {
-      if (this.searchQuery == ''){
-        this.$emit('no-searching')
+    filterList: function() {
+      if (this.searchQuery == '') {
+        this.$emit('no-searching');
       } else {
-        this.$emit('filter-vote',this.filterList)
+        this.$emit('filter-vote', this.filterList);
       }
-    }
+    },
   },
-}
+};
 </script>
 
 <style scoped>
-html, body {
+html,
+body {
   height: 100%;
 }
 body {
@@ -132,7 +141,7 @@ body {
 .wrap {
   display: table;
   padding: 0px 20px;
-  padding-bottom: 100px;
+  padding-bottom: 10px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
