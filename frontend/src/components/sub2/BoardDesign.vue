@@ -70,7 +70,6 @@ export default {
     return {};
   },
   created() {
-    // console.log(this.value);
   },
   props: {
     value: {

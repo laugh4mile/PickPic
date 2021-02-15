@@ -50,7 +50,6 @@ export default {
     axios
       .get(`${SERVER_URL}/post`, { params })
       .then((response) => {
-        // console.log(response.data);
         if (response.data.fileList.length == 0){
           this.$emit('no-pic')
         }
@@ -73,12 +72,9 @@ export default {
             });
           }
         }
-        // console.log(this.imgUrl);
-        // console.log(this.options);
-        console.log(this.options.showResults);
       })
       .catch((error) => {
-        alert(error);
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
   },
   methods: {
@@ -89,7 +85,6 @@ export default {
       }
       alert(this.selected+1+'번째 사진에 투표하였습니다.')
       // this.selected = -1
-      // console.log('투표', this.item);
       const params = new URLSearchParams();
       params.append('email', this.$store.getters.getUserEmail);
       params.append('postNo', this.item.postNo);
@@ -97,7 +92,6 @@ export default {
       axios
         .post(`${SERVER_URL}/post/vote`, params)
         .then((response) => {
-          console.log(response.data);
           this.options.showResults = true;
           this.options.finalResults = true;
           this.options.answers = [];
@@ -120,13 +114,12 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     selectImg(item, idx) {
       this.item = item;
       this.selected = idx;
-      console.log(this.selected);
     },
   },
 };

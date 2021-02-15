@@ -130,20 +130,12 @@ export default {
     emitedData(event) {
       this.content = event.content;
       this.title = event.title;
-      console.log('event', event);
     },
     modiImg(item, index) {
       this.deleted.push(item.picNo);
       this.imgUrl.splice(index, 1);
-      console.log(item);
-      console.log(index);
     },
     deleteImg(index) {
-      console.log(index);
-      // this.imageUrl.splice(index, 1)
-      // this.myfile.splice(index, 1)
-      console.log('이미지', this.imageUrl);
-      console.log('파일', this.myfile);
       this.imageUrl.splice(index, 1);
       this.myfile.splice(index, 1);
     },
@@ -156,8 +148,6 @@ export default {
         this.imageUrl.push(URL.createObjectURL(file[i]));
         this.myfile.push(this.$refs.file.files[i]);
       }
-      // console.log(this.myfile)
-      // console.log(this.imageUrl)
     },
     getTempPost() {
       this.dialog = false;
@@ -167,7 +157,6 @@ export default {
       axios
         .get(`${SERVER_URL}/post`, { params })
         .then((response) => {
-          console.log(response);
           this.tempBoard.postNo = response.data.postInfo.postNo;
           this.tempBoard.title = response.data.postInfo.title;
           this.tempBoard.content = response.data.postInfo.content;
@@ -179,13 +168,12 @@ export default {
           // this.content = response.data.postInfo.content;
           this.imgUrl = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
-            console.log(response.data.fileList[i].modPicName);
             this.imgUrl.push(response.data.fileList[i]);
           }
           this.temp = true;
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     tempUpload() {
@@ -195,7 +183,6 @@ export default {
         frm.append('files', file);
       }
 
-      console.log(this.postNo);
       frm.append('postNo', this.postNo);
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
@@ -209,10 +196,9 @@ export default {
         })
         .then((response) => {
           alert('등록 완료');
-          //   this.$router.push("/board");
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     getTemp() {
@@ -224,7 +210,7 @@ export default {
           this.tempPost = response.data;
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     completeUpload() {
@@ -237,13 +223,11 @@ export default {
         let file = this.myfile[i];
         frm.append('files', file);
       }
-      console.log('저장된거바바', this.content);
       frm.append('postNo', this.postNo);
       frm.append('email', this.$store.getters.getUserEmail);
       frm.append('content', this.content);
       frm.append('title', this.title);
       frm.append('unmodified', this.deleted);
-      console.log('딜리티스', this.deleted);
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {
@@ -252,11 +236,10 @@ export default {
         })
         .then((response) => {
           alert('등록 완료');
-          console.log(response);
           this.$router.push('/board');
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     deleteForm() {
@@ -271,7 +254,7 @@ export default {
           this.$router.push('/board');
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
   },

@@ -54,20 +54,16 @@ export default {
     VoteSearch,
   },
   created() {
-    console.log(process.env.VUE_APP_SERVER_URL);
 
     axios
       .get(`${SERVER_URL}/post/list`)
       .then((response) => {
-        // console.log(response);
         this.boards = response.data;
         this.board = this.boards;
       })
       .catch((error) => {
-        alert(error);
-        this.$router.push('/Error');
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
-    // console.log(board);
   },
   methods: {
     noSearching: function() {
@@ -101,7 +97,7 @@ export default {
           }, 1000);
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     searchBoard() {

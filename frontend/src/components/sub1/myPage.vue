@@ -84,25 +84,17 @@ export default {
     ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
   },
   created() {
-    console.log('created');
-    console.log(this.$store.getters.getRole);
-    console.log(this.$store.getters.getUserEmail);
     const params = new URLSearchParams();
     params.append('email', this.getUserEmail);
     axios
       .get(`${SERVER_URL}/member`, { params })
       .then((response) => {
-        console.log('리스폰스', response);
         this.user = null;
         this.user = response.data.info;
-        this.user.profileImg =
-          'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
-          response.data.info.profileImg;
-        console.log(this.user);
-        console.log(this.user.email);
+        this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
       })
       .catch(() => {
-        // this.$router.push("/Error");
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
   },
   methods: {
@@ -110,46 +102,39 @@ export default {
       if (input.target.files[0]) {
         if (this.user.profileImg) {
           const params = new URLSearchParams();
-          params.append('email', this.user.email);
+          params.append("email", this.user.email);
+          axios.get(`${SERVER_URL}/member/delete`, {params})
+          .then((response) => {
+          })
+          .catch((err) => {
+            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          });
+        }
+        var frm = new FormData();
+        var photoFile = input.target.files[0]
+        frm.append("profileImg", photoFile);
+        frm.append("email", this.user.email);
+        axios.post(`${SERVER_URL}/member/upload`, frm,{
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then((response) => {
+          alert('프로필 업로드 완료');
+          const params = new URLSearchParams();
+          params.append("email", this.getUserEmail);
           axios
             .get(`${SERVER_URL}/member/delete`, { params })
             .then((response) => {
               console.log('기존이미지 삭제');
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
             });
-        }
-        var frm = new FormData();
-        var photoFile = input.target.files[0];
-        frm.append('profileImg', photoFile);
-        frm.append('email', this.user.email);
-        axios
-          .post(`${SERVER_URL}/member/upload`, frm, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then((response) => {
-            alert('프로필 업로드 완료');
-            const params = new URLSearchParams();
-            params.append('email', this.getUserEmail);
-            axios
-              .get(`${SERVER_URL}/member`, { params })
-              .then((response) => {
-                this.user = null;
-                this.user = response.data.info;
-                this.user.profileImg =
-                  'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
-                  response.data.info.profileImg;
-              })
-              .catch(() => {
-                // this.$router.push("/Error");
-              });
-          })
-          .catch((error) => {
-            this.$router.push('/Error');
-          });
+        })
+        .catch(error => {
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+        });
       }
     },
     showmodifyForm: function() {
@@ -162,11 +147,10 @@ export default {
           introduce: this.user.introduce,
         })
         .then((response) => {
-          console.log(response);
           this.modify = false;
         })
         .catch((error) => {
-          this.$router.push('/Error');
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
   },

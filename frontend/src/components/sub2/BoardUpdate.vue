@@ -69,9 +69,7 @@ export default {
         },
       })
       .then((response) => {
-        console.log(response);
         this.not = response.data.fileList;
-        console.log(this.not);
         for (var n = 0; n < this.not.length; n++) {
           this.temp.push(this.not[n].picNo);
         }
@@ -79,33 +77,27 @@ export default {
         for (var i = 0; i < response.data.fileList.length; i++) {
           this.imgUrl.push(response.data.fileList[i]);
         }
-        console.log(this.imgUrl)
         this.board = response.data;
       })
       .catch((error) => {
-        console.log(error);
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
   },
 
   methods: {
   emitedData(event){
       this.board.postInfo = event;
-      console.log("emitted",this.board);
     },
     modiImg(item, index) {
       this.deleted.push(item.picNo)
       this.imgUrl.splice(index, 1)
-      console.log(item)
-      console.log(index)
     },
     deleteImg(index) {
-      console.log(index)
       this.imageUrl.splice(index, 1)
       this.myfile.splice(index, 1)
     },
     modifyComplete() {
       var frm = new FormData();
-      console.log(this.myfile)
       
       for (var i = 0; i < this.myfile.length; i++) {
         let file = this.myfile[i];
@@ -116,7 +108,6 @@ export default {
     //         frm.append("files", this.$refs.file[i].files[0]);
     //     }
     //   }
-      console.log(frm);
       for (var i = 0; i < this.modified.length; i++) {
         const idx = this.temp.indexOf(this.modified[i]);
         this.temp.splice(idx,1);
@@ -126,11 +117,8 @@ export default {
 
       // }
       if (this.modified.length <1) {
-        console.log('변경된거 없음')
         this.temp = []
       }
-      console.log('모디파이드 배열은',this.modified)
-      console.log('최종보내줄 배열은',this.temp)
       frm.append("unmodified",this.deleted)
       frm.append("postNo", this.board.postInfo.postNo);
       frm.append("content", this.board.postInfo.content);
@@ -143,6 +131,7 @@ export default {
         })
         .catch((error) => {
           alert("수정 실패");
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     onChangeImages(e) {
@@ -151,27 +140,7 @@ export default {
         this.imageUrl.push(URL.createObjectURL(file[i]));
         this.myfile.push(this.$refs.file.files[i])
       }
-      console.log(this.myfile)
-      console.log(this.imageUrl)
     },
-    // onChangeImages(e) {
-    //   this.myfile.push(event.target.files[0])
-    //   document.getElementById("img" + index).src = URL.createObjectURL(
-    //     event.target.files[0]
-    //   );
-    //   console.log(event);
-    //   this.not[index] = event.target.files[0];
-    //   this.modified = [];
-    //   for (var n = 0; n < this.not.length; n++) {
-    //     //   console.log(this.not[n].picNo)
-    //     if (this.not[n].picNo) {
-    //       this.modified.push(this.not[n].picNo);
-    //     }
-    //     //   console.log(this.not[n])
-    //   }
-    //   //   this.imgUrl[0] = URL.createObjectURL(event.target.files[0]);
-    //   console.log(this.modified);
-    // },
   },
   computed: {},
 };
