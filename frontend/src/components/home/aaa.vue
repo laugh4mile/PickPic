@@ -94,7 +94,6 @@ export default {
       axios
         .get(`${SERVER_URL}/post/list/` + i)
         .then((response) => {
-          console.log(response);
           this.imgurl.push(
             'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
               response.data.thumbnail

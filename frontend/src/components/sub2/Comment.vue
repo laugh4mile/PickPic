@@ -246,20 +246,17 @@ export default {
       params.append('email', this.getUserEmail);
       params.append('pg', this.limit);
       params.append('sortBy', this.sortBy);
-      console.log('마지막이라고');
       axios
         .post(`${SERVER_URL}/comment/` + this.$route.params.no, params)
         .then((response) => {
           setTimeout(() => {
             if (response.data.length) {
-              console.log(response.data);
               for (var i = 0; i < response.data.length; i++) {
                 response.data[i].Comment.profileImg =
                   'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
                   response.data[i].Comment.profileImg;
               }
               this.comments = this.comments.concat(response.data);
-              console.log(this.comments);
               $state.loaded();
               this.limit += 1;
               // 끝 지정(No more data) - 데이터가 EACH_LEN개 미만이면
@@ -273,7 +270,7 @@ export default {
           }, 1000);
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     refreshData(sortTo) {
@@ -288,7 +285,6 @@ export default {
           params,
         })
         .then((response) => {
-          console.log(response.data);
           this.comments = response.data;
           // this.comments.profileImg =
           //   'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
@@ -298,10 +294,9 @@ export default {
               'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
               this.comments[i].Comment.profileImg;
           }
-          console.log(this.comments);
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     heart(cmt) {
@@ -314,14 +309,12 @@ export default {
       }
     },
     modifyCommentBtn(event) {
-      console.log(event);
       this.dis = event.currentTarget.id;
     },
     modifyCommentCompleteBtn(event) {
       this.dis = 0;
     },
     writeComment() {
-      console.log(!this.$store.getters.getUserEmail);
 
       if (!this.$store.getters.getUserEmail) {
         alert('로그인이 필요한 서비스입니다.');
@@ -336,13 +329,12 @@ export default {
               content: this.userComment,
             })
             .then((response) => {
-              console.log(response);
               this.userComment = '';
 
               this.refreshData();
             })
             .catch((error) => {
-              alert(error);
+              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
             });
         }
       }
@@ -363,7 +355,7 @@ export default {
             this.refreshData();
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
           });
       } else if (event.target.innerText == '수정') {
         this.dis = cmt.Comment.commentNo;
@@ -377,7 +369,7 @@ export default {
             this.dis = 0;
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
           });
       }
     },
@@ -389,21 +381,15 @@ export default {
       axios
         .put(`${SERVER_URL}/comment/like`, params)
         .then((res) => {
-          console.log(res);
           if (res.data.likeCheck == 'Y') {
-            // console.log('this.like : ' + this.like);
-            // this.like = true;
             this.like = false;
-            console.log(this.like);
           } else {
-            // console.log('this.like : ' + this.like);
             this.like = true;
-            console.log(this.like);
           }
           this.refreshData();
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
   },
