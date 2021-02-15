@@ -127,6 +127,14 @@
             >님 환영합니다.</span
           >
           <v-btn
+            v-if="getRole=='admin'"
+            text
+            @click="adminPageForm"
+            class="btn btn-outline-secondary rounded-pill ml-2 font-yg-jalnan"
+            style="border-width : 3px;"
+            >관리자페이지</v-btn
+          >
+          <v-btn
             text
             @click="myPageForm"
             class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan"
@@ -214,6 +222,9 @@ export default {
     },
     myPageForm() {
       this.$router.push('/myPage');
+    },
+    adminPageForm() {
+      this.$router.push('/admin');
     },
     toHome() {
       // 같은 경로로 이동시에 충돌 안나게
