@@ -30,6 +30,7 @@ export default {
         answers: [
           // { value: 1, text: "Vue", votes: 53 },
         ],
+        showResults: false,
       },
     };
   },
@@ -57,14 +58,24 @@ export default {
           // this.imgUrl.push(`${SERVER_URL}/post/imgs/download?fileName=` + response.data.fileList[i].modPicName + '&postNo=' + this.no);
           let file = response.data.fileList[i];
           this.imgUrl.push(file);
-          this.options.answers.push({
-            value: i + 1,
-            text: i + 1 + ' 번째',
-            votes: file.voteCnt,
-          });
+          if(response.data.votedPicNo !== undefined && response.data.votedPicNo == file.picNo) {
+            this.options.answers.push({
+              value: i + 1,
+              text: i + 1 + ' 번째',
+              votes: file.voteCnt,
+              selected: true,
+            });
+          } else {
+            this.options.answers.push({
+              value: i + 1,
+              text: i + 1 + ' 번째',
+              votes: file.voteCnt,
+            });
+          }
         }
-        console.log(this.imgUrl);
-        console.log(this.options);
+        // console.log(this.imgUrl);
+        // console.log(this.options);
+        console.log(this.options.showResults);
       })
       .catch((error) => {
         alert(error);
@@ -77,8 +88,8 @@ export default {
         return;
       }
       alert(this.selected+1+'번째 사진에 투표하였습니다.')
-      this.selected = -1
-      console.log('투표', this.item);
+      // this.selected = -1
+      // console.log('투표', this.item);
       const params = new URLSearchParams();
       params.append('email', this.$store.getters.getUserEmail);
       params.append('postNo', this.item.postNo);
@@ -87,14 +98,25 @@ export default {
         .post(`${SERVER_URL}/post/vote`, params)
         .then((response) => {
           console.log(response.data);
+          this.options.showResults = true;
+          this.options.finalResults = true;
           this.options.answers = [];
           for (var i = 0; i < response.data.fileList.length; i++) {
             let file = response.data.fileList[i];
-            this.options.answers.push({
-              value: i + 1,
-              text: i + 1 + ' 번째',
-              votes: file.voteCnt,
-            });
+            if(this.selected == i) {
+              this.options.answers.push({
+                value: i + 1,
+                text: i + 1 + ' 번째',
+                votes: file.voteCnt,
+                selected: true,
+              });
+            } else {
+              this.options.answers.push({
+                value: i + 1,
+                text: i + 1 + ' 번째',
+                votes: file.voteCnt,
+              });
+            }
           }
         })
         .catch((error) => {
