@@ -7,7 +7,12 @@
       v-model="contents.title"
     ></v-text-field>
     <v-row align="center" class="mb-3">
-      <select class="ml-2" id="select_font" v-model="font" @change="cng">
+      <select
+        class="border border-secondary rounded-lg mx-3"
+        id="select_font"
+        v-model="font"
+        @change="cng"
+      >
         <option :value="item" v-for="(item, index) in fonts" :key="index">
           {{ item }}
         </option>
@@ -110,18 +115,18 @@
 
 <script>
 var font_size = 12;
-var font = "Arial";
+var font = 'Arial';
 
 var selection_range;
 
-var clickHandler = function (event) {
+var clickHandler = function(event) {
   document
-    .getElementById("editors")
-    .removeEventListener("keypress", clickHandler);
+    .getElementById('editors')
+    .removeEventListener('keypress', clickHandler);
   updateFontSizeForNewText(event);
 };
 
-var isValidKeyPress = function (e) {
+var isValidKeyPress = function(e) {
   var keycode = e.keyCode;
   var valid =
     (keycode > 47 && keycode < 58) || // number keys
@@ -132,25 +137,25 @@ var isValidKeyPress = function (e) {
   return valid;
 };
 
-var updateFontSizeForNewText = function (e) {
+var updateFontSizeForNewText = function(e) {
   var timestamp = new Date().getUTCMilliseconds();
-  var key = "";
+  var key = '';
   if (isValidKeyPress(e)) {
     event.preventDefault();
     key = e.key;
-    var span = document.createElement("span");
+    var span = document.createElement('span');
     span.id = timestamp;
     var txt = document.createTextNode(key);
-    span.style.fontSize = font_size + "px";
+    span.style.fontSize = font_size + 'px';
     span.style.fontFamily = font;
     span.appendChild(txt);
-    var wrap = document.createElement("div");
+    var wrap = document.createElement('div');
     wrap.appendChild(span.cloneNode(true));
     pasteHtmlAtCaret(wrap.innerHTML);
   }
 };
 
-var pasteHtmlAtCaret = function (html) {
+var pasteHtmlAtCaret = function(html) {
   var sel, range;
   if (window.getSelection) {
     // IE9 and non-IE
@@ -161,7 +166,7 @@ var pasteHtmlAtCaret = function (html) {
 
       // Range.createContextualFragment() would be useful here but is
       // non-standard and not supported in all browsers (IE9, for one)
-      var el = document.createElement("div");
+      var el = document.createElement('div');
       el.innerHTML = html;
       var frag = document.createDocumentFragment(),
         node,
@@ -180,7 +185,7 @@ var pasteHtmlAtCaret = function (html) {
         sel.addRange(range);
       }
     }
-  } else if (document.selection && document.selection.type != "Control") {
+  } else if (document.selection && document.selection.type != 'Control') {
     // IE < 9
     document.selection.createRange().pasteHTML(html);
   }
@@ -196,42 +201,42 @@ export default {
   mounted() {
     if (this.contents) {
       this.content = this.contents;
-      $("#editors").append(this.content.content);
+      $('#editors').append(this.content.content);
       this.getTitle();
-      this.sendText = marked($("#editors")[0].innerText + "", {
+      this.sendText = marked($('#editors')[0].innerText + '', {
         sanitize: true,
       });
     }
   },
   data() {
     return {
-      H: ["H1", "H2", "H3", "H4", "H5", "H6"],
+      H: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
       size: [8, 10, 11, 12, 13, 15, 16, 19, 24, 28, 30, 34, 38],
       videosrcs: [],
-      srcs: "",
-      temp: "",
-      sendText: "",
-      font_size: "12",
+      srcs: '',
+      temp: '',
+      sendText: '',
+      font_size: '12',
       dialog: false,
       fonts: [
-        "Arial",
-        "Sans Serif",
-        "Comic Sans MS",
-        "Times New Roman",
-        "Courier New",
-        "Verdana",
-        "Trebuchet MS",
-        "Arial Black",
-        "Impact",
-        "Bookman",
-        "Garamond",
-        "Palatino",
-        "Georgia",
+        'Arial',
+        'Sans Serif',
+        'Comic Sans MS',
+        'Times New Roman',
+        'Courier New',
+        'Verdana',
+        'Trebuchet MS',
+        'Arial Black',
+        'Impact',
+        'Bookman',
+        'Garamond',
+        'Palatino',
+        'Georgia',
       ],
-      font: "Arial",
+      font: 'Arial',
       content: {
-        title: "",
-        content: "",
+        title: '',
+        content: '',
       },
     };
   },
@@ -242,31 +247,31 @@ export default {
   },
   methods: {
     preview() {
-      $("#preview").addClass("hidden");
-      $("#edit").removeClass("hidden");
-      $("#previewEditor").removeClass("hidden");
-      $("#editors").addClass("hidden");
+      $('#preview').addClass('hidden');
+      $('#edit').removeClass('hidden');
+      $('#previewEditor').removeClass('hidden');
+      $('#editors').addClass('hidden');
     },
     edit() {
-      $("#edit").addClass("hidden");
-      $("#preview").removeClass("hidden");
-      $("#previewEditor").addClass("hidden");
-      $("#editors").removeClass("hidden");
+      $('#edit').addClass('hidden');
+      $('#preview').removeClass('hidden');
+      $('#previewEditor').addClass('hidden');
+      $('#editors').removeClass('hidden');
     },
     cng() {
       font = this.font;
       this.ColorizeSelection(font_size);
     },
     getTitle() {
-      this.$emit("text", this.contents);
+      this.$emit('text', this.contents);
     },
     getText(event) {
-      this.contents.content = document.getElementById("editors").innerHTML;
-      this.$emit("text", this.contents);
+      this.contents.content = document.getElementById('editors').innerHTML;
+      this.$emit('text', this.contents);
       this.update(event);
     },
-    update: _.debounce(function (e) {
-      this.sendText = marked(e.target.innerText + "", { sanitize: true });
+    update: _.debounce(function(e) {
+      this.sendText = marked(e.target.innerText + '', { sanitize: true });
     }, 500),
     GetNextLeaf(node) {
       while (!node.nextSibling) {
@@ -300,10 +305,10 @@ export default {
     IsTextVisible(text) {
       for (var i = 0; i < text.length; i++) {
         if (
-          text[i] != " " &&
-          text[i] != "\t" &&
-          text[i] != "\r" &&
-          text[i] != "\n"
+          text[i] != ' ' &&
+          text[i] != '\t' &&
+          text[i] != '\r' &&
+          text[i] != '\n'
         )
           return true;
       }
@@ -316,17 +321,17 @@ export default {
       var parentNode = node.parentNode;
       // if the node does not have siblings and the parent is a span element, then modify its color
       if (!node.previousSibling && !node.nextSibling) {
-        if (parentNode.tagName.toLowerCase() == "span") {
+        if (parentNode.tagName.toLowerCase() == 'span') {
           //parentNode.style.color = color;
-          parentNode.style.fontSize = size + "px";
+          parentNode.style.fontSize = size + 'px';
           return;
         }
       }
 
       // Create a span element around the node
-      var span = document.createElement("span");
+      var span = document.createElement('span');
       //span.style.color = color;
-      span.style.fontSize = size + "px";
+      span.style.fontSize = size + 'px';
       var nextSibling = node.nextSibling;
 
       parentNode.removeChild(node);
@@ -360,9 +365,9 @@ export default {
         parentNode.insertBefore(textNode, nextSibling);
       }
       if (part2.length > 0) {
-        var span = document.createElement("span");
+        var span = document.createElement('span');
         //span.style.color = color;
-        span.style.fontSize = size + "px";
+        span.style.fontSize = size + 'px';
         var textNode = document.createTextNode(part2);
         span.appendChild(textNode);
         parentNode.insertBefore(span, nextSibling);
@@ -409,8 +414,8 @@ export default {
         if (selectionRange.isCollapsed) {
           font_size = size;
           document
-            .getElementById("editors")
-            .addEventListener("keypress", clickHandler);
+            .getElementById('editors')
+            .addEventListener('keypress', clickHandler);
           selection_range = selectionRange;
         } else {
           var range = selectionRange.getRangeAt(0);
@@ -460,7 +465,7 @@ export default {
         }
       } else {
         // Internet Explorer before version 9
-        alert("Your browser does not support this example!");
+        alert('Your browser does not support this example!');
       }
     },
     dialogComp() {
@@ -470,35 +475,35 @@ export default {
           this.srcs
         )
       ) {
-        alert("valid url");
+        alert('valid url');
         if (this.validateYouTubeUrl(this.srcs)) {
           this.videosrcs.push(this.srcs);
           // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
 
-          var iframe = document.createElement("iframe");
+          var iframe = document.createElement('iframe');
           iframe.src = this.videosrcs[this.videosrcs.length - 1];
           iframe.width = 560;
           iframe.height = 315;
-          document.getElementById("editors").append(iframe);
+          document.getElementById('editors').append(iframe);
           document
-            .getElementById("editors")
-            .append(document.createElement("br"));
-          this.content.content = document.getElementById("editors").innerHTML;
-          this.$emit("text", this.content);
+            .getElementById('editors')
+            .append(document.createElement('br'));
+          this.content.content = document.getElementById('editors').innerHTML;
+          this.$emit('text', this.content);
         } else {
-          var a = document.createElement("a");
+          var a = document.createElement('a');
           a.href = this.srcs;
           a.innerText = this.srcs;
-          document.getElementById("editors").append(a);
-          this.content.content = document.getElementById("editors").innerHTML;
-          this.$emit("text", this.content);
+          document.getElementById('editors').append(a);
+          this.content.content = document.getElementById('editors').innerHTML;
+          this.$emit('text', this.content);
         }
       } else {
-        alert("invalid url");
+        alert('invalid url');
       }
     },
     validateYouTubeUrl(url) {
-      if (url != undefined || url != "") {
+      if (url != undefined || url != '') {
         var regExp = /^.*(youtube\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
         var match = url.match(regExp);
         if (match && match[2].length > 10) {

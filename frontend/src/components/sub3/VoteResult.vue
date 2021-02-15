@@ -7,8 +7,10 @@
         :key="index"
         :class="{ ans: true, [a.custom_class]: a.custom_class }"
       >
-         <template>
-          <div :class="{ 'ans-voted': true, 'final': true, selected: a.selected }">
+        <template>
+          <div
+            :class="{ 'ans-voted': true, final: true, selected: a.selected }"
+          >
             <span v-if="a.percent" class="percent" v-text="a.percent"></span>
             <span class="txt" v-html="a.text"></span>
           </div>
@@ -19,16 +21,13 @@
         </template>
       </div>
     </div>
-    <div
-      class="votes"
-      v-text="totalVotesFormatted + ' votes'"
-    ></div>
+    <div class="votes" v-text="totalVotesFormatted + ' votes'"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Poll",
+  name: 'Poll',
   props: {
     question: {
       type: String,
@@ -52,7 +51,7 @@ export default {
     },
     submitButtonText: {
       type: String,
-      default: "Submit",
+      default: 'Submit',
     },
     customId: {
       type: Number,
@@ -74,7 +73,7 @@ export default {
     },
     totalVotesFormatted() {
       // return this.totalVotes;
-      return this.totalVotes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return this.totalVotes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
     mostVotes() {
       let max = 0;
@@ -87,7 +86,7 @@ export default {
     calcAnswers() {
       if (this.totalVotes === 0)
         return this.answers.map((a) => {
-          a.percent = "0%";
+          a.percent = '0%';
           return a;
         });
 
@@ -95,8 +94,8 @@ export default {
       return this.answers.filter((a) => {
         if (!isNaN(a.votes) && a.votes > 0)
           a.percent =
-            Math.round((parseInt(a.votes) / this.totalVotes) * 100) + "%";
-        else a.percent = "0%";
+            Math.round((parseInt(a.votes) / this.totalVotes) * 100) + '%';
+        else a.percent = '0%';
 
         return a;
       });
@@ -108,9 +107,7 @@ export default {
   methods: {
     handleVote(a) {
       if (this.multiple) {
-        if (a.selected === undefined)
-
-        a.selected = !a.selected;
+        if (a.selected === undefined) a.selected = !a.selected;
         return;
       }
 
@@ -122,7 +119,7 @@ export default {
 
       if (this.customId) obj.customId = this.customId;
 
-      this.$emit("addvote", obj);
+      this.$emit('addvote', obj);
     },
   },
 };
@@ -130,7 +127,7 @@ export default {
 
 <style>
 .vue-poll {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -203,7 +200,7 @@ export default {
 }
 
 .vue-poll .ans-cnt .ans-voted.selected .txt:after {
-  content: "✔";
+  content: '✔';
   margin-left: 10px;
 }
 
@@ -229,7 +226,7 @@ export default {
 .vue-poll .votes {
   font-size: 14px;
   color: #8899a6;
-  margin: -10px 0 15px 10px ;
+  margin: -10px 0 15px 10px;
 }
 
 .vue-poll .submit {

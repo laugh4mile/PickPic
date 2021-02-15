@@ -18,14 +18,14 @@
 </template>
 
 <script>
-  // Utilities
-  import { mapGetters } from 'vuex'
+// Utilities
+import { mapGetters } from 'vuex';
 
-  export default {
-    name: 'Tags',
+export default {
+  name: 'Tags',
 
-    computed: {
-      ...mapGetters(['categories']),
-    },
-  }
+  computed: {
+    ...mapGetters(['categories']),
+  },
+};
 </script>

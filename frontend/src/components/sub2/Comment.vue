@@ -50,7 +50,7 @@
                 <v-btn
                   class="purple mb-3"
                   color="primary"
-                  style="float:right"
+                  style="float:right; height:30px; min-width:30px"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -85,7 +85,7 @@
             />
             <v-row>
               <v-spacer />
-              <span style="font-size:13px">
+              <span style="font-size:13px" class="mr-3 mt-2">
                 좋아요 {{ comment.Comment.likeCnt }}개
               </span>
               <!-- <img
@@ -96,14 +96,14 @@
               /> -->
               <div v-if="comment.likeCheck == 'Y'">
                 <i
-                  class="fas fa-heart fa-2x"
+                  class="fas fa-heart fa-2x mr-2"
                   style="color:red"
                   @click="heartClick(comment)"
                 ></i>
               </div>
               <div v-else>
                 <i
-                  class="far fa-heart fa-2x"
+                  class="far fa-heart fa-2x mr-2"
                   style="color:red"
                   @click="heartClick(comment)"
                 ></i>
@@ -270,7 +270,10 @@ export default {
           }, 1000);
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     refreshData(sortTo) {
@@ -296,7 +299,10 @@ export default {
           }
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     heart(cmt) {
@@ -315,7 +321,6 @@ export default {
       this.dis = 0;
     },
     writeComment() {
-
       if (!this.$store.getters.getUserEmail) {
         alert('로그인이 필요한 서비스입니다.');
       } else {
@@ -334,7 +339,10 @@ export default {
               this.refreshData();
             })
             .catch((error) => {
-              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+              this.$router.push({
+                path: '/Error',
+                query: { status: error.response.status },
+              });
             });
         }
       }
@@ -355,7 +363,10 @@ export default {
             this.refreshData();
           })
           .catch((error) => {
-            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
       } else if (event.target.innerText == '수정') {
         this.dis = cmt.Comment.commentNo;
@@ -369,7 +380,10 @@ export default {
             this.dis = 0;
           })
           .catch((error) => {
-            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
       }
     },
@@ -389,7 +403,10 @@ export default {
           this.refreshData();
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
   },

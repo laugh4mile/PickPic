@@ -9,7 +9,7 @@
 </template>
 
 <script>
-  export default {
-    name: 'BaseSubheading',
-  }
+export default {
+  name: 'BaseSubheading',
+};
 </script>

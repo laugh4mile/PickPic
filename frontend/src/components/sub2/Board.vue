@@ -54,7 +54,6 @@ export default {
     VoteSearch,
   },
   created() {
-
     axios
       .get(`${SERVER_URL}/post/list`)
       .then((response) => {
@@ -62,7 +61,10 @@ export default {
         this.board = this.boards;
       })
       .catch((error) => {
-        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+        this.$router.push({
+          path: '/Error',
+          query: { status: error.response.status },
+        });
       });
   },
   methods: {
@@ -97,7 +99,10 @@ export default {
           }, 1000);
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     searchBoard() {

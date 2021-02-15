@@ -5,7 +5,7 @@
       <div
         class="well col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2"
       >
-        <div class="row user-row" >
+        <div class="row user-row">
           <div class="col-xs-3 col-sm-2 col-md-1 col-lg-1">
             <img
               class="img img-responsive user-photo"
@@ -14,17 +14,28 @@
             />
           </div>
           <div class="col-xs-8 col-sm-9 col-md-10 col-lg-10">
-            <strong>{{ user.name }}</strong><br />
-            <span class="text-muted">User level: {{ user.role}}</span>
+            <strong>{{ user.name }}</strong
+            ><br />
+            <span class="text-muted">User level: {{ user.role }}</span>
           </div>
           <div
             class="col-xs-1 col-sm-1 col-md-1 col-lg-1 dropdown-user"
             data-for="cyruxx"
           >
-            <i class="glyphicon glyphicon-chevron-down text-muted" @click="isShow = !isShow"></i>
+            <i
+              class="glyphicon glyphicon-chevron-down text-muted"
+              @click="isShow = !isShow"
+            ></i>
           </div>
         </div>
-        <div class="row user-infos cyruxx" :class="{hidden: !isShow, 'botao-lista-baixo': !isShow, 'botao-lista-cima': !isShow}">
+        <div
+          class="row user-infos cyruxx"
+          :class="{
+            hidden: !isShow,
+            'botao-lista-baixo': !isShow,
+            'botao-lista-cima': !isShow,
+          }"
+        >
           <div
             class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-1 col-lg-offset-1"
           >
@@ -77,7 +88,8 @@
                     </dl>
                   </div> -->
                   <div class=" col-md-9 col-lg-9 hidden-xs hidden-sm">
-                    <strong>{{ user.name }}</strong><br />
+                    <strong>{{ user.name }}</strong
+                    ><br />
                     <table class="table table-user-information">
                       <tbody>
                         <tr>
@@ -118,7 +130,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
@@ -128,7 +140,7 @@ export default {
     };
   },
   methods: {
-    deleteUser () {
+    deleteUser() {
       axios
         .delete(`${SERVER_URL}/member`, {
           data: {
@@ -136,11 +148,11 @@ export default {
           },
         })
         .then((response) => {
-          alert('회원을 삭제했습니다.')
-          this.$emit('deleted',this.user)
+          alert('회원을 삭제했습니다.');
+          this.$emit('deleted', this.user);
         })
         .catch((error) => {
-          this.$router.push("/Error");
+          this.$router.push('/Error');
         });
     },
   },
@@ -203,10 +215,10 @@ export default {
   margin-top: 3.5%;
 }
 .container {
-	padding: 0;
+  padding: 0;
 }
 .well {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 .lista-collapse {
   width: 100%;
@@ -255,7 +267,7 @@ export default {
   padding-top: 100px;
 }
 .row {
-	margin: 0;
+  margin: 0;
 }
 .user-row:last-child {
   margin-bottom: 0;

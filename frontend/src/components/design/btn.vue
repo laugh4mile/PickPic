@@ -1,17 +1,15 @@
 <template>
-    <v-btn color="secondary" outlined>
-        {{title}}
-    </v-btn>
+  <v-btn color="secondary" outlined>
+    {{ title }}
+  </v-btn>
 </template>
 <script>
 export default {
-    created(){
-
+  created() {},
+  props: {
+    title: {
+      type: String,
     },
-    props:{
-        title:{
-            type:String,
-        }
-    },
-}
+  },
+};
 </script>

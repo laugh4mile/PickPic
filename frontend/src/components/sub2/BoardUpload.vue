@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container font-ELAND_Choice_B">
     <v-row align="center">
       <!-- <v-text-field label="제목" v-model="title"></v-text-field> -->
 
@@ -173,7 +173,10 @@ export default {
           this.temp = true;
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     tempUpload() {
@@ -198,7 +201,10 @@ export default {
           alert('등록 완료');
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     getTemp() {
@@ -210,7 +216,10 @@ export default {
           this.tempPost = response.data;
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     completeUpload() {
@@ -239,7 +248,10 @@ export default {
           this.$router.push('/board');
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     deleteForm() {
@@ -254,7 +266,10 @@ export default {
           this.$router.push('/board');
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
   },
