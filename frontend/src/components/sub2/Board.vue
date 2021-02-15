@@ -3,7 +3,7 @@
     <div>
       <v-row align="center">
 
-        <v-btn color="secondary" outline @click="uploadForm" class="mr-2">작성</v-btn>
+        <v-btn color="secondary" outlined @click="uploadForm" class="mr-2">작성</v-btn>
         <VoteSearch @filter-vote="filterVote" @no-searching="noSearching" :boards="boards" />
         <!-- <v-text-field label="제목 검색" v-model="search"></v-text-field> -->
         <!-- <v-btn class="ml-2" @click="searchBoard">검색</v-btn> -->

@@ -11,7 +11,6 @@ import BoardDetail from "../components/sub2/BoardDetail.vue"
 import BoardUpdate from "../components/sub2/BoardUpdate.vue"
 import BoardUpload from "../components/sub2/BoardUpload.vue"
 import temp from "../components/sub2/temp.vue"
-import editor from "../components/sub3/Editor.vue";
 Vue.use(Router)
 
 export default new Router({
@@ -22,11 +21,6 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
-    },
-    {
-      path: '/editor',
-      name: 'editor',
-      component: editor,
     },
     {
       path: '/tt',

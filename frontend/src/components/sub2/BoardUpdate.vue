@@ -34,8 +34,8 @@
         </span>
       </v-row>
     </div>
-
-    <v-btn dark @click="modifyComplete">수정 완료</v-btn>
+    <br>
+    <v-btn color="secondary" outlined @click="modifyComplete">수정 완료</v-btn>
   </div>
 </template>
 <script>
