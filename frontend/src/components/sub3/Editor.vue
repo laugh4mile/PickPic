@@ -1,10 +1,16 @@
 <template>
   <div class="container">
     <head> </head>
-    <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
+    <v-text-field
+      label="제목"
+      @change="getTitle"
+      v-model="contents.title"
+    ></v-text-field>
     <v-row align="center" class="mb-3">
       <select class="ml-2" id="select_font" v-model="font" @change="cng">
-        <option :value="item" v-for="(item, index) in fonts" :key="index">{{item}}</option>
+        <option :value="item" v-for="(item, index) in fonts" :key="index">
+          {{ item }}
+        </option>
       </select>
       <button class="mr-2" onclick="document.execCommand('Bold')">
         <i class="fas fa-bold fa-lg fa-border"></i>
@@ -18,10 +24,10 @@
       <button class="mr-2" onclick="document.execCommand('StrikeThrough')">
         <i class="fas fa-strikethrough fa-lg fa-border"></i>
       </button>
-      <v-menu  offset-y>
-        <template  v-slot:activator="{ on, attrs }">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
           <v-btn class="mr-2" color="primary" dark v-bind="attrs" v-on="on">
-            {{font_size}}px
+            {{ font_size }}px
           </v-btn>
         </template>
         <v-list>
@@ -43,49 +49,40 @@
       <button class="mr-2" onclick="document.execCommand('justifyright')">
         <i class="fas fa-align-right fa-lg fa-border"></i>
       </button>
-      <v-dialog
-      v-model="dialog"
-      width="500"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          링크
-        </v-btn>
-      </template>
+      <v-dialog v-model="dialog" width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn dark v-bind="attrs" v-on="on"> 링크 </v-btn>
+        </template>
 
-      <v-card>
-        <v-card-title class="headline grey lighten-2">
-          Privacy Policy
-        </v-card-title>
+        <v-card>
+          <v-card-title class="headline grey lighten-2">
+            Privacy Policy
+          </v-card-title>
 
-        <v-card-text>
-          <v-text-field v-model="srcs" label="링크 입력"></v-text-field>
-        </v-card-text>
+          <v-card-text>
+            <v-text-field v-model="srcs" label="링크 입력"></v-text-field>
+          </v-card-text>
 
-        <v-divider></v-divider>
+          <v-divider></v-divider>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="dialogComp"
-          >
-            완료
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-btn class="ml-2" id="preview" dark @click="preview">Preview</v-btn>
-    <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialogComp"> 완료 </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-btn class="ml-2" id="preview" dark @click="preview">Preview</v-btn>
+      <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
     </v-row>
 
     <div
-      style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto; padding: 10px;"
+      style="
+        border: 0.2px solid black;
+        font-size: 12px;
+        height: 400px;
+        overflow: auto;
+        padding: 10px;
+      "
       id="editors"
       @blur="getText"
       @change="getText"
@@ -93,13 +90,15 @@
       label="본문"
       v-html="contents.content"
     >
-    <!-- <video src="https://tv.naver.com/v/18161441"></video> -->
-    <!-- https://youtu.be/70ip9Ug8DHs -->
-    <br>
-      <!-- <iframe v-for="(item, index) in videosrcs" :key="index" id="video" :src="item" frameborder="0"></iframe> -->
+      <br />
     </div>
     <div
-      style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto;"
+      style="
+        border: 0.2px solid black;
+        font-size: 12px;
+        height: 400px;
+        overflow: auto;
+      "
       id="previewEditor"
       class="hidden"
       label="본문"
@@ -112,19 +111,18 @@
 
 <script>
 var font_size = 12;
-var font = "Arial"
+var font = "Arial";
 
 var selection_range;
 
-
-var clickHandler = function(event) {
+var clickHandler = function (event) {
   document
     .getElementById("editors")
     .removeEventListener("keypress", clickHandler);
   updateFontSizeForNewText(event);
 };
 
-var isValidKeyPress = function(e) {
+var isValidKeyPress = function (e) {
   var keycode = e.keyCode;
   var valid =
     (keycode > 47 && keycode < 58) || // number keys
@@ -135,7 +133,7 @@ var isValidKeyPress = function(e) {
   return valid;
 };
 
-var updateFontSizeForNewText = function(e) {
+var updateFontSizeForNewText = function (e) {
   var timestamp = new Date().getUTCMilliseconds();
   var key = "";
   if (isValidKeyPress(e)) {
@@ -153,7 +151,7 @@ var updateFontSizeForNewText = function(e) {
   }
 };
 
-var pasteHtmlAtCaret = function(html) {
+var pasteHtmlAtCaret = function (html) {
   var sel, range;
   if (window.getSelection) {
     // IE9 and non-IE
@@ -190,28 +188,29 @@ var pasteHtmlAtCaret = function(html) {
 };
 
 export default {
-  created(){
+  created() {
     // this.content = this.contents;
   },
-  mounted(){
-    if(this.contents){
+  mounted() {
+    if (this.contents) {
       this.content = this.contents;
-      console.log('mounted');
       $("#editors").append(this.content.content);
       this.getTitle();
-      this.sendText = marked($("#editors")[0].innerText + '', { sanitize: true });
+      this.sendText = marked($("#editors")[0].innerText + "", {
+        sanitize: true,
+      });
     }
   },
   data() {
     return {
       H: ["H1", "H2", "H3", "H4", "H5", "H6"],
       size: [8, 10, 11, 12, 13, 15, 16, 19, 24, 28, 30, 34, 38],
-      videosrcs:[],
-      srcs:'',
-      temp:'',
-      sendText: '',
-      font_size:'12',
-      dialog:false,
+      videosrcs: [],
+      srcs: "",
+      temp: "",
+      sendText: "",
+      font_size: "12",
+      dialog: false,
       fonts: [
         "Arial",
         "Sans Serif",
@@ -229,49 +228,44 @@ export default {
       ],
       font: "Arial",
       content: {
-        title:'',
-        content:'',
+        title: "",
+        content: "",
       },
     };
   },
-  props:{
-    contents:{
-      type:Object,
-    }
+  props: {
+    contents: {
+      type: Object,
+    },
   },
   methods: {
-    alertFunc(){
-      console.log(this.contents);
+    preview() {
+      $("#preview").addClass("hidden");
+      $("#edit").removeClass("hidden");
+      $("#previewEditor").removeClass("hidden");
+      $("#editors").addClass("hidden");
     },
-    preview(){
-      $("#preview").addClass('hidden');
-      $("#edit").removeClass('hidden');
-      $("#previewEditor").removeClass('hidden');
-      $("#editors").addClass('hidden');
-    },
-    edit(){
-      $("#edit").addClass('hidden');
-      $("#preview").removeClass('hidden');
-      $("#previewEditor").addClass('hidden');
-      $("#editors").removeClass('hidden');
+    edit() {
+      $("#edit").addClass("hidden");
+      $("#preview").removeClass("hidden");
+      $("#previewEditor").addClass("hidden");
+      $("#editors").removeClass("hidden");
     },
     cng() {
       font = this.font;
       this.ColorizeSelection(font_size);
     },
-    getTitle(){
-      this.$emit('text', this.contents);
-      console.log("getTitle", this.contents);
+    getTitle() {
+      this.$emit("text", this.contents);
     },
-    getText(event){
-      this.contents.content = document.getElementById('editors').innerHTML;
-      console.log("getText", this.contents);
-      this.$emit('text', this.contents);
+    getText(event) {
+      this.contents.content = document.getElementById("editors").innerHTML;
+      this.$emit("text", this.contents);
       this.update(event);
     },
-    update: _.debounce(function(e) {
-           this.sendText = marked(e.target.innerText + '', { sanitize: true });
-        }, 500),
+    update: _.debounce(function (e) {
+      this.sendText = marked(e.target.innerText + "", { sanitize: true });
+    }, 500),
     GetNextLeaf(node) {
       while (!node.nextSibling) {
         node = node.parentNode;
@@ -412,7 +406,6 @@ export default {
 
         if (selectionRange.isCollapsed) {
           font_size = size;
-          console.log("Collapsed");
           document
             .getElementById("editors")
             .addEventListener("keypress", clickHandler);
@@ -468,104 +461,56 @@ export default {
         alert("Your browser does not support this example!");
       }
     },
-    dialogComp(){
+    dialogComp() {
       this.dialog = false;
-      if(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www\.)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(this.srcs)){
+      if (
+        /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www\.)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(
+          this.srcs
+        )
+      ) {
         alert("valid url");
-          if(this.validateYouTubeUrl(this.srcs)){
-            console.log("들어옴");
-            this.videosrcs.push(this.srcs);
-            console.log("this.videosrcs[" + this.videosrcs.length + "]");
-            // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
+        if (this.validateYouTubeUrl(this.srcs)) {
+          this.videosrcs.push(this.srcs);
+          // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
 
-            var iframe = document.createElement("iframe");
-            iframe.src = this.videosrcs[this.videosrcs.length-1]
-            iframe.width =  560;
-            iframe.height = 315;
-            document.getElementById('editors').append(iframe);
-            document.getElementById('editors').append(document.createElement('br'));
-            this.content.content = document.getElementById('editors').innerHTML;
-            console.log('url',this.content.content);
-            this.$emit('text', this.content);
-          }else{
-            console.log('안들어옴');
-            var a = document.createElement("a");
-            a.href = this.srcs;
-            a.innerText = this.srcs;
-            console.log(a);
-            document.getElementById('editors').append(a);
-            this.content.content = document.getElementById('editors').innerHTML;
-            console.log('url',this.content.content);
-            this.$emit('text', this.content);
-          }
+          var iframe = document.createElement("iframe");
+          iframe.src = this.videosrcs[this.videosrcs.length - 1];
+          iframe.width = 560;
+          iframe.height = 315;
+          document.getElementById("editors").append(iframe);
+          document
+            .getElementById("editors")
+            .append(document.createElement("br"));
+          this.content.content = document.getElementById("editors").innerHTML;
+          this.$emit("text", this.content);
+        } else {
+          var a = document.createElement("a");
+          a.href = this.srcs;
+          a.innerText = this.srcs;
+          document.getElementById("editors").append(a);
+          this.content.content = document.getElementById("editors").innerHTML;
+          this.$emit("text", this.content);
+        }
       } else {
-          alert("invalid url");
+        alert("invalid url");
       }
     },
-    linkbtn(){
-
-      document.getElementById('editor').append('<span>asd</span>');
-      document.getElementById('editor').append('<iframe v-for="(item, index) in videosrcs" :key="index" id="video" :src="item" frameborder="0"></iframe>');
-    },
-    execFontSize(size, unit) {
-      // var spanString = $("<span/>", {
-      //   text: document.getSelection(),
-      // })
-
-      var e = document.createElement("span");
-      if (document.getSelection()) {
-        e.innerHTML = document.getSelection().toString();
-      } else {
-        console.log("asd");
+    validateYouTubeUrl(url) {
+      if (url != undefined || url != "") {
+        var regExp = /^.*(youtube\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match && match[2].length > 10) {
+          // Do anything for being valid
+          // if need to change the url to embed url then use below line
+          return true;
+          // console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
+          // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
+        } else {
+          // Do anything for not being valid
+          return false;
+        }
       }
-      e.style = "font-size:" + size + unit + ";";
-
-      var range = document.getSelection().getRangeAt(0);
-      range.deleteContents(); // Deletes selected text…
-      range.insertNode(e);
-
-      // document.execCommand("insertHTML", false, spanString);
-    },
-
-    setSelected(item) {
-      this.execFontSize(item, "px");
-    },
-    changeFont() {
-      console.log(this.font);
-      var sel = window.getSelection(); // Gets selection
-      if (sel.rangeCount) {
-        // Creates a new element, and insert the selected text with the chosen font inside
-        var e = document.createElement("span");
-        e.style = "font-family:" + this.font.toString() + ";";
-        e.innerHTML = sel.toString();
-        console.log(e);
-        // https://developer.mozilla.org/en-US/docs/Web/API/Selection/getRangeAt
-        var range = sel.getRangeAt(0);
-        range.deleteContents(); // Deletes selected text…
-        range.insertNode(e); // … and inserts the new element at its place
-      }
-    },
-
-    validateYouTubeUrl(url)
-    {
-      console.log("match");
-            if (url != undefined || url != '') {
-                var regExp = /^.*(youtube\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
-                var match = url.match(regExp);
-                if (match && match[2].length > 10) {
-                    // Do anything for being valid
-                    // if need to change the url to embed url then use below line
-                    return true;
-                    // console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
-                    // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
-                }
-                else {
-                    // Do anything for not being valid
-                    return false;
-                }
-            }
     },
   },
-  
 };
 </script>

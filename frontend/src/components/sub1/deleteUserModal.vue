@@ -59,7 +59,6 @@ export default {
     DeleteUser: function() {
       const params = new URLSearchParams();
       params.append("email", this.getUserEmail);
-      console.log(params);
       if (this.chk == "삭제하겠습니다.") {
         axios
           .delete(`${SERVER_URL}/member`, {
@@ -73,7 +72,7 @@ export default {
               .then(() => this.$router.replace("/").catch(() => {}));
           })
           .catch((error) => {
-            this.$router.push("/Error");
+            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
           });
       } else {
         alert("문구가 일치하지 않습니다.");

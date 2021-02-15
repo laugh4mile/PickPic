@@ -163,7 +163,7 @@ export default {
       
       })
       .catch((err) => {
-        console.log(err)
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
     },
     checkEmailDuplicate() {
@@ -191,7 +191,7 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err)
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
       } else {
         alert('메일 형식에 맞게 입력해주세요')
@@ -212,11 +212,10 @@ export default {
       axios
         .post(`${SERVER_URL}/service/mail`, params)
         .then(response => {
-          console.log(response);
           alert('메일이 전송되었습니다');
         })
         .catch(error => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     verifyBtn() {
@@ -235,7 +234,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
     onSubmit(event){
@@ -251,10 +250,9 @@ export default {
         axios.post(`${SERVER_URL}/member`, this.user).then((response) => {
           alert('회원가입 완료');
           this.$router.push("/");
-          console.log(response);
         })
       .catch(error => {
-        this.$router.push("/Error");
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
       }
     }

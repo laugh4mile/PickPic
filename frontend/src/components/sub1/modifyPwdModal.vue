@@ -99,7 +99,7 @@ export default {
                     this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
                   })
                   .catch(() => {
-                    // this.$router.push("/Error");
+                    this.$router.push({path: '/Error', query: {'status' : error.response.status}});
                   });
                 this.dialog2 = false
               } else {
@@ -108,7 +108,7 @@ export default {
               
             })
             .catch((error) => {
-              this.$router.push("/Error");
+              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
             });
         }
       } else {

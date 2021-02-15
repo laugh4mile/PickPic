@@ -106,7 +106,6 @@ export default {
   },
   created() {
     this.loading = true;
-    console.log("created");
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -115,7 +114,6 @@ export default {
         },
       })
       .then((response) => {
-        console.log(response.data);
         this.board = response.data;
         this.cont = this.board.postInfo.content;
         this.loading = false;
@@ -128,7 +126,7 @@ export default {
         }
       })
       .catch((error) => {
-        console.log(error);
+        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
   },
   methods: {
@@ -167,7 +165,6 @@ export default {
                 },
               })
               .then((response) => {
-                console.log(response.data);
                 this.board = response.data;
                 if (this.board.likeCheck == 'N') {
                   this.heartIcon = require('@/assets/blank heart.png');
@@ -179,11 +176,11 @@ export default {
                 }
               })
               .catch((error) => {
-                console.log(error);
+                this.$router.push({path: '/Error', query: {'status' : error.response.status}});
               });
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
           });
       }
     },
@@ -198,7 +195,7 @@ export default {
           this.$router.push('/board');
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
         });
     },
   },

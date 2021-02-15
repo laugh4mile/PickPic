@@ -70,7 +70,6 @@ export default {
       this.answers.filter((a) => {
         if (!isNaN(a.votes) && a.votes > 0) totalVotes += parseInt(a.votes);
       });
-      console.log(totalVotes);
       return totalVotes;
     },
     totalVotesFormatted() {
@@ -110,7 +109,6 @@ export default {
     handleVote(a) {
       if (this.multiple) {
         if (a.selected === undefined)
-          console.log("Please add 'selected: false' on the answer object");
 
         a.selected = !a.selected;
         return;

@@ -36,26 +36,21 @@ export default {
   },
   methods: {
     changeValue(str) {
-      // console.log(`change value: ${str}`);
       this.isActive = false;
       this.searchQuery = str;
     },
     selectValue(keycode, str) {
       if (this.isActive === true) {
         const hasClass = document.querySelector('.r').classList.contains('key');
-        // console.log(hasClass)
         if (keycode === 'down') {
-          // console.log('내려감')
           if (!hasClass) {
             const thisEl = document.querySelectorAll('.r li')[0];
-            // console.log(thisEl)
             document.querySelector('.r').classList.add('key');
             thisEl.classList.add('sel');
             thisEl.focus();
           } else {
             const lastEl = document.querySelector('.r li:last-child');
             const thisEl = document.querySelector('.r li.sel');
-            // console.log(thisEl)
             const nextEl = thisEl.nextElementSibling;
             if (!lastEl.classList.contains('sel')) {
               thisEl.classList.remove('sel');
@@ -65,7 +60,6 @@ export default {
           }
         }
         if (keycode === 'up' && hasClass) {
-          // console.log('올라감')
           const firstEl = document.querySelectorAll('.r li')[0];
           const thisEl = document.querySelector('.r li.sel');
           const prevEl = thisEl.previousElementSibling;
@@ -96,7 +90,6 @@ export default {
       }
       const str = this.searchQuery;
       const reg = /[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9|\s]/.test(str);
-      // console.log(`typing value: ${str}`);
       if (reg === false && str !== '' && str !== ' ') {
         this.isActive = true;
         this.filterList =  this.boards.filter((el) => {
