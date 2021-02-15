@@ -1,95 +1,145 @@
 <template>
   <div class="container">
-    <b-carousel
-      id="carousel-1"
-      v-model="slide"
-      :interval="3000"
-      controls
-      indicators
-      background="#ababab"
-      img-width="1024px"
-      img-height="480px"
-      style="text-shadow: 1px 1px 2px #333;"
-      @sliding-start="onSlideStart"
-      @sliding-end="onSlideEnd"
-    >
-      <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block myStyle mx-auto"
-            width="1024"
-            height="480"
-            :src="imgurl[0]"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide>
-      <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block myStyle mx-auto"
-            width="1024"
-            height="480"
-            :src="imgurl[1]"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide>
-      <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block myStyle mx-auto"
-            width="1024"
-            height="480"
-            :src="imgurl[2]"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide>
-      <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block myStyle mx-auto"
-            width="1024"
-            height="480"
-            :src="imgurl[3]"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide>
-      <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block myStyle mx-auto"
-            width="1024"
-            height="480"
-            :src="imgurl[4]"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide>
-    </b-carousel>
+    <div class="row">
+      <div
+        class="col-9 rounded-xl mx-4"
+        style="border-style: solid; border-width : 3px; border-color: lightgrey"
+      >
+        <b-carousel
+          id="carousel-1"
+          v-model="slide"
+          :interval="3000"
+          controls
+          indicators
+          class="rounded-xl"
+          background="#ababab"
+          img-width="1024px"
+          img-height="480px"
+          style="text-shadow: 1px 1px 2px #333;"
+          @sliding-start="onSlideStart"
+          @sliding-end="onSlideEnd"
+        >
+          <b-carousel-slide>
+            <template #img>
+              <img
+                class="d-block myStyle mx-auto rounded-xl"
+                width="1024"
+                height="480"
+                :src="imgurl[0]"
+                alt="image slot"
+              />
+            </template>
+          </b-carousel-slide>
+          <b-carousel-slide>
+            <template #img>
+              <img
+                class="d-block myStyle mx-auto rounded-xl"
+                width="1024"
+                height="480"
+                :src="imgurl[1]"
+                alt="image slot"
+              />
+            </template>
+          </b-carousel-slide>
+          <b-carousel-slide>
+            <template #img>
+              <img
+                class="d-block myStyle mx-auto rounded-xl"
+                width="1024"
+                height="480"
+                :src="imgurl[2]"
+                alt="image slot"
+              />
+            </template>
+          </b-carousel-slide>
+          <b-carousel-slide>
+            <template #img>
+              <img
+                class="d-block myStyle mx-auto rounded-xl"
+                width="1024"
+                height="480"
+                :src="imgurl[3]"
+                alt="image slot"
+              />
+            </template>
+          </b-carousel-slide>
+          <b-carousel-slide>
+            <template #img>
+              <img
+                class="d-block myStyle mx-auto"
+                width="1024"
+                height="480"
+                :src="imgurl[4]"
+                alt="image slot"
+              />
+            </template>
+          </b-carousel-slide>
+        </b-carousel>
 
-    <!-- <p class="mt-4">
+        <!-- <p class="mt-4">
       Slide #: {{ slide }}<br />
       Sliding: {{ sliding }}
     </p> -->
+      </div>
+      <div
+        class="col-2 rounded-xl ml-4 "
+        style="border-style: solid; border-width : 3px; border-color: lightgrey"
+      >
+        <div>
+          <v-row align="center">
+            <ol class="ma-5">
+              <span class="font-ELAND_Choice_B ma-3" style="font-size:22px;"
+                >Best 10</span
+              >
+              <br />
+              <li
+                class="my-4 font-ELAND_Choice_B"
+                style="font-size:16px; max-width: 50px"
+                v-for="(item, i) in board"
+                :key="i"
+                :value="item"
+              >
+                {{ item.title }}
+              </li>
+            </ol>
+            <!-- <Board-design v-for="(item, i) in board" :key="i" :value="item" /> -->
+          </v-row>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import BoardDesign from '../sub2/BoardDesign.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
+  components: {
+    BoardDesign,
+  },
   name: 'aaa',
   data() {
     return {
       slide: 0,
       sliding: null,
       imgurl: [],
+      boards: [],
+      board: [],
     };
   },
   created() {
+    axios
+      .get(`${SERVER_URL}/post/list`)
+      .then((response) => {
+        // console.log(response);
+        this.boards = response.data;
+        this.board = this.boards;
+      })
+      .catch((error) => {
+        alert(error);
+        this.$router.push('/Error');
+      });
     for (var i = 1; i <= 5; i++) {
       axios
         .get(`${SERVER_URL}/post/list/` + i)
