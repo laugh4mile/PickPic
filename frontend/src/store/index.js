@@ -8,7 +8,15 @@ Vue.use(Vuex);
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
 export default new Vuex.Store({
-  plugins: [createPersistedState()],
+  plugins: [createPersistedState({
+    key: 'vuex',
+    reducer (val) {                                
+      if(val.accessToken === null) { // return empty state when user logged out                
+        return {}
+      }
+      return val
+    }
+  })],
   state: {
     articles: require('@/data/articles.json'),
     drawer: false,
@@ -47,7 +55,7 @@ export default new Vuex.Store({
 
     //   return categories.sort().slice(0, 4)
     // },
-    links: (state, getters) => {
+    links: (state) => {
       return state.items;
     },
     getAccessToken(state) {
@@ -112,6 +120,7 @@ export default new Vuex.Store({
     LOGOUT(context) {
       context.commit('LOGOUT');
       axios.defaults.headers.common['auth-token'] = undefined;
+      location.reload();
     },
     REGIST(context, user) {
       return axios
