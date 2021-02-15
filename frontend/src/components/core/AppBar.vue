@@ -208,6 +208,7 @@ export default {
       console.log(this.$store.getters.getAccessToken);
       this.user.email = '';
       this.user.pwd = '';
+      this.availableEmailForm = true;
     },
     logout() {
       this.$store
