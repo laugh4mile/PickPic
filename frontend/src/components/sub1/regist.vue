@@ -214,30 +214,32 @@ export default {
         axios
           .get(`${SERVER_URL}/member/emailCheck`, { params })
           .then((response) => {
-            if (this.user.name) {
+            if (this.user.email) {
               if (response.data) {
-                alert('중복된이름');
-                this.chkname = false;
-                this.marker.nameMarker = false;
-                this.arletName = false;
+                alert('중복된메일');
+                this.chkemail = false;
+                this.marker.emailMarker = false;
+                this.arletEmail = false;
               } else {
                 alert('사용가능');
-                this.chkname = true;
-                this.marker.nameMarker = true;
-                this.arletName = true;
+                this.chkemail = true;
+                this.marker.emailMarker = true;
+                this.arletEmail = true;
               }
             } else {
-              alert('이름을 입력해주세요');
-              this.chkname = false;
-              this.marker.nameMarker = false;
+              alert('메일을 입력해주세요');
+              this.chkemail = true;
+              this.marker.emailMarker = false;
             }
           })
           .catch((err) => {
-            this.$router.push({
-              path: '/Error',
-              query: { status: error.response.status },
-            });
+            console.log(err);
           });
+      } else {
+        alert('메일 형식에 맞게 입력해주세요');
+        this.chkemail = false;
+        this.marker.emailMarker = false;
+        this.arletEmail = false;
       }
     },
     validate() {
