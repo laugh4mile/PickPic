@@ -3,7 +3,7 @@
     <head> </head>
     <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
     <v-row align="center" class="mb-3">
-      <select class="ml-2" id="select_font" v-model="font" @change="cng()">
+      <select class="ml-2" id="select_font" v-model="font" @change="cng">
         <option :value="item" v-for="(item, index) in fonts" :key="index">{{item}}</option>
       </select>
       <button class="mr-2" onclick="document.execCommand('Bold')">
@@ -28,7 +28,7 @@
           <v-list-item
             v-for="(item, index) in size"
             :key="index"
-            @click="ColorizeSelection(font, item)"
+            @click="ColorizeSelection(item)"
           >
             <v-list-item-title>{{ item }}</v-list-item-title>
           </v-list-item>
@@ -84,12 +84,11 @@
     <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
     </v-row>
 
-      <!-- @input="getText"
-      @change="getText" -->
     <div
       style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto; padding: 10px;"
       id="editors"
       @blur="getText"
+      @change="getText"
       contenteditable="true"
       label="본문"
       v-html="contents.content"
@@ -106,12 +105,15 @@
       label="본문"
       v-html="sendText"
     ></div>
+    <br />
+    <v-btn @click="alertFunc">버튼</v-btn>
   </div>
 </template>
 
 <script>
 var font_size = 12;
 var font = "Arial"
+
 var selection_range;
 
 
@@ -122,32 +124,34 @@ var clickHandler = function(event) {
   updateFontSizeForNewText(event);
 };
 
-
+var isValidKeyPress = function(e) {
+  var keycode = e.keyCode;
+  var valid =
+    (keycode > 47 && keycode < 58) || // number keys
+    (keycode > 64 && keycode < 91) || // letter keys
+    (keycode > 95 && keycode < 112) || // numpad keys
+    (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+    (keycode > 218 && keycode < 223); // [\]' (in order)
+  return valid;
+};
 
 var updateFontSizeForNewText = function(e) {
+  var timestamp = new Date().getUTCMilliseconds();
   var key = "";
   if (isValidKeyPress(e)) {
+    event.preventDefault();
     key = e.key;
-  var span = document.createElement("span");
-  var txt = document.createTextNode(key);
-  span.style.fontSize = font_size + "px";
-  span.style.fontFamily = font;
-  span.appendChild(txt);
-  var wrap = document.createElement("div");
-  wrap.appendChild(span.cloneNode(true));
-  pasteHtmlAtCaret(wrap.innerHTML);
+    var span = document.createElement("span");
+    span.id = timestamp;
+    var txt = document.createTextNode(key);
+    span.style.fontSize = font_size + "px";
+    span.style.fontFamily = font;
+    span.appendChild(txt);
+    var wrap = document.createElement("div");
+    wrap.appendChild(span.cloneNode(true));
+    pasteHtmlAtCaret(wrap.innerHTML);
   }
 };
-  var isValidKeyPress = function(e) {
-    var keycode = e.keyCode;
-    var valid =
-      (keycode > 47 && keycode < 58) || // number keys
-      (keycode > 64 && keycode < 91) || // letter keys
-      (keycode > 95 && keycode < 112) || // numpad keys
-      (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-      (keycode > 218 && keycode < 223); // [\]' (in order)
-    return valid;
-  };
 
 var pasteHtmlAtCaret = function(html) {
   var sel, range;
@@ -169,7 +173,7 @@ var pasteHtmlAtCaret = function(html) {
         lastNode = frag.appendChild(node);
       }
       range.insertNode(frag);
-      console.log(frag);
+
       // Preserve the selection
       if (lastNode) {
         range = range.cloneRange();
@@ -184,6 +188,7 @@ var pasteHtmlAtCaret = function(html) {
     document.selection.createRange().pasteHTML(html);
   }
 };
+
 export default {
   created(){
     // this.content = this.contents;
@@ -192,7 +197,7 @@ export default {
     if(this.contents){
       this.content = this.contents;
       console.log('mounted');
-      $("#editors").html(this.content.content);
+      $("#editors").append(this.content.content);
       this.getTitle();
       this.sendText = marked($("#editors")[0].innerText + '', { sanitize: true });
     }
@@ -235,6 +240,9 @@ export default {
     }
   },
   methods: {
+    alertFunc(){
+      console.log(this.contents);
+    },
     preview(){
       $("#preview").addClass('hidden');
       $("#edit").removeClass('hidden');
@@ -249,17 +257,15 @@ export default {
     },
     cng() {
       font = this.font;
-      console.log(font);
-      this.ColorizeSelection(font, font_size);
+      this.ColorizeSelection(font_size);
     },
     getTitle(){
       this.$emit('text', this.contents);
       console.log("getTitle", this.contents);
     },
     getText(event){
-      this.content.content = event.target.innerHTML;
-      this.contents.content = event.target.innerHTML;
-      console.log(this.contents.content);
+      this.contents.content = document.getElementById('editors').innerHTML;
+      console.log("getText", this.contents);
       this.$emit('text', this.contents);
       this.update(event);
     },
@@ -317,7 +323,6 @@ export default {
         if (parentNode.tagName.toLowerCase() == "span") {
           //parentNode.style.color = color;
           parentNode.style.fontSize = size + "px";
-          parentNode.style.fontFamily = font;
           return;
         }
       }
@@ -326,7 +331,6 @@ export default {
       var span = document.createElement("span");
       //span.style.color = color;
       span.style.fontSize = size + "px";
-      span.style.fontFamily = font;
       var nextSibling = node.nextSibling;
 
       parentNode.removeChild(node);
@@ -363,7 +367,6 @@ export default {
         var span = document.createElement("span");
         //span.style.color = color;
         span.style.fontSize = size + "px";
-        span.style.fontFamily = font;
         var textNode = document.createTextNode(part2);
         span.appendChild(textNode);
         parentNode.insertBefore(span, nextSibling);
@@ -401,7 +404,7 @@ export default {
       }
     },
 
-    ColorizeSelection(font, size) {
+    ColorizeSelection(size) {
       this.font_size = size;
       if (window.getSelection) {
         // all browsers, except IE before version 9
@@ -542,34 +545,7 @@ export default {
         range.insertNode(e); // … and inserts the new element at its place
       }
     },
-    // validateYouTubeUrl(url)
-    // {
-    //   var urls = document.getElementById('editor').innerText;
-    //   // console.log(urls.split('\n'));
-    //   var temp = urls.split('\n');
-    //   console.log(temp);
-    //   for(var i=0; i < temp.length; i++){
-    //     var url = temp[i]
-    //     // console.log(urls.split('\n')[i]);
-    //         if (url != undefined || url != '') {
-    //             var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
-    //             var match = url.match(regExp);
-    //             console.log(match);
-    //             if (match && match[2].length > 10) {
-    //                 // Do anything for being valid
-    //                 // if need to change the url to embed url then use below line
-                    
-    //                 console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
-    //                 this.videosrcs[i] = 'https://www.youtube.com/embed/' + match[2];
-    //                 console.log(this.videosrcs.length);
-    //                 // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
-    //             }
-    //             else {
-    //                 // Do anything for not being valid
-    //             }
-    //         }
-    //   }
-    // },
+
     validateYouTubeUrl(url)
     {
       console.log("match");
