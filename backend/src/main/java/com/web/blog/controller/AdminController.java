@@ -30,7 +30,7 @@ public class AdminController {
 	@Autowired
 	MemberService memberService;
 
-	@ApiOperation(value = "회원 목록 조회", notes = "회원들의 정보(이메일, 이름, 가입일, 권한, 게시글 수, 댓글 수)을 반환한다.", response = HashMap.class)
+	@ApiOperation(value = "회원 목록 조회", notes = "회원들의 정보(이메일, 이름, 가입일, 권한, 프로필, 게시글 수, 댓글 수)을 반환한다.", response = HashMap.class)
 	@GetMapping
 	public ResponseEntity<Map<String, Object>> getMembers(@RequestParam String email)
 			throws Exception {

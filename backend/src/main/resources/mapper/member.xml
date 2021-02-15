@@ -7,7 +7,7 @@
 	<!-- MemberController -->
 
 	<select id="getAllMember" resultType="MemberDto">
-		select email, name, joinDate, role, count(post.postNo) as postCnt, count(commentNo) commentCnt
+		select email, name, joinDate, role, profileImg, count(post.postNo) as postCnt, count(commentNo) commentCnt
 		from member left join post using(email)
 		left join comment using(email)
 		group by email;
