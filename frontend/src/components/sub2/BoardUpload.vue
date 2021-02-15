@@ -47,8 +47,18 @@
       </div>
     </v-row>
     <hr />
-    <editor v-if="!temp" id="editor" @text="emitedData" :contents="{title:'', content:''}"></editor>
-    <editor v-else id="editor" @text="emitedData" :contents="tempBoard"></editor>
+    <editor
+      v-if="!temp"
+      id="editor"
+      @text="emitedData"
+      :contents="{ title: '', content: '' }"
+    ></editor>
+    <editor
+      v-else
+      id="editor"
+      @text="emitedData"
+      :contents="tempBoard"
+    ></editor>
     <!-- <v-textarea label="본문" v-model="content"></v-textarea> -->
     <input
       multiple="multiple"
@@ -110,7 +120,7 @@ export default {
       deleted: [],
       board: [],
       temp: false,
-      tempBoard:{},
+      tempBoard: {},
     };
   },
   components: {
@@ -150,9 +160,9 @@ export default {
           this.tempBoard.postNo = response.data.postInfo.postNo;
           this.tempBoard.title = response.data.postInfo.title;
           this.tempBoard.content = response.data.postInfo.content;
-          this.content = response.data.postInfo.content
-          this.title = response.data.postInfo.title
-          this.postNo = response.data.postInfo.postNo
+          this.content = response.data.postInfo.content;
+          this.title = response.data.postInfo.title;
+          this.postNo = response.data.postInfo.postNo;
           // this.postNo = response.data.postInfo.postNo;
           // this.title = response.data.postInfo.title;
           // this.content = response.data.postInfo.content;
@@ -204,10 +214,10 @@ export default {
         });
     },
     completeUpload() {
-      if(this.myfile.length + this.imgUrl.length < 2) {
-        alert("사진을 두 장 이상 업로드해 주세요!");
+      if (this.myfile.length + this.imgUrl.length < 2) {
+        alert('사진을 두 장 이상 업로드해 주세요!');
         return;
-      } 
+      }
       var frm = new FormData();
       for (var i = 0; i < this.myfile.length; i++) {
         let file = this.myfile[i];

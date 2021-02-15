@@ -1,9 +1,14 @@
 <template>
-  <div class="container">
+  <div class="container font-ELAND_Choice_M">
     <div class="row">
       <label class="col-sm-2 col-md-2 newbtn selector" width="200">
-        <img id="blah" :src=user.profileImg onerror="this.src=`https://apfbucket.s3.ap-northeast-2.amazonaws.com/c8c25cb23bdd4aa9a5c4608b7fa243ef.png`" alt="프로필 이미지"/>
-        <input id="pic" class='pis' @change="addProfile" type="file" >
+        <img
+          id="blah"
+          :src="user.profileImg"
+          onerror="this.src=`https://apfbucket.s3.ap-northeast-2.amazonaws.com/c8c25cb23bdd4aa9a5c4608b7fa243ef.png`"
+          alt="프로필 이미지"
+        />
+        <input id="pic" class="pis" @change="addProfile" type="file" />
       </label>
       <div class="col-sm-10 col-md-10">
         <blockquote>
@@ -25,15 +30,25 @@
           ></v-text-field>
         </blockquote>
       </div>
-      <v-btn color="secondary" class="mr-2" outlined v-show="!modify" @click="showmodifyForm"
+      <v-btn
+        color="secondary"
+        class="mr-2"
+        outlined
+        v-show="!modify"
+        @click="showmodifyForm"
         >자기소개수정</v-btn
       >
-      <v-btn color="secondary" class="mr-2" outlined v-show="modify" @click="modifyIntro"
+      <v-btn
+        color="secondary"
+        class="mr-2"
+        outlined
+        v-show="modify"
+        @click="modifyIntro"
         >정보수정</v-btn
       >
       <div class="text-center">
-        <delete-user-modal/>
-        <modify-pwd-modal/>
+        <delete-user-modal />
+        <modify-pwd-modal />
       </div>
     </div>
     <v-col cols="12" md="4">
@@ -43,11 +58,10 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapGetters } from "vuex";
+import axios from 'axios';
+import { mapGetters } from 'vuex';
 import DeleteUserModal from './deleteUserModal.vue';
 import ModifyPwdModal from './modifyPwdModal.vue';
-
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
@@ -56,22 +70,22 @@ export default {
       user: {},
       modify: false,
       modify: false,
-      imgSrc: "",
+      imgSrc: '',
     };
   },
   components: {
-    NewestPosts: () => import("@/components/NewestPosts"),
-    Instagram: () => import("@/components/Instagram"),
-    Tags: () => import("@/components/Tags"),
+    NewestPosts: () => import('@/components/NewestPosts'),
+    Instagram: () => import('@/components/Instagram'),
+    Tags: () => import('@/components/Tags'),
     DeleteUserModal,
     ModifyPwdModal,
   },
   computed: {
-    ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
+    ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
   },
   created() {
     const params = new URLSearchParams();
-    params.append("email", this.getUserEmail);
+    params.append('email', this.getUserEmail);
     axios
       .get(`${SERVER_URL}/member`, { params })
       .then((response) => {
@@ -82,10 +96,8 @@ export default {
       .catch(() => {
         this.$router.push({path: '/Error', query: {'status' : error.response.status}});
       });
-    
   },
   methods: {
-    
     addProfile: function(input) {
       if (input.target.files[0]) {
         if (this.user.profileImg) {
@@ -112,11 +124,9 @@ export default {
           const params = new URLSearchParams();
           params.append("email", this.getUserEmail);
           axios
-            .get(`${SERVER_URL}/member`, { params })
+            .get(`${SERVER_URL}/member/delete`, { params })
             .then((response) => {
-              this.user = null;
-              this.user = response.data.info;
-              this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
+              console.log('기존이미지 삭제');
             })
             .catch(() => {
               this.$router.push({path: '/Error', query: {'status' : error.response.status}});
@@ -172,17 +182,16 @@ small {
   height: 100%;
 }
 
-
-#pic{
-display: none;
+#pic {
+  display: none;
 }
 
-.newbtn{
+.newbtn {
   cursor: pointer;
 }
-#blah{
-  max-width:100px;
-  height:100px;
-  margin-top:20px;
+#blah {
+  max-width: 100px;
+  height: 100px;
+  margin-top: 20px;
 }
 </style>
