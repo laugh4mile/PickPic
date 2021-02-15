@@ -4,19 +4,7 @@
     <v-text-field label="제목" @change="getTitle" v-model="contents.title"></v-text-field>
     <v-row align="center" class="mb-3">
       <select class="ml-2" id="select_font" v-model="font" @change="cng">
-        <option value="Arial">Arial</option>
-        <option value="Sans Serif" selected>Sans Serif</option>
-        <option value="Comic Sans MS">Comic Sans MS</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Verdana">Verdana</option>
-        <option value="Trebuchet MS">Trebuchet MS</option>
-        <option value="Arial Black">Arial Black</option>
-        <option value="Impact">Impact</option>
-        <option value="Bookman">Bookman</option>
-        <option value="Garamond">Garamond</option>
-        <option value="Palatino">Palatino</option>
-        <option value="Georgia">Georgia</option>
+        <option :value="item" v-for="(item, index) in fonts" :key="index">{{item}}</option>
       </select>
       <button class="mr-2" onclick="document.execCommand('Bold')">
         <i class="fas fa-bold fa-lg fa-border"></i>
@@ -99,7 +87,7 @@
     <div
       style="border: .2px solid black; font-size: 12px; height: 400px; overflow:auto; padding: 10px;"
       id="editors"
-      @input="getText"
+      @blur="getText"
       @change="getText"
       contenteditable="true"
       label="본문"
@@ -124,6 +112,8 @@
 
 <script>
 var font_size = 12;
+var font = "Arial"
+
 var selection_range;
 
 
@@ -132,7 +122,6 @@ var clickHandler = function(event) {
     .getElementById("editors")
     .removeEventListener("keypress", clickHandler);
   updateFontSizeForNewText(event);
-  updateFontStyleForNewText(event);
 };
 
 var isValidKeyPress = function(e) {
@@ -156,23 +145,7 @@ var updateFontSizeForNewText = function(e) {
     span.id = timestamp;
     var txt = document.createTextNode(key);
     span.style.fontSize = font_size + "px";
-    span.appendChild(txt);
-    var wrap = document.createElement("div");
-    wrap.appendChild(span.cloneNode(true));
-    pasteHtmlAtCaret(wrap.innerHTML);
-  }
-};
-
-var updateFontStyleForNewText = function(e) {
-  var timestamp = new Date().getUTCMilliseconds();
-  var key = "";
-  if (isValidKeyPress(e)) {
-    event.preventDefault();
-    key = e.key;
-    var span = document.createElement("span");
-    span.id = timestamp;
-    var txt = document.createTextNode(key);
-    span.style.fontFamily = this.font;
+    span.style.fontFamily = font;
     span.appendChild(txt);
     var wrap = document.createElement("div");
     wrap.appendChild(span.cloneNode(true));
@@ -283,7 +256,8 @@ export default {
       $("#editors").removeClass('hidden');
     },
     cng() {
-      this.changeFont();
+      font = this.font;
+      this.ColorizeSelection(font_size);
     },
     getTitle(){
       this.$emit('text', this.contents);
@@ -571,34 +545,7 @@ export default {
         range.insertNode(e); // … and inserts the new element at its place
       }
     },
-    // validateYouTubeUrl(url)
-    // {
-    //   var urls = document.getElementById('editor').innerText;
-    //   // console.log(urls.split('\n'));
-    //   var temp = urls.split('\n');
-    //   console.log(temp);
-    //   for(var i=0; i < temp.length; i++){
-    //     var url = temp[i]
-    //     // console.log(urls.split('\n')[i]);
-    //         if (url != undefined || url != '') {
-    //             var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
-    //             var match = url.match(regExp);
-    //             console.log(match);
-    //             if (match && match[2].length > 10) {
-    //                 // Do anything for being valid
-    //                 // if need to change the url to embed url then use below line
-                    
-    //                 console.log($("#video").attr('src', 'https://www.youtube.com/embed/' + match[2]));
-    //                 this.videosrcs[i] = 'https://www.youtube.com/embed/' + match[2];
-    //                 console.log(this.videosrcs.length);
-    //                 // this.videosrcs.push('https://www.youtube.com/embed/' + match[2]);
-    //             }
-    //             else {
-    //                 // Do anything for not being valid
-    //             }
-    //         }
-    //   }
-    // },
+
     validateYouTubeUrl(url)
     {
       console.log("match");

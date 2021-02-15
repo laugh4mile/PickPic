@@ -25,11 +25,6 @@ export default new Router({
       component: Home,
     },
     {
-      path: '/editor',
-      name: 'editor',
-      component: editor,
-    },
-    {
       path: '/tt',
       name: 'temp',
       component: temp,
