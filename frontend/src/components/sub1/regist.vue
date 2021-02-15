@@ -178,37 +178,9 @@ export default {
   methods: {
     checkNameDuplicate() {
       const params = new URLSearchParams();
-      params.append("name", this.user.name);
-      axios.get(`${SERVER_URL}/member/nameCheck`, {params})
-      .then((response) => {
-        if (this.user.name) {
-          if (response.data) {
-            alert('중복된이름')
-            this.chkname = false
-            this.marker.nameMarker = false
-            this.arletName = false
-          } else {
-            alert('사용가능')
-            this.chkname = true
-            this.marker.nameMarker = true
-            this.arletName = true
-          }
-        } else {
-          alert('이름을 입력해주세요')
-          this.chkname = false
-          this.marker.nameMarker = false
-        }
-      
-      })
-      .catch((err) => {
-        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
-      });
-    },
-    checkEmailDuplicate() {
-      if (/.+@.+\..+/.test(this.user.email)) {
-        const params = new URLSearchParams();
-        params.append("email", this.user.email);
-        axios.get(`${SERVER_URL}/member/emailCheck`, {params})
+      params.append('name', this.user.name);
+      axios
+        .get(`${SERVER_URL}/member/nameCheck`, { params })
         .then((response) => {
           if (this.user.name) {
             if (response.data) {
@@ -229,7 +201,10 @@ export default {
           }
         })
         .catch((err) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     checkEmailDuplicate() {
@@ -239,32 +214,30 @@ export default {
         axios
           .get(`${SERVER_URL}/member/emailCheck`, { params })
           .then((response) => {
-            if (this.user.email) {
+            if (this.user.name) {
               if (response.data) {
-                alert('중복된메일');
-                this.chkemail = false;
-                this.marker.emailMarker = false;
-                this.arletEmail = false;
+                alert('중복된이름');
+                this.chkname = false;
+                this.marker.nameMarker = false;
+                this.arletName = false;
               } else {
                 alert('사용가능');
-                this.chkemail = true;
-                this.marker.emailMarker = true;
-                this.arletEmail = true;
+                this.chkname = true;
+                this.marker.nameMarker = true;
+                this.arletName = true;
               }
             } else {
-              alert('메일을 입력해주세요');
-              this.chkemail = true;
-              this.marker.emailMarker = false;
+              alert('이름을 입력해주세요');
+              this.chkname = false;
+              this.marker.nameMarker = false;
             }
           })
           .catch((err) => {
-            console.log(err);
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
-      } else {
-        alert('메일 형식에 맞게 입력해주세요');
-        this.chkemail = false;
-        this.marker.emailMarker = false;
-        this.arletEmail = false;
       }
     },
     validate() {
@@ -278,11 +251,14 @@ export default {
       params.append('email', this.user.email);
       axios
         .post(`${SERVER_URL}/service/mail`, params)
-        .then(response => {
+        .then((response) => {
           alert('메일이 전송되었습니다');
         })
-        .catch(error => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+        .catch((error) => {
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     verifyBtn() {
@@ -300,8 +276,11 @@ export default {
             this.arletCode = false;
           }
         })
-        .catch(error => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+        .catch((error) => {
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     onSubmit(event) {
@@ -314,13 +293,18 @@ export default {
       } else if (!this.checkbox) {
         alert('약관에 동의해주세요');
       } else {
-        axios.post(`${SERVER_URL}/member`, this.user).then((response) => {
-          alert('회원가입 완료');
-          this.$router.push("/");
-        })
-      .catch(error => {
-        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
-      });
+        axios
+          .post(`${SERVER_URL}/member`, this.user)
+          .then((response) => {
+            alert('회원가입 완료');
+            this.$router.push('/');
+          })
+          .catch((error) => {
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
+          });
       }
     },
   },
