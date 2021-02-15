@@ -23,8 +23,8 @@
         Sort
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" @click="refreshData('zzz')">Time</a>
-        <a class="dropdown-item" @click="refreshData('like')">Like</a>
+        <a class="dropdown-item" @click="[reset=true, refreshData('zzz')]">Time</a>
+        <a class="dropdown-item" @click="[reset=true, refreshData('like')]">Like</a>
       </div>
     </div>
     <br /><br /><br />
@@ -163,7 +163,7 @@
         </v-row>
       </div>
     </div> -->
-    <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+    <infinite-loading @infinite="infiniteHandler" ref="InfiniteLoading" spinner="waveDots">
       <div
         slot="no-more"
         style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
@@ -226,6 +226,7 @@ export default {
       sortBy: '',
       profileImg: 'sibal',
       like: false,
+      reset: false,
     };
   },
   components: {
@@ -274,6 +275,10 @@ export default {
         });
     },
     refreshData(sortTo) {
+      if(this.reset) {
+        this.$refs.InfiniteLoading.stateChanger.reset(); 
+        this.reset=false;
+      }
       this.limit = 1;
       this.sortBy = sortTo;
       const params = new URLSearchParams();
