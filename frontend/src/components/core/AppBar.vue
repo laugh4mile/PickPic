@@ -132,7 +132,7 @@
             >님 환영합니다.</span
           >
           <v-btn
-            v-if="getRole=='admin'"
+            v-if="getRole == 'admin'"
             text
             @click="adminPageForm"
             class="btn btn-outline-secondary rounded-pill ml-2 font-yg-jalnan"

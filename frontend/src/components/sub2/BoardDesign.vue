@@ -69,8 +69,7 @@ export default {
   data() {
     return {};
   },
-  created() {
-  },
+  created() {},
   props: {
     value: {
       type: Object,

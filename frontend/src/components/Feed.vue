@@ -26,17 +26,11 @@
         </base-btn>
       </v-col>
 
-      <v-col
-        class="text-center subheading"
-        cols="6"
-      >
+      <v-col class="text-center subheading" cols="6">
         PAGE {{ page }} OF {{ pages }}
       </v-col>
 
-      <v-col
-        class="text-right"
-        cols="3"
-      >
+      <v-col class="text-right" cols="3">
         <base-btn
           v-if="pages > 1 && page < pages"
           class="mr-0"
@@ -52,40 +46,38 @@
 </template>
 
 <script>
-  // Utilities
-  import {
-    mapState,
-  } from 'vuex'
+// Utilities
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'Feed',
+export default {
+  name: 'Feed',
 
-    components: {
-      FeedCard: () => import('@/components/FeedCard'),
+  components: {
+    FeedCard: () => import('@/components/FeedCard'),
+  },
+
+  data: () => ({
+    layout: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+    page: 1,
+  }),
+
+  computed: {
+    ...mapState(['articles']),
+    pages() {
+      return Math.ceil((this.articles.length + 1) / 4);
     },
+    paginatedArticles() {
+      const start = (this.page - 1) * 4;
+      const stop = this.page * 4;
 
-    data: () => ({
-      layout: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-      page: 1,
-    }),
-
-    computed: {
-      ...mapState(['articles']),
-      pages () {
-        return Math.ceil((this.articles.length+1) / 4)
-      },
-      paginatedArticles () {
-        const start = (this.page - 1) * 4
-        const stop = this.page * 4
-
-        return this.articles.slice(start, stop)
-      },
+      return this.articles.slice(start, stop);
     },
+  },
 
-    watch: {
-      page () {
-        window.scrollTo(0, 0)
-      },
+  watch: {
+    page() {
+      window.scrollTo(0, 0);
     },
-  }
+  },
+};
 </script>

@@ -48,71 +48,77 @@
   </v-dialog>
 </template>
 <script>
-import axios from "axios";
-import { mapGetters } from "vuex";
-import customButton from "../design/btn.vue"
+import axios from 'axios';
+import { mapGetters } from 'vuex';
+import customButton from '../design/btn.vue';
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
-    components:{
-        customButton,
-    },
+  components: {
+    customButton,
+  },
   data() {
     return {
       dialog2: false,
-      pwd: "",
-      pwd1: "",
-      pwd2: "",
+      pwd: '',
+      pwd1: '',
+      pwd2: '',
       pwdRules: [
         (v) =>
           /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v) ||
-          "숫자 와 문자 1개 이상씩 사용해야하며 8자리 이상 작성해야합니다.",
+          '숫자 와 문자 1개 이상씩 사용해야하며 8자리 이상 작성해야합니다.',
       ],
     };
   },
   computed: {
-    ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
+    ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
   },
   methods: {
     modifyPwd() {
       if (this.pwd1 == this.pwd2) {
         if (this.pwd == this.pwd1) {
-          alert('기존비밀번호와 같습니다.')
+          alert('기존비밀번호와 같습니다.');
         } else {
-          
           axios
             .put(`${SERVER_URL}/member/pwd`, {
               email: this.getUserEmail,
               pwd: this.pwd2,
-              prePwd: this.pwd
+              prePwd: this.pwd,
             })
             .then((response) => {
-              if(response.data) {
-                alert('비밀번호변경완료')
+              if (response.data) {
+                alert('비밀번호변경완료');
                 const params = new URLSearchParams();
-                params.append("email", this.getUserEmail);
+                params.append('email', this.getUserEmail);
                 axios
                   .get(`${SERVER_URL}/member`, { params })
                   .then((response) => {
                     this.user = null;
                     this.user = response.data.info;
-                    this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
+                    this.user.profileImg =
+                      'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+                      response.data.info.profileImg;
                   })
                   .catch(() => {
-                    this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+                    this.$router.push({
+                      path: '/Error',
+                      query: { status: error.response.status },
+                    });
                   });
-                this.dialog2 = false
+                this.dialog2 = false;
               } else {
-                alert('비밀번호가 다릅니다.')
+                alert('비밀번호가 다릅니다.');
               }
-              
             })
             .catch((error) => {
-              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+              this.$router.push({
+                path: '/Error',
+                query: { status: error.response.status },
+              });
             });
         }
       } else {
-        alert("내용을 확인해주세요");
+        alert('내용을 확인해주세요');
       }
     },
   },

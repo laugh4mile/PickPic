@@ -91,10 +91,15 @@ export default {
       .then((response) => {
         this.user = null;
         this.user = response.data.info;
-        this.user.profileImg = 'https://apfbucket.s3.ap-northeast-2.amazonaws.com/'+response.data.info.profileImg
+        this.user.profileImg =
+          'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+          response.data.info.profileImg;
       })
       .catch(() => {
-        this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+        this.$router.push({
+          path: '/Error',
+          query: { status: error.response.status },
+        });
       });
   },
   methods: {
@@ -102,39 +107,49 @@ export default {
       if (input.target.files[0]) {
         if (this.user.profileImg) {
           const params = new URLSearchParams();
-          params.append("email", this.user.email);
-          axios.get(`${SERVER_URL}/member/delete`, {params})
-          .then((response) => {
-          })
-          .catch((err) => {
-            this.$router.push({path: '/Error', query: {'status' : error.response.status}});
-          });
-        }
-        var frm = new FormData();
-        var photoFile = input.target.files[0]
-        frm.append("profileImg", photoFile);
-        frm.append("email", this.user.email);
-        axios.post(`${SERVER_URL}/member/upload`, frm,{
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then((response) => {
-          alert('프로필 업로드 완료');
-          const params = new URLSearchParams();
-          params.append("email", this.getUserEmail);
+          params.append('email', this.user.email);
           axios
             .get(`${SERVER_URL}/member/delete`, { params })
-            .then((response) => {
-              console.log('기존이미지 삭제');
-            })
-            .catch(() => {
-              this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+            .then((response) => {})
+            .catch((err) => {
+              this.$router.push({
+                path: '/Error',
+                query: { status: error.response.status },
+              });
             });
-        })
-        .catch(error => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
-        });
+        }
+        var frm = new FormData();
+        var photoFile = input.target.files[0];
+        frm.append('profileImg', photoFile);
+        frm.append('email', this.user.email);
+        axios
+          .post(`${SERVER_URL}/member/upload`, frm, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then((response) => {
+            alert('프로필 업로드 완료');
+            const params = new URLSearchParams();
+            params.append('email', this.getUserEmail);
+            axios
+              .get(`${SERVER_URL}/member/delete`, { params })
+              .then((response) => {
+                console.log('기존이미지 삭제');
+              })
+              .catch(() => {
+                this.$router.push({
+                  path: '/Error',
+                  query: { status: error.response.status },
+                });
+              });
+          })
+          .catch((error) => {
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
+          });
       }
     },
     showmodifyForm: function() {
@@ -150,7 +165,10 @@ export default {
           this.modify = false;
         })
         .catch((error) => {
-          this.$router.push({path: '/Error', query: {'status' : error.response.status}});
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
   },
