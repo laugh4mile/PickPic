@@ -43,7 +43,6 @@ public class ETCServiceImpl implements ETCService {
 		msgg += "</div>";
 		message.setText(msgg, "utf-8", "html");// 내용
 		message.setFrom(new InternetAddress("shim99887@gmail.com", "PickPic"));// 보내는 사람
-		System.out.println(ePw);
 		return message;
 	}
 
