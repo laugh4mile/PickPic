@@ -104,8 +104,6 @@
       label="본문"
       v-html="sendText"
     ></div>
-    <br />
-    <v-btn @click="alertFunc">버튼</v-btn>
   </div>
 </template>
 
