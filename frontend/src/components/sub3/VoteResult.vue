@@ -7,19 +7,8 @@
         :key="index"
         :class="{ ans: true, [a.custom_class]: a.custom_class }"
       >
-        <template v-if="!finalResults">
-          <div :class="{ 'ans-voted': true, selected: a.selected }">
-            <span v-if="a.percent" class="percent" v-text="a.percent"></span>
-            <span class="txt" v-html="a.text"></span>
-          </div>
-
-          <span
-            class="bg"
-            :style="{ width: a.percent}"
-          ></span>
-        </template>
-        <template v-else>
-          <div class="ans-voted final">
+         <template>
+          <div :class="{ 'ans-voted': true, 'final': true, selected: a.selected }">
             <span v-if="a.percent" class="percent" v-text="a.percent"></span>
             <span class="txt" v-html="a.text"></span>
           </div>
@@ -32,20 +21,8 @@
     </div>
     <div
       class="votes"
-      v-if="showTotalVotes && finalResults"
       v-text="totalVotesFormatted + ' votes'"
     ></div>
-
-    <template
-      v-if="!finalResults && multiple && totalSelections > 0"
-    >
-      <a
-        href="#"
-        @click.prevent="handleMultiple"
-        class="submit"
-        v-text="submitButtonText"
-      ></a>
-    </template>
   </div>
 </template>
 
@@ -73,10 +50,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
     submitButtonText: {
       type: String,
       default: "Submit",
@@ -97,9 +70,11 @@ export default {
       this.answers.filter((a) => {
         if (!isNaN(a.votes) && a.votes > 0) totalVotes += parseInt(a.votes);
       });
+      console.log(totalVotes);
       return totalVotes;
     },
     totalVotesFormatted() {
+      // return this.totalVotes;
       return this.totalVotes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     mostVotes() {
@@ -132,26 +107,7 @@ export default {
     },
   },
   methods: {
-    handleMultiple() {
-      let arSelected = [];
-      this.calcAnswers.filter((a) => {
-        if (a.selected) {
-          a.votes++;
-          arSelected.push({ value: a.value, votes: a.votes });
-        }
-      });
-
-      this.visibleResults = true;
-
-      let obj = { arSelected: arSelected, totalVotes: this.totalVotes };
-
-      if (this.customId) obj.customId = this.customId;
-
-      this.$emit("addvote", obj);
-    },
     handleVote(a) {
-      //Callback
-
       if (this.multiple) {
         if (a.selected === undefined)
           console.log("Please add 'selected: false' on the answer object");
@@ -275,6 +231,7 @@ export default {
 .vue-poll .votes {
   font-size: 14px;
   color: #8899a6;
+  margin: -10px 0 15px 10px ;
 }
 
 .vue-poll .submit {
