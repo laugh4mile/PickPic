@@ -16,8 +16,8 @@
               임시저장 목록
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title class="headline">
+          <v-card class="font-ELAND_Choice_B">
+            <v-card-title class="font-ELAND_Choice_B">
               임시저장 목록
             </v-card-title>
             <v-card-text style="height: 300px;">
@@ -67,10 +67,19 @@
       id="file"
       name="file"
       @change="onChangeImages"
+      class="my-4"
     />
 
-    <v-btn @click="completeUpload">작성 완료</v-btn>
-    <v-btn @click="tempUpload">임시저장</v-btn>
+    <v-btn
+      @click="completeUpload"
+      class="btn btn-outline-secondary rounded-pill text-secondary"
+      >작성 완료</v-btn
+    >
+    <v-btn
+      @click="tempUpload"
+      class="btn btn-outline-secondary rounded-pill ml-2 mr-2 text-secondary"
+      >임시저장</v-btn
+    >
     <div class="card">
       <v-row>
         <v-col v-for="(item, idx) in imgUrl" :key="idx">
