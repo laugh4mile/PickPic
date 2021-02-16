@@ -7,6 +7,7 @@ public class PostParameterDto {
 	private String key;
 	private String word;
 	private String email;
+	private String sortBy;
 
 	public PostParameterDto() {
 		pg = 1;
@@ -61,5 +62,15 @@ public class PostParameterDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public String getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(String sortBy) {
+		this.sortBy = sortBy;
+	}
+	
+	
 
 }
