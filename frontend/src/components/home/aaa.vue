@@ -26,6 +26,7 @@
                 height="480"
                 :src="imgurl[n]"
                 alt="image slot"
+                @click="go(postno[n])"
               />
             </template>
           </b-carousel-slide>
@@ -50,6 +51,7 @@
                 v-for="(item, i) in board"
                 :key="i"
                 :value="item"
+                @click="go(item.postNo)"
               >
                 {{ item.title }}
               </li>
@@ -77,7 +79,8 @@ export default {
       imgurl: [],
       boards: [],
       board: [],
-      num: [0, 1, 2, 3, 4, 5],
+      num: [0, 1, 2, 3, 4],
+      postno: [],
     };
   },
   created() {
@@ -86,7 +89,7 @@ export default {
     axios
       .get(`${SERVER_URL}/post/list`, { params })
       .then((response) => {
-        // console.log(response);
+        console.log(response);
         this.boards = response.data;
         this.board = this.boards;
       })
@@ -98,6 +101,7 @@ export default {
       axios
         .get(`${SERVER_URL}/post/list/` + i)
         .then((response) => {
+          this.postno.push(response.data.postNo);
           this.imgurl.push(
             'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
               response.data.thumbnail
@@ -115,6 +119,9 @@ export default {
     onSlideEnd(slide) {
       this.sliding = false;
     },
+    go(postNo) {
+      this.$router.push('/board/' + postNo);
+    }
   },
 };
 </script>
