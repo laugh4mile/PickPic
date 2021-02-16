@@ -81,8 +81,10 @@ export default {
     };
   },
   created() {
+    const params = new URLSearchParams();
+    params.append('sortBy', 'like');
     axios
-      .get(`${SERVER_URL}/post/list`)
+      .get(`${SERVER_URL}/post/list`, { params })
       .then((response) => {
         // console.log(response);
         this.boards = response.data;

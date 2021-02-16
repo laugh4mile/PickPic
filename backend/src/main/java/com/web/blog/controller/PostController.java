@@ -53,7 +53,8 @@ public class PostController {
 
 	@ApiOperation(value = "게시글 목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
 	@GetMapping("/list")
-	public ResponseEntity<List<PostDto>> getList(PostParameterDto postParameterDto) throws Exception {
+	public ResponseEntity<List<PostDto>> getList(PostParameterDto postParameterDto, @RequestParam(required = false) String sortBy) throws Exception {
+		postParameterDto.setSortBy(sortBy);
 		logger.info("getList - 호출, " + postParameterDto);
 
 		return new ResponseEntity<List<PostDto>>(postService.getList(postParameterDto), HttpStatus.OK);

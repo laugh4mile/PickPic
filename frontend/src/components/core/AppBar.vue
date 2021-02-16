@@ -39,7 +39,7 @@
                 <v-btn
                   text
                   v-on="on"
-                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan hidden-xs  "
+                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan"
                   style="border-width : 3px; font-size : 12 px; "
                 >
                   로그인
@@ -127,7 +127,7 @@
         </template>
         <template v-else>
           <v-spacer />
-          <span class="font-yg-jalnan">
+          <span class="font-yg-jalnan hidden-xs">
             <span style="color: green">{{ getUserName }}</span
             >님 환영합니다.</span
           >
@@ -144,14 +144,14 @@
             text
             @click="myPageForm"
             class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan col-xs-2"
-            style="border-width : 3px;"
+            style="border-width : 3px; font-size : 12 px;"
             >마이페이지</v-btn
           >
           <v-btn
             text
             @click="logout"
             class="btn btn-outline-secondary rounded-pill font-yg-jalnan col-xs-2"
-            style="border-width : 3px; "
+            style="border-width : 3px; font-size : 12 px;"
             >로그아웃</v-btn
           >
         </template>
