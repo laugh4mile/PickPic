@@ -7,7 +7,7 @@
           :src="require('@/assets/logo.png')"
           class="mr-5"
           contain
-          height="55"
+          height="100%"
           width="80"
           max-width="110"
           @click="toHome"
@@ -28,7 +28,7 @@
           <v-btn
             text
             @click="registForm"
-            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan hidden-xs"
             style="border-width : 3px; font-size : 12px;"
           >
             회원가입
@@ -39,7 +39,7 @@
                 <v-btn
                   text
                   v-on="on"
-                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan"
+                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan hidden-xs  "
                   style="border-width : 3px; font-size : 12 px; "
                 >
                   로그인
@@ -143,14 +143,14 @@
           <v-btn
             text
             @click="myPageForm"
-            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan"
+            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan col-xs-2"
             style="border-width : 3px;"
             >마이페이지</v-btn
           >
           <v-btn
             text
             @click="logout"
-            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan col-xs-2"
             style="border-width : 3px; "
             >로그아웃</v-btn
           >
