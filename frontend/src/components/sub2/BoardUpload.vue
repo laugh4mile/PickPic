@@ -51,12 +51,14 @@
       v-if="!temp"
       id="editor"
       @text="emitedData"
+      @edit-img2="emitedImg"
       :contents="{ title: '', content: '' }"
     ></editor>
     <editor
       v-else
       id="editor"
       @text="emitedData"
+      @edit-img2="emitedImg"
       :contents="tempBoard"
     ></editor>
     <!-- <v-textarea label="본문" v-model="content"></v-textarea> -->
@@ -70,6 +72,7 @@
     />
 
     <v-btn @click="completeUpload">작성 완료</v-btn>
+    <p>{{$refs}}</p>
     <v-btn @click="tempUpload">임시저장</v-btn>
     <div class="card">
       <v-row>
@@ -127,6 +130,12 @@ export default {
     Editor,
   },
   methods: {
+    emitedImg(data) {
+      console.log(data)
+      this.imageUrl.push(data.imgsrc);
+      this.myfile.push(data.file);
+
+    },
     emitedData(event) {
       this.content = event.content;
       this.title = event.title;
@@ -143,6 +152,7 @@ export default {
       this.content = event;
     },
     onChangeImages(e) {
+      console.log(e)
       var file = e.target.files;
       for (var i = 0; i < file.length; i++) {
         this.imageUrl.push(URL.createObjectURL(file[i]));
@@ -237,6 +247,7 @@ export default {
       frm.append('content', this.content);
       frm.append('title', this.title);
       frm.append('unmodified', this.deleted);
+      console.log(this.myfile)
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {

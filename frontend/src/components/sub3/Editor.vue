@@ -78,7 +78,7 @@
       </v-dialog>
       <v-btn class="ml-2" id="preview" dark @click="preview">Preview</v-btn>
       <v-btn class="ml-2 hidden" id="edit" dark @click="edit">Edit</v-btn>
-      <PostImageEditor/>
+      <PostImageEditor @edit-img="editImg"/>
     </v-row>
 
     <div
@@ -246,6 +246,11 @@ export default {
     },
   },
   methods: {
+    editImg(data) {
+      // console.log(data);
+      // console.log('에디터완료');
+      this.$emit('edit-img2', data);
+    },
     preview() {
       $('#preview').addClass('hidden');
       $('#edit').removeClass('hidden');
