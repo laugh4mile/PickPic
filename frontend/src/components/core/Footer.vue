@@ -1,71 +1,89 @@
 <template>
-  <v-footer class="py-4" dark height="auto">
-    <v-container class="mx-auto">
-      <v-row>
-        <v-col cols="9">
-          <base-btn
-            v-for="(item, i) in items"
-            :key="i"
-            :href="item.href"
-            class="ml-0 mr-3"
-            color="primary"
-            square
-            target="_blank"
-          >
-            <v-icon v-text="item.icon" />
-          </base-btn>
-        </v-col>
-
-        <v-spacer />
-
-        <base-btn
-          class="mr-0"
-          square
-          title="Go to top"
-          @click="$vuetify.goTo(0)"
-        >
-          <v-icon>mdi-chevron-up</v-icon>
-        </base-btn>
-      </v-row>
-    </v-container>
-  </v-footer>
+<footer class="section footer-classic context-dark bg-image mt-5" style="background: #D3D3D3;">
+        <div class="container">
+          <div class="row row-30">
+            <div class="col-md-4 col-xl-5">
+              <div class="pr-xl-4"><a class="brand" href="/"><img class="brand-logo-light" src="../../assets/logo.png" alt="" width="140" height="37" srcset="images/agency/logo-retina-inverse-280x74.png 2x"></a>
+                <p>We are an award-winning creative agency, dedicated to the best result in web design, promotion, business consulting, and marketing.</p>
+                <!-- Rights-->
+                <p class="rights"><span>©  </span><span class="copyright-year">2021</span><span> </span><span>PickPic</span><span>. </span><span>All Rights Reserved.</span></p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <h5>Contacts</h5>
+              <dl class="contact-list">
+                <dt>Address:</dt>
+                <dd>서울 강남구 테헤란로 212</dd>
+              </dl>
+              <dl class="contact-list">
+                <dt>email:</dt>
+                <dd><a href="mailto:#">PickPic.gmail.com</a></dd>
+              </dl>
+            </div>
+            <div class="col-md-4 col-xl-3">
+              <h5>Links</h5>
+              <ul class="nav-list">
+                <li><a href="/">홈으로</a></li>
+                <li><a href="/board">게시판</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
 </template>
+<style scoped>
+.context-dark, .bg-gray-dark, .bg-primary {
+   color: rgba(0, 0, 0, 0.5);
+}
 
+.footer-classic a, .footer-classic a:focus, .footer-classic a:active {
+    color: rgba(0, 0, 0, 0.5);
+}
+.nav-list li {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.nav-list li a:hover:before {
+    margin-left: 0;
+    opacity: 1;
+    visibility: visible;
+}
+
+ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.social-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 23px;
+    font: 900 13px/1 "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.5);
+}
+.social-container .col {
+    border: 1px solid  rgba(0, 0, 0, 0.5);
+}
+.nav-list li a:before {
+    content: "\f14f";
+    font: 400 21px/1 "Material Design Icons";
+    color: #4d6de6;
+    display: inline-block;
+    vertical-align: baseline;
+    margin-left: -28px;
+    margin-right: 7px;
+    opacity: 0;
+    visibility: hidden;
+    transition: .22s ease;
+}
+</style>
 <script>
 export default {
   name: 'CoreFooter',
-
-  data: () => ({
-    items: [
-      {
-        href: '#!',
-        icon: 'mdi-twitter',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-instagram',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-facebook',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-google-plus',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-reddit',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-discord',
-      },
-      {
-        href: '#!',
-        icon: 'mdi-pinterest',
-      },
-    ],
-  }),
 };
 </script>

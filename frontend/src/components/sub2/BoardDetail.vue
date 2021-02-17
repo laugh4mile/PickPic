@@ -1,6 +1,7 @@
 <template>
   <div class="container font-ELAND_Choice_B" v-if="!loading">
-    <div>
+    <div id="wr">
+    <login-modal v-model="loginPlz" :btnView="true" :dialog="loginPlz" @loginSuccess="loginPlz=false"/>
       <v-row>
         <v-col>
           <h2>{{ this.board.postInfo.title }}</h2>
@@ -29,7 +30,7 @@
           <span class="d-flex justify-content-end" style="font-size:15px">
             좋아요 {{ this.board.postInfo.likeCnt }}
           </span>
-          <div class="d-flex justify-content-end mt-4">
+          <div v-if="!((board.postInfo.email != $store.getters.getUserEmail) && ($store.getters.getRole != 'admin'))" class="d-flex justify-content-end mt-4">
             <v-btn
               :disabled="
                 this.board.postInfo.email != $store.getters.getUserEmail
@@ -48,8 +49,9 @@
               >
                 <v-btn
                   :disabled="
-                    board.postInfo.email != $store.getters.getUserEmail
+                    (board.postInfo.email != $store.getters.getUserEmail) && ($store.getters.getRole != 'admin')
                   "
+
                   color="secondary"
                   outlined
                   class="btn-outline-info mr-2 rounded-pill"
@@ -97,7 +99,7 @@
         outlined
         @click="toBoard"
         class="btn-outline mr-2 rounded-pill mb-5"
-        >홈으로</v-btn
+        >게시판</v-btn
       >
     </div>
     <comment />
@@ -108,6 +110,8 @@ import Vote from './vote.vue';
 import Comment from './Comment.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
+import LoginModal from "../core/LoginModal.vue";
+
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -121,6 +125,7 @@ export default {
       cont: '',
       loading: false,
       isPic: true,
+      loginPlz: false,
     };
   },
   computed: {
@@ -129,9 +134,12 @@ export default {
   components: {
     Vote,
     Comment,
+    LoginModal,
   },
   created() {
     this.loading = true;
+    this.loginPlz = false;
+
     axios
       .get(`${SERVER_URL}/post`, {
         params: {
@@ -178,6 +186,7 @@ export default {
     heartClick() {
       if (!this.getUserEmail) {
         alert('로그인이 필요한 서비스입니다.');
+        this.loginPlz = true;
       } else {
         const params = new URLSearchParams();
         params.append('email', this.$store.getters.getUserEmail);

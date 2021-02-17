@@ -15,6 +15,7 @@
           <v-btn
             color="secondary"
             outlined
+            v-if="getUserEmail"
             @click="uploadForm"
             class="btn-outline-info rounded-pill mb-10 pull-right"
             >글쓰기</v-btn
@@ -46,12 +47,16 @@ import BoardDesign from './BoardDesign.vue';
 import axios from 'axios';
 import InfiniteLoading from 'vue-infinite-loading';
 import VoteSearch from '@/components/sub2/VoteSearch.vue';
+import { mapGetters } from 'vuex';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   components: {
     BoardDesign,
     InfiniteLoading,
     VoteSearch,
+  },
+  computed: {
+    ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
   },
   created() {
     axios
