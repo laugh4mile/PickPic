@@ -57,7 +57,12 @@
 				and #{key} = #{word}
 			</if>
 		</if>
-		order by postNo desc, modifyDate desc
+		<if test="sortBy == 'like'">
+            order by likeCnt desc
+        </if>
+        <if test="sortBy != 'like'">
+			order by postNo desc, modifyDate desc
+        </if>
 		limit #{start}, #{spp}
 	</select>
 	

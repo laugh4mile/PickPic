@@ -3,6 +3,11 @@
 <template>
   <div class="container">
     <div class="card mb-5">
+      <login-modal
+        :btnView="true"
+        :dialog="loginPlz"
+        @loginSuccess="loginPlz = false"
+      />
       <div class="card-body">
         <v-row align="center">
           <v-textarea
@@ -23,8 +28,12 @@
         Sort
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" @click="refreshData('zzz')">Time</a>
-        <a class="dropdown-item" @click="refreshData('like')">Like</a>
+        <a class="dropdown-item" @click="[(reset = true), refreshData('zzz')]"
+          >Time</a
+        >
+        <a class="dropdown-item" @click="[(reset = true), refreshData('like')]"
+          >Like</a
+        >
       </div>
     </div>
     <br /><br /><br />
@@ -53,6 +62,12 @@
                   style="float:right; height:30px; min-width:30px"
                   v-bind="attrs"
                   v-on="on"
+                  v-if="
+                    !(
+                      comment.Comment.email != $store.getters.getUserEmail &&
+                      $store.getters.getRole != 'admin'
+                    )
+                  "
                 >
                   <v-icon>fas fa-list</v-icon>
                 </v-btn>
@@ -61,7 +76,10 @@
               <v-list>
                 <v-list-item v-for="(item, i) in items" :key="i">
                   <v-btn
-                    :disabled="comment.Comment.email != getUserEmail"
+                    :disabled="
+                      comment.Comment.email != $store.getters.getUserEmail &&
+                        $store.getters.getRole != 'admin'
+                    "
                     color="secondary"
                     outlined
                     @click="menuclick($event, comment)"
@@ -163,7 +181,11 @@
         </v-row>
       </div>
     </div> -->
-    <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+    <infinite-loading
+      @infinite="infiniteHandler"
+      ref="InfiniteLoading"
+      spinner="waveDots"
+    >
       <div
         slot="no-more"
         style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
@@ -189,7 +211,7 @@
   width: 0;
   height: 0;
   display: block;
-  content: ' ';
+  content: " ";
   border-color: transparent;
   border-style: solid solid outset;
   pointer-events: none;
@@ -209,7 +231,7 @@
 <script>
 import axios from 'axios';
 import { mapGetters } from 'vuex';
-
+import LoginModal from "../core/LoginModal.vue";
 import InfiniteLoading from 'vue-infinite-loading';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
@@ -223,13 +245,16 @@ export default {
       dis: 0,
       items: ['수정', '삭제'],
       limit: 1,
+      loginPlz: false,
       sortBy: '',
       profileImg: 'sibal',
       like: false,
+      reset: false,
     };
   },
   components: {
     InfiniteLoading,
+    LoginModal,
   },
   computed: {
     ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
@@ -249,6 +274,7 @@ export default {
       axios
         .post(`${SERVER_URL}/comment/` + this.$route.params.no, params)
         .then((response) => {
+          console.log(response);
           setTimeout(() => {
             if (response.data.length) {
               for (var i = 0; i < response.data.length; i++) {
@@ -277,6 +303,10 @@ export default {
         });
     },
     refreshData(sortTo) {
+      if(this.reset) {
+        this.$refs.InfiniteLoading.stateChanger.reset();
+        this.reset=false;
+      }
       this.limit = 1;
       this.sortBy = sortTo;
       const params = new URLSearchParams();
@@ -289,6 +319,7 @@ export default {
         })
         .then((response) => {
           this.comments = response.data;
+          console.log(this.comments);
           // this.comments.profileImg =
           //   'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
           //   this.comment.profileImg;
@@ -306,13 +337,13 @@ export default {
         });
     },
     heart(cmt) {
-      if (cmt.likeCheck == 'Y') {
-        this.like = !this.like;
-        // return require('@/assets/heart.jpg');
-      } else {
-        this.like = !this.like;
-        // return require('@/assets/blank heart.png');
-      }
+        if (cmt.likeCheck == 'Y') {
+          this.like = !this.like;
+      // return require('@/assets/heart.jpg');
+        } else {
+          this.like = !this.like;
+          // return require('@/assets/blank heart.png');
+        }
     },
     modifyCommentBtn(event) {
       this.dis = event.currentTarget.id;
@@ -323,6 +354,7 @@ export default {
     writeComment() {
       if (!this.$store.getters.getUserEmail) {
         alert('로그인이 필요한 서비스입니다.');
+        this.loginPlz = true;
       } else {
         if (!this.userComment) {
           alert('댓글을 입력해주세요');
@@ -388,7 +420,11 @@ export default {
       }
     },
     heartClick(comment) {
-      const params = new URLSearchParams();
+       if (!this.getUserEmail) {
+        alert('로그인이 필요한 서비스입니다.');
+        this.loginPlz = true;
+      }else{
+        const params = new URLSearchParams();
       params.append('email', this.getUserEmail);
       params.append('commentNo', comment.Comment.commentNo);
 
@@ -408,6 +444,7 @@ export default {
             query: { status: error.response.status },
           });
         });
+          }
     },
   },
 };

@@ -16,18 +16,23 @@
               임시저장 목록
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title class="headline">
+          <v-card class="font-ELAND_Choice_B">
+            <v-card-title class="font-ELAND_Choice_B">
               임시저장 목록
             </v-card-title>
             <v-card-text style="height: 300px;">
               <v-radio-group v-model="dialogm1" column>
-                <v-radio
-                  v-for="(item, index) in tempPost"
-                  :key="index"
-                  :label="item.title"
-                  :value="item.postNo"
-                />
+                <div v-if="tempPost.length > 0">
+                  <v-radio
+                    v-for="(item, index) in tempPost"
+                    :key="index"
+                    :label="item.title"
+                    :value="item.postNo"
+                  />
+                </div>
+                <div v-else>
+                  임시저장 목록 없음
+                </div>
               </v-radio-group>
             </v-card-text>
             <v-card-actions>
@@ -51,8 +56,7 @@
       v-if="!temp"
       id="editor"
       @text="emitedData"
-      @edit-img2="emitedImg"
-      :contents="{ title: '', content: '' }"
+      :contents="{ title, content }"
     ></editor>
     <editor
       v-else
@@ -69,11 +73,20 @@
       id="file"
       name="file"
       @change="onChangeImages"
+      class="my-4"
     />
-
-    <v-btn @click="completeUpload">작성 완료</v-btn>
-    <p>{{$refs}}</p>
-    <v-btn @click="tempUpload">임시저장</v-btn>
+    <div class="mb-3">
+      <v-btn
+        @click="completeUpload"
+        class="btn btn-outline-secondary rounded-pill text-secondary"
+        >작성 완료</v-btn
+      >
+      <v-btn
+        @click="tempUpload"
+        class="btn btn-outline-secondary rounded-pill ml-2 mr-2 text-secondary"
+        >임시저장</v-btn
+      >
+    </div>
     <div class="card">
       <v-row>
         <v-col v-for="(item, idx) in imgUrl" :key="idx">
@@ -94,11 +107,13 @@
             Delete
           </v-btn>
         </v-col>
-        <v-col cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
-          <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
-          <v-btn color="red darken-1" @click="deleteImg(index)">
-            Delete
-          </v-btn>
+        <v-col  cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
+          <div class="text-center">
+            <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
+            <v-btn color="red darken-1" style="color:white;" @click="deleteImg(index)" class="text-center mt-2">
+              Delete
+            </v-btn>
+          </div>
         </v-col>
       </v-row>
     </div>

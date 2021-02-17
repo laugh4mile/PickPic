@@ -7,10 +7,11 @@
           :src="require('@/assets/logo.png')"
           class="mr-5"
           contain
-          height="55"
+          height="100%"
           width="80"
           max-width="110"
           @click="toHome"
+          style="cursor:pointer"
         />
 
         <v-btn
@@ -28,106 +29,16 @@
           <v-btn
             text
             @click="registForm"
-            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan hidden-xs"
             style="border-width : 3px; font-size : 12px;"
           >
             회원가입
           </v-btn>
-          <div class="text-center">
-            <v-dialog v-model="dialog" width="300" content-class="elevation-0">
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  text
-                  v-on="on"
-                  class="btn btn-outline-secondary ma-4 rounded-pill font-yg-jalnan"
-                  style="border-width : 3px; font-size : 12 px; "
-                >
-                  로그인
-                </v-btn>
-              </template>
-
-              <!-- 로그인모달 시작 -->
-              <div
-                class="d-flex justify-content-center h-100 w-100 rounded-xl font-yg-jalnan"
-              >
-                <div class="card rounded-xl" style="background : white;">
-                  <div class="card-header ">
-                    <h3 style="color:black; text-align:center" class="ma-0">
-                      PickPic
-                    </h3>
-                    <!-- <div class="d-flex justify-content-end social_icon">
-                      <span><i class="fab fa-facebook-square"></i></span>
-                      <span><i class="fab fa-google-plus-square"></i></span>
-                      <span><i class="fab fa-twitter-square"></i></span>
-                    </div> -->
-                  </div>
-                  <div class="card-body font-ELAND_Choice_M">
-                    <form>
-                      <span
-                        class="badge badge-danger mt-1"
-                        v-if="!availableEmailForm"
-                        >이메일 형식이 다릅니다.</span
-                      >
-                      <div class="input-group form-group">
-                        <!-- <div class="input-group-prepend">
-                          <span class="input-group-text"
-                            ><i class="fas fa-user"></i
-                          ></span>
-                        </div> -->
-                        <input
-                          type="email"
-                          class="form-control rounded-xl"
-                          v-model="user.email"
-                          placeholder="이메일"
-                          @blur="checkDuplicate"
-                        />
-                      </div>
-                      <div class="input-group form-group">
-                        <!-- <div class="input-group-prepend">
-                          <span class="input-group-text"
-                            ><i class="fas fa-key"></i
-                          ></span>
-                        </div> -->
-                        <input
-                          type="password"
-                          class="form-control rounded-xl"
-                          v-model="user.pwd"
-                          placeholder="비밀번호"
-                        />
-                      </div>
-                      <!-- <div class="row align-items-center remember">
-                          <input type="checkbox">Remember Me
-                        </div> -->
-                      <input
-                        type="submit"
-                        @click="login"
-                        value="로그인"
-                        class="btn btn-secondary rounded-pill form-control font-yg-jalnan"
-                      />
-                    </form>
-                  </div>
-                  <div class="card-footer rounded-b-xl">
-                    <div
-                      class="d-flex justify-content-center links text-secondary font-ELAND_Choice_M"
-                    >
-                      처음이신가요 ?
-                      <a href="regist" class="font-ELAND_Choice_B">회원가입</a>
-                    </div>
-                    <div
-                      class="d-flex justify-content-center font-ELAND_Choice_B"
-                    >
-                      <a href="#">비밀번호 찾기</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- 로그인 모달끝 -->
-            </v-dialog>
-          </div>
+          <login-modal/>
         </template>
         <template v-else>
           <v-spacer />
-          <span class="font-yg-jalnan">
+          <span class="font-yg-jalnan hidden-xs">
             <span style="color: green">{{ getUserName }}</span
             >님 환영합니다.</span
           >
@@ -143,15 +54,15 @@
           <v-btn
             text
             @click="myPageForm"
-            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan"
-            style="border-width : 3px;"
+            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan col-xs-2"
+            style="border-width : 3px; font-size : 12 px;"
             >마이페이지</v-btn
           >
           <v-btn
             text
             @click="logout"
-            class="btn btn-outline-secondary rounded-pill font-yg-jalnan"
-            style="border-width : 3px; "
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan col-xs-2"
+            style="border-width : 3px; font-size : 12 px;"
             >로그아웃</v-btn
           >
         </template>
@@ -164,7 +75,7 @@
 // Utilities
 import { mapGetters, mapMutations } from 'vuex';
 import axios from 'axios';
-
+import LoginModal from './LoginModal.vue';
 export default {
   name: 'CoreAppBar',
 
@@ -177,7 +88,9 @@ export default {
       'getRole',
     ]),
   },
-
+  components:{
+    LoginModal,
+  },
   methods: {
     validEmail(email) {
       var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

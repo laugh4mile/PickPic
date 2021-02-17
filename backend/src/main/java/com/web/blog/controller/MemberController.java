@@ -172,7 +172,10 @@ public class MemberController {
 
 		// 회원 탈퇴
 		try {
-			flag = memberService.delete(map.get("email"));
+			String email = map.get("email");
+			String fileName = memberService.findUserInfo(email).getProfileImg();
+			s3FileUploadService.delete(fileName);
+			flag = memberService.delete(email);
 			status = HttpStatus.ACCEPTED;
 		} catch (Exception e) {
 			e.printStackTrace();

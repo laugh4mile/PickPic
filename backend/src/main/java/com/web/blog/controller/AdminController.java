@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.blog.model.service.MemberService;
+import com.web.blog.model.service.S3FileUploadService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -29,6 +30,9 @@ public class AdminController {
 
 	@Autowired
 	MemberService memberService;
+
+	@Autowired
+	private S3FileUploadService s3FileUploadService;
 
 	@ApiOperation(value = "회원 목록 조회", notes = "회원들의 정보(이메일, 이름, 가입일, 권한, 프로필, 게시글 수, 댓글 수)을 반환한다.", response = HashMap.class)
 	@GetMapping
@@ -67,6 +71,8 @@ public class AdminController {
 		// 회원 탈퇴
 		try {
 			for(String email : targets) {
+				String fileName = memberService.findUserInfo(email).getProfileImg();
+				s3FileUploadService.delete(fileName);
 				flag = memberService.delete(email);
 				if(!flag) {
 					return new ResponseEntity<Boolean>(false, HttpStatus.NO_CONTENT);
