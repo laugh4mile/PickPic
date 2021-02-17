@@ -25,6 +25,7 @@
                 max-width="100%"
                 height="480"
                 :src="imgurl[n]"
+                style="cursor:pointer;"
                 alt="image slot"
                 @click="go(postno[n])"
               />
@@ -47,7 +48,7 @@
               <br />
               <li
                 class="my-4 font-ELAND_Choice_B"
-                style="font-size:16px; max-width: 100%"
+                style="font-size:16px; max-width: 100%; cursor:pointer"
                 v-for="(item, i) in board"
                 :key="i"
                 :value="item"

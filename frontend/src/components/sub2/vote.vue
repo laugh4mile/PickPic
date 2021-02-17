@@ -1,5 +1,6 @@
 <template>
   <div>
+    <login-modal :btnView="true" :dialog="loginPlz" @loginSuccess="loginPlz=false"/>
     <v-radio-group>
       <v-row>
         <label v-for="(item, index) in imgUrl" :key="index">
@@ -18,6 +19,8 @@
 <script>
 import axios from 'axios';
 import Poll from '@/components/sub3/VoteResult.vue';
+import { mapGetters } from 'vuex';
+import LoginModal from "../core/LoginModal.vue";
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
@@ -25,6 +28,7 @@ export default {
       imgUrl: [],
       item: [],
       selected: -1,
+      loginPlz: false,
       options: {
         question: "What's your favourite?",
         answers: [
@@ -34,6 +38,9 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
+  },
   props: {
     no: {
       type: Number,
@@ -41,6 +48,7 @@ export default {
   },
   components: {
     Poll,
+    LoginModal,
   },
   created() {
     const params = new URLSearchParams();
@@ -85,8 +93,13 @@ export default {
   },
   methods: {
     vote() {
-      if (this.selected == -1) {
-        alert('사진을 선택해 주세요!');
+      if (!this.getUserEmail) {
+        alert('로그인이 필요한 서비스입니다.');
+        this.loginPlz = true;
+      }else{
+
+        if (this.selected == -1) {
+          alert('사진을 선택해 주세요!');
         return;
       }
       alert(this.selected + 1 + '번째 사진에 투표하였습니다.');
@@ -125,6 +138,7 @@ export default {
             query: { status: error.response.status },
           });
         });
+      }
     },
     selectImg(item, idx) {
       this.item = item;

@@ -119,6 +119,7 @@ export default new Vuex.Store({
               'auth-token'
             ] = `${response.data['auth-token']}`;
             alert('로그인 성공');
+            location.reload();
           }
         })
         .catch((error) => {});
@@ -126,7 +127,7 @@ export default new Vuex.Store({
     LOGOUT(context) {
       context.commit('LOGOUT');
       axios.defaults.headers.common['auth-token'] = undefined;
-      location.reload();
+      location.href = "/";
     },
     REGIST(context, user) {
       return axios
