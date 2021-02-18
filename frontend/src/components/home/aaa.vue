@@ -47,7 +47,7 @@
               >
               <br />
               <li
-                class="my-4 font-ELAND_Choice_B"
+                class="my-4 font-ELAND_Choice_B overtext"
                 style="font-size:16px; max-width: 100%; cursor:pointer"
                 v-for="(item, i) in board"
                 :key="i"
@@ -149,5 +149,12 @@ export default {
 .myStyle {
   height: 480px;
   width: auto;
+}
+
+.overtext {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 200px;
 }
 </style>
