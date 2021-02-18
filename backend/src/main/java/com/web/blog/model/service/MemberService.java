@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.web.blog.model.MemberDto;
+import com.web.blog.model.PostDto;
 
 public interface MemberService {
 
@@ -45,5 +46,8 @@ public interface MemberService {
 	// LoginController
 	/** id, pwd와 일치하는 MemberDto를 반환 */
 	public MemberDto login(MemberDto dto) throws Exception;
+
+	/** 게시글 리스트 */
+	public List<PostDto> getPostList(String email) throws Exception;
 
 }

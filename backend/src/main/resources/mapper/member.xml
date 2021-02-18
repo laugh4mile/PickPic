@@ -85,5 +85,11 @@
 		from member
 		where email=#{email}
 	</select>
+	
+	<select id="getPostList" parameterType="string" resultType="PostDto">
+		select *
+		from post
+		where email = #{email} and temp = 0
+	</select>
 
 </mapper>
