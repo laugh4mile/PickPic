@@ -353,11 +353,11 @@ export default {
     },
     writeComment() {
       if (!this.$store.getters.getUserEmail) {
-        alert('로그인이 필요한 서비스입니다.');
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
         this.loginPlz = true;
       } else {
         if (!this.userComment) {
-          alert('댓글을 입력해주세요');
+          this.$alert('댓글을 입력해주세요','','warning');
         } else {
           axios
             .post(`${SERVER_URL}/comment`, {
@@ -388,7 +388,7 @@ export default {
             },
           })
           .then((response) => {
-            alert('삭제 완료');
+            this.$alert('삭제 완료','','success');
 
             const params = new URLSearchParams();
             params.append('email', this.getUserEmail);
@@ -408,7 +408,7 @@ export default {
           .put(`${SERVER_URL}/comment`, cmt)
           .then((response) => {
             event.target.innerText = '수정';
-            alert('수정 완료');
+            this.$alert('수정 완료','','success');
             this.dis = 0;
           })
           .catch((error) => {
@@ -421,7 +421,7 @@ export default {
     },
     heartClick(comment) {
        if (!this.getUserEmail) {
-        alert('로그인이 필요한 서비스입니다.');
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
         this.loginPlz = true;
       }else{
         const params = new URLSearchParams();

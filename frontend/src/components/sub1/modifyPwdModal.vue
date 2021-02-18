@@ -77,7 +77,7 @@ export default {
     modifyPwd() {
       if (this.pwd1 == this.pwd2) {
         if (this.pwd == this.pwd1) {
-          alert('기존비밀번호와 같습니다.');
+          this.$alert('기존비밀번호와 같습니다.','','warning');
         } else {
           axios
             .put(`${SERVER_URL}/member/pwd`, {
@@ -87,7 +87,7 @@ export default {
             })
             .then((response) => {
               if (response.data) {
-                alert('비밀번호변경완료');
+                this.$alert('비밀번호변경완료','','success');
                 const params = new URLSearchParams();
                 params.append('email', this.getUserEmail);
                 axios
@@ -107,7 +107,7 @@ export default {
                   });
                 this.dialog2 = false;
               } else {
-                alert('비밀번호가 다릅니다.');
+                this.$alert('비밀번호가 다릅니다.','','warning');
               }
             })
             .catch((error) => {
@@ -118,7 +118,7 @@ export default {
             });
         }
       } else {
-        alert('내용을 확인해주세요');
+        this.$alert('내용을 확인해주세요','','warning');
       }
     },
   },

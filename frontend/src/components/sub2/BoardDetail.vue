@@ -185,7 +185,7 @@ export default {
     },
     heartClick() {
       if (!this.getUserEmail) {
-        alert('로그인이 필요한 서비스입니다.');
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
         this.loginPlz = true;
       } else {
         const params = new URLSearchParams();

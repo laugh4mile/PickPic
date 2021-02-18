@@ -98,13 +98,35 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-checkbox
+    <!-- <v-checkbox
       v-model="checkbox"
       :rules="[(v) => !!v || 'You must agree to continue!']"
       label="Do you agree?"
+      @click="opneTerms"
       required
-    ></v-checkbox>
-
+    ></v-checkbox> -->
+    <v-checkbox v-model="checkbox">
+      <template v-slot:label>
+        <div class="mt-2">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <!-- <a
+                target="_blank"
+                href=""
+                @click="opneTerms"
+                v-on="on"
+              >
+                이용약관
+              </a> -->
+              <terms-modal @agree="agreeTerms" @disagree="disagreeTerms" :on="on"/>
+            </template>
+            약관확인
+          </v-tooltip>
+          에 동의합니다
+        </div>
+      </template>
+    </v-checkbox>
+    
     <v-btn
       color="success"
       outlined
@@ -124,11 +146,13 @@
 <script>
 import axios from 'axios';
 import customButton from '../design/btn.vue';
+import TermsModal from './termsModal.vue';
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
 export default {
   components: {
     customButton,
+    TermsModal,
   },
   data: () => ({
     valid: false,
@@ -176,6 +200,14 @@ export default {
   }),
 
   methods: {
+    disagreeTerms() {
+      this.checkbox = false
+      console.log('약관미동의')
+    },
+    agreeTerms() {
+      this.checkbox = true
+      console.log('약관동의')
+    },
     checkNameDuplicate() {
       const params = new URLSearchParams();
       params.append('name', this.user.name);
@@ -184,18 +216,18 @@ export default {
         .then((response) => {
           if (this.user.name) {
             if (response.data) {
-              alert('중복된이름');
+              this.$alert('중복된이름','','error');
               this.chkname = false;
               this.marker.nameMarker = false;
               this.arletName = false;
             } else {
-              alert('사용가능');
+              this.$alert('사용가능','','success');
               this.chkname = true;
               this.marker.nameMarker = true;
               this.arletName = true;
             }
           } else {
-            alert('이름을 입력해주세요');
+            this.$alert('이름을 입력해주세요','','warning');
             this.chkname = false;
             this.marker.nameMarker = false;
           }
@@ -216,18 +248,18 @@ export default {
           .then((response) => {
             if (this.user.email) {
               if (response.data) {
-                alert('중복된메일');
+                this.$alert('중복된 메일','','error');
                 this.chkemail = false;
                 this.marker.emailMarker = false;
                 this.arletEmail = false;
               } else {
-                alert('사용가능');
+                this.$alert('사용가능','','success');
                 this.chkemail = true;
                 this.marker.emailMarker = true;
                 this.arletEmail = true;
               }
             } else {
-              alert('메일을 입력해주세요');
+              this.$alert('메일을 입력해주세요','','warning');
               this.chkemail = true;
               this.marker.emailMarker = false;
             }
@@ -236,7 +268,7 @@ export default {
             console.log(err);
           });
       } else {
-        alert('메일 형식에 맞게 입력해주세요');
+        this.$alert('메일 형식에 맞게 입력해주세요','','warning');
         this.chkemail = false;
         this.marker.emailMarker = false;
         this.arletEmail = false;
@@ -254,7 +286,7 @@ export default {
       axios
         .post(`${SERVER_URL}/service/mail`, params)
         .then((response) => {
-          alert('메일이 전송되었습니다');
+          this.$alert('메일이 전송되었습니다','','success');
         })
         .catch((error) => {
           this.$router.push({
@@ -271,10 +303,10 @@ export default {
         .then((response) => {
           if (response.data == 1) {
             this.verifys = true;
-            alert('인증 성공');
+            this.$alert('인증 성공','','success');
             this.arletCode = true;
           } else {
-            alert('인증 번호가 틀립니다.');
+            this.$alert('인증 번호가 틀립니다.','','error');
             this.arletCode = false;
           }
         })
@@ -289,16 +321,16 @@ export default {
       this.$refs.form.validate();
       if (!this.verifys) {
         event.preventDefault();
-        alert('이메일 인증 미완료');
+        this.$alert('이메일 인증 미완료','','warning');
       } else if (!this.chkname || !this.chkemail) {
-        alert('중복검사를 해주세요');
+        this.$alert('중복검사를 해주세요','','warning');
       } else if (!this.checkbox) {
-        alert('약관에 동의해주세요');
+        this.$alert('약관에 동의해주세요','','warning');
       } else {
         axios
           .post(`${SERVER_URL}/member`, this.user)
           .then((response) => {
-            alert('회원가입 완료');
+            this.$alert('회원가입 완료','','success');
             this.$router.push('/');
           })
           .catch((error) => {

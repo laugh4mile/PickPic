@@ -94,15 +94,15 @@ export default {
   methods: {
     vote() {
       if (!this.getUserEmail) {
-        alert('로그인이 필요한 서비스입니다.');
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
         this.loginPlz = true;
       }else{
 
         if (this.selected == -1) {
-          alert('사진을 선택해 주세요!');
+          this.$alert('사진을 선택해 주세요!','','warning');
         return;
       }
-      alert(this.selected + 1 + '번째 사진에 투표하였습니다.');
+      this.$alert(this.selected + 1 + '번째 사진에 투표하였습니다.','','success');
       // this.selected = -1
       const params = new URLSearchParams();
       params.append('email', this.$store.getters.getUserEmail);

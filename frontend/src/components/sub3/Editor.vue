@@ -484,7 +484,7 @@ export default {
         }
       } else {
         // Internet Explorer before version 9
-        alert('Your browser does not support this example!');
+        this.$alert('인터넷 브라우저에서는 지원하지 않는 기능입니다.','','warning');
       }
     },
     dialogComp() {
@@ -494,7 +494,7 @@ export default {
           this.srcs
         )
       ) {
-        alert('valid url');
+        this.$alert('적합한 링크입니다.','','success');
         if (this.validateYouTubeUrl(this.srcs)) {
           this.videosrcs.push(this.srcs);
           // document.getElementById('editor').append('<span v-model="videosrcs[' + this.videosrcs.length-1 +']"></span>');
@@ -518,7 +518,7 @@ export default {
           this.$emit('text', this.content);
         }
       } else {
-        alert('invalid url');
+        this.$alert('잘못된 링크입니다.','','warning');
       }
     },
     validateYouTubeUrl(url) {

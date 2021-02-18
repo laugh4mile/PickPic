@@ -148,7 +148,7 @@ export default {
           },
         })
         .then((response) => {
-          alert('회원을 삭제했습니다.');
+          this.$alert('회원을 삭제했습니다.','','success');
           this.$emit('deleted', this.user);
         })
         .catch((error) => {

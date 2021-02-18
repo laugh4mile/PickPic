@@ -230,7 +230,7 @@ export default {
           },
         })
         .then((response) => {
-          alert('등록 완료');
+          this.$alert('등록 완료','','success');
         })
         .catch((error) => {
           this.$router.push({
@@ -256,7 +256,7 @@ export default {
     },
     completeUpload() {
       if (this.myfile.length + this.imgUrl.length < 2) {
-        alert('사진을 두 장 이상 업로드해 주세요!');
+        this.$alert('사진을 두 장 이상 업로드해 주세요!','','warning');
         return;
       }
       var frm = new FormData();
@@ -276,7 +276,7 @@ export default {
           },
         })
         .then((response) => {
-          alert('등록 완료');
+          this.$alert('등록 완료','','success');
           this.$router.push('/board');
         })
         .catch((error) => {
