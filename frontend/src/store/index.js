@@ -111,7 +111,7 @@ export default new Vuex.Store({
         .then((response) => {
           if (response.data.message) {
             console.log('받았다', response);
-            this.$alert('아이디 또는 비밀번호를 틀렸습니다.','','warning');
+            alert('아이디 또는 비밀번호를 틀렸습니다.','','warning');
           } else {
             console.log(response);
             context.commit('LOGIN', response.data);

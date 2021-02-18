@@ -1,5 +1,5 @@
 <template>
-  <v-app oncontextmenu="return false" ondragstart="return false">
+  <v-app>
     <core-app-bar />
 
     <core-drawer />
@@ -11,10 +11,6 @@
 </template>
 
 <script>
-document.oncontextmenu = function (e) {
-  return false;
-}
-document.ondragstart = new Function('return false');
 export default {
   name: 'App',
 
@@ -56,33 +52,5 @@ export default {
 }
 .font-ELAND_Choice_B {
   font-family: 'ELAND_Choice_B';
-}
-
-/* 마우스 우클릭 드래그 금지 */
-
-code{
--webkit-user-select: text !important;
--moz-user-select: text !important;
--ms-user-select: text !important;
-user-select: text !important;
-}
-.code{
--webkit-user-select: text !important;
--moz-user-select: text !important;
--ms-user-select: text !important;
-user-select: text !important;
-}
-.txc-textbox{
--webkit-user-select: text !important;
--moz-user-select: text !important;
--ms-user-select: text !important;
-user-select: text !important;
-}
-
-body {
--webkit-user-select: none !important;
--moz-user-select: -moz-none !important;
--ms-user-select: none !important;
-user-select: none !important;
 }
 </style>
