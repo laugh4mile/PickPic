@@ -251,8 +251,8 @@ export default {
   methods: {
     updateValue(event) {
       console.log(event);
-      if(event.length > 10){
-        this.contents.title = this.contents.title.substring(0,10);
+      if(event.length > 30){
+        this.contents.title = this.contents.title.substring(0,30);
       }
       // console.log(value, this.amount)
       // if (String(value).length <= 10) {
