@@ -1,6 +1,7 @@
 <template>
   <div class="container font-ELAND_Choice_B">
-    <editor :contents="this.board.postInfo" @text="emitedData"></editor>
+    <editor :contents="this.board.postInfo" @text="emitedData" 
+      @edit-img2="emitedImg"></editor>
     <input
       class="mt-4"
       multiple="multiple"
@@ -103,6 +104,10 @@ export default {
   },
 
   methods: {
+    emitedImg(data) {
+      this.imageUrl.push(data.imgsrc);
+      this.myfile.push(data.file);
+    },
     emitedData(event) {
       this.board.postInfo = event;
     },
