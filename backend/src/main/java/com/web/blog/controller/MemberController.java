@@ -102,7 +102,6 @@ public class MemberController {
 
 		// 회원 정보 조회
 		try {
-//			MemberDto info = memberService.findUserInfo(email);
 			resultMap.put("info", memberService.findUserInfo(email));
 			resultMap.put("postList", memberService.getPostList(email));
 			status = HttpStatus.ACCEPTED;
