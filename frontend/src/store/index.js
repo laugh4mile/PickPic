@@ -111,14 +111,13 @@ export default new Vuex.Store({
         .then((response) => {
           if (response.data.message) {
             console.log('받았다', response);
-            alert('아이디 또는 비밀번호를 틀렸습니다.');
+            this.$alert('아이디 또는 비밀번호를 틀렸습니다.','','warning');
           } else {
             console.log(response);
             context.commit('LOGIN', response.data);
             axios.defaults.headers.common[
               'auth-token'
             ] = `${response.data['auth-token']}`;
-            alert('로그인 성공');
             location.reload();
           }
         })

@@ -129,7 +129,7 @@ export default {
             },
           })
           .then((response) => {
-            alert('프로필 업로드 완료');
+            this.$alert('프로필 업로드 완료','','success');
             const params = new URLSearchParams();
             params.append('email', this.getUserEmail);
             axios

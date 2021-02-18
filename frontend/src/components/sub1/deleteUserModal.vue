@@ -78,7 +78,7 @@ export default {
             });
           });
       } else {
-        alert('문구가 일치하지 않습니다.');
+        this.$alert('문구가 일치하지 않습니다.','','warning');
       }
     },
   },

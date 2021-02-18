@@ -143,11 +143,11 @@ export default {
       axios
         .put(`${SERVER_URL}/post`, frm)
         .then((response) => {
-          alert('수정 완료');
+          this.$alert('수정 완료','','success');
           this.$router.push('/board/' + this.board.postInfo.postNo);
         })
         .catch((error) => {
-          alert('수정 실패');
+          this.$alert('수정 실패','','error');
           this.$router.push({
             path: '/Error',
             query: { status: error.response.status },

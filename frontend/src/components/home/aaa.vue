@@ -95,7 +95,7 @@ export default {
         this.board = this.boards;
       })
       .catch((error) => {
-        alert(error);
+        this.$alert(error,'','error');
         this.$router.push('/Error');
       });
     for (var i = 1; i <= 5; i++) {
@@ -109,7 +109,7 @@ export default {
           );
         })
         .catch((error) => {
-          alert(error);
+          this.$alert(error,'','error');
         });
     }
   },
