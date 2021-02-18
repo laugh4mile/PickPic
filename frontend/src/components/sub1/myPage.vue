@@ -146,9 +146,11 @@ export default {
             const params = new URLSearchParams();
             params.append("email", this.getUserEmail);
             axios
-              .get(`${SERVER_URL}/member/delete`, { params })
+              .get(`${SERVER_URL}/member`, { params })
               .then((response) => {
-                console.log("기존이미지 삭제");
+                this.user.profileImg =
+                  "https://apfbucket.s3.ap-northeast-2.amazonaws.com/" +
+                  response.data.info.profileImg;
               })
               .catch(() => {
                 this.$router.push({
