@@ -56,6 +56,7 @@
       v-if="!temp"
       id="editor"
       @text="emitedData"
+      @edit-img2="emitedImg"
       :contents="{ title, content }"
     ></editor>
     <editor
@@ -72,6 +73,7 @@
       type="file"
       id="file"
       name="file"
+      accept=".png, .jpg, .jpeg, .gif"
       @change="onChangeImages"
       class="my-4"
     />
@@ -146,10 +148,8 @@ export default {
   },
   methods: {
     emitedImg(data) {
-      console.log(data)
       this.imageUrl.push(data.imgsrc);
       this.myfile.push(data.file);
-
     },
     emitedData(event) {
       this.content = event.content;
@@ -167,11 +167,18 @@ export default {
       this.content = event;
     },
     onChangeImages(e) {
-      console.log(e)
       var file = e.target.files;
       for (var i = 0; i < file.length; i++) {
-        this.imageUrl.push(URL.createObjectURL(file[i]));
-        this.myfile.push(this.$refs.file.files[i]);
+        var file_kind = file[i].name.lastIndexOf('.');
+        var ext_name = file[i].name.substring(file_kind+1,file[i].length);
+        var filetype = ext_name.toLowerCase();
+        if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp') {
+          this.imageUrl.push(URL.createObjectURL(file[i]));
+          this.myfile.push(this.$refs.file.files[i]);
+        } else {
+          alert('이미지 파일만 선택할 수 있습니다.');
+          return false;
+        }
       }
     },
     getTempPost() {
@@ -262,7 +269,6 @@ export default {
       frm.append('content', this.content);
       frm.append('title', this.title);
       frm.append('unmodified', this.deleted);
-      console.log(this.myfile)
       axios
         .post(`${SERVER_URL}/post`, frm, {
           headers: {

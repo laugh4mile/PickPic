@@ -78,7 +78,7 @@
 				end modifyDate,
 				likeCnt, email, name,
 				(
-					select thumbnail
+					select modPicName
 					from (
 						select pp.*, (select count(*)
 									from post_vote
@@ -91,7 +91,7 @@
 					limit 1
 				) as thumbnail,
 				(
-					select thumbnail
+					select modPicName
 					from (
 						select pp.*, (select count(*)
 									from post_vote

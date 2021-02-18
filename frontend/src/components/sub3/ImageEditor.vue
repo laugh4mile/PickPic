@@ -15,7 +15,7 @@
         <v-spacer></v-spacer>
       </v-toolbar> -->
       <div class="imageEditorApp">
-        <btn @click="getImg" class="btnstyle ">Apply</btn>
+        <button @click="getImg" class="btnstyle">Apply</button>
         <tui-image-editor ref="editor" :include-ui="useDefaultUI" :options="options"></tui-image-editor>
       </div>
     </v-card>
@@ -73,6 +73,7 @@ var whiteTheme = {
   // 'downloadButton.position': 'absolute',
 
   // main icons
+  'menu.backgroundColor':'transparent',
   'menu.normalIcon.color': '#8a8a8a',
   'menu.activeIcon.color': '#555555',
   'menu.disabledIcon.color': '#434343',
@@ -82,7 +83,7 @@ var whiteTheme = {
 
   // submenu icons
   'submenu.normalIcon.color': '#8a8a8a',
-  'submenu.activeIcon.color': '#555555',
+  'submenu.activeIcon.color': '#e9e9e9',
   'submenu.iconSize.width': '32px',
   'submenu.iconSize.height': '32px',
 
@@ -93,7 +94,7 @@ var whiteTheme = {
   // submenu labels
   'submenu.normalLabel.color': '#858585',
   'submenu.normalLabel.fontWeight': 'normal',
-  'submenu.activeLabel.color': '#000',
+  'submenu.activeLabel.color': '#e9e9e9',
   'submenu.activeLabel.fontWeight': 'normal',
 
   // checkbox style
@@ -193,12 +194,11 @@ export default {
       }
     console.log(editImg)
       // editImg.file['name'] = this.tempname
-      this.$emit('edit-img', editImg);
+    this.$emit('edit-img', editImg);
 
-
+    
 },
 getImg() {
-      // console.log(this.$refs.editor.invoke('toDataURL'))
       this.temp=this.$refs.editor.invoke('toDataURL')
       this.tempname=this.$refs.editor.invoke('getImageName')
       this.dataURItoBlob()

@@ -5,6 +5,9 @@
       label="제목"
       @change="getTitle"
       v-model="contents.title"
+      required
+      @input="updateValue"
+      counter="30"
     ></v-text-field>
     <v-row align="center" class="mb-3">
       <select
@@ -84,7 +87,7 @@
     <div
       style="
         border: 0.2px solid black;
-        font-size: 12px;
+        font-size: 24px;
         height: 400px;
         overflow: auto;
         padding: 10px;
@@ -114,7 +117,7 @@
 </template>
 
 <script>
-var font_size = 12;
+var font_size = 24;
 var font = 'Arial';
 
 var selection_range;
@@ -201,7 +204,7 @@ export default {
   mounted() {
     if (this.contents) {
       this.content = this.contents;
-      $('#editors').append(this.content.content);
+      // $('#editors').append(this.content.content);
       this.getTitle();
       this.sendText = marked($('#editors')[0].innerText + '', {
         sanitize: true,
@@ -216,7 +219,7 @@ export default {
       srcs: '',
       temp: '',
       sendText: '',
-      font_size: '12',
+      font_size: '24',
       dialog: false,
       fonts: [
         'Arial',
@@ -246,6 +249,17 @@ export default {
     },
   },
   methods: {
+    updateValue(event) {
+      console.log(event);
+      if(event.length > 10){
+        this.contents.title = this.contents.title.substring(0,10);
+      }
+      // console.log(value, this.amount)
+      // if (String(value).length <= 10) {
+      //   this.amount = value
+      // }
+      this.$forceUpdate()
+    },
     editImg(data) {
       // console.log(data);
       // console.log('에디터완료');

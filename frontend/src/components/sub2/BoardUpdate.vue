@@ -1,6 +1,7 @@
 <template>
   <div class="container font-ELAND_Choice_B">
-    <editor :contents="this.board.postInfo" @text="emitedData"></editor>
+    <editor :contents="this.board.postInfo" @text="emitedData" 
+      @edit-img2="emitedImg"></editor>
     <input
       class="mt-4"
       multiple="multiple"
@@ -8,6 +9,7 @@
       type="file"
       id="file"
       name="file"
+      accept=".png, .jpg, .jpeg, .gif"
       @change="onChangeImages"
     />
     <div>
@@ -102,6 +104,10 @@ export default {
   },
 
   methods: {
+    emitedImg(data) {
+      this.imageUrl.push(data.imgsrc);
+      this.myfile.push(data.file);
+    },
     emitedData(event) {
       this.board.postInfo = event;
     },
@@ -157,8 +163,16 @@ export default {
     onChangeImages(e) {
       var file = e.target.files;
       for (var i = 0; i < file.length; i++) {
-        this.imageUrl.push(URL.createObjectURL(file[i]));
-        this.myfile.push(this.$refs.file.files[i]);
+        var file_kind = file[i].name.lastIndexOf('.');
+        var ext_name = file[i].name.substring(file_kind+1,file[i].length);
+        var filetype = ext_name.toLowerCase();
+        if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp') {
+          this.imageUrl.push(URL.createObjectURL(file[i]));
+          this.myfile.push(this.$refs.file.files[i]);
+        } else {
+          alert('이미지 파일만 선택할 수 있습니다.');
+          return false;
+        }
       }
     },
   },
