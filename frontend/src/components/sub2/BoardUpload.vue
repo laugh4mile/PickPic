@@ -1,117 +1,114 @@
 <template>
-  <div class="container font-ELAND_Choice_B">
-    <code>
-      <v-row align="center">
-
-        <div class="text-center">
-          <v-dialog v-model="dialog" scrollable max-width="290">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-                @click="getTemp"
-              >
-                임시저장 목록
-              </v-btn>
-            </template>
-            <v-card class="font-ELAND_Choice_B">
-              <v-card-title class="font-ELAND_Choice_B">
-                임시저장 목록
-              </v-card-title>
-              <v-card-text style="height: 300px;">
-                <v-radio-group v-model="dialogm1" column>
-                  <div v-if="tempPost.length > 0">
-                    <v-radio
-                      v-for="(item, index) in tempPost"
-                      :key="index"
-                      :label="item.title"
-                      :value="item.postNo"
-                    />
-                  </div>
-                  <div v-else>
-                    임시저장 목록 없음
-                  </div>
-                </v-radio-group>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="red darken-1" text @click="deleteForm">
-                  Delete
-                </v-btn>
-                <v-btn color="green darken-1" text @click="dialog = false">
-                  Disagree
-                </v-btn>
-                <v-btn color="green darken-1" text @click="getTempPost">
-                  Agree
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </div>
-      </v-row>
-      <hr />
-      <editor
-        v-if="!temp"
-        id="editor"
-        @text="emitedData"
-        @edit-img2="emitedImg"
-        :contents="{ title, content }"
-      ></editor>
-      <editor
-        v-else
-        id="editor"
-        @text="emitedData"
-        @edit-img2="emitedImg"
-        :contents="tempBoard"
-      ></editor>
-      <input
-        multiple="multiple"
-        ref="file"
-        type="file"
-        id="file"
-        name="file"
-        accept=".png, .jpg, .jpeg, .gif"
-        @change="onChangeImages"
-        class="my-4"
-      />
-      <div class="mb-3">
-        <v-btn
-          @click="completeUpload"
-          class="btn btn-outline-secondary rounded-pill text-secondary"
-          >작성 완료</v-btn
-        >
-        <v-btn
-          @click="tempUpload"
-          class="btn btn-outline-secondary rounded-pill ml-2 mr-2 text-secondary"
-          >임시저장</v-btn
-        >
-      </div>
-      <div class="card">
-        <v-row>
-          <v-col v-for="(item, idx) in imgUrl" :key="idx">
-            <img
-              :src="item.modPicName"
-              :id="'img' + idx"
-              width="300px"
-              height="300px"
-            />
-            <v-btn color="red darken-1" @click="modiImg(item, idx)">
-              Delete
+  <div class="container font-ELAND_Choice_B code">
+    <v-row align="center">
+      <div class="text-center">
+        <v-dialog v-model="dialog" scrollable max-width="290">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              dark
+              v-bind="attrs"
+              v-on="on"
+              @click="getTemp"
+            >
+              임시저장 목록
             </v-btn>
-          </v-col>
-          <v-col  cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
-            <div class="text-center">
-              <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
-              <v-btn color="red darken-1" style="color:white;" @click="deleteImg(index)" class="text-center mt-2">
+          </template>
+          <v-card class="font-ELAND_Choice_B">
+            <v-card-title class="font-ELAND_Choice_B">
+              임시저장 목록
+            </v-card-title>
+            <v-card-text style="height: 300px;">
+              <v-radio-group v-model="dialogm1" column>
+                <div v-if="tempPost.length > 0">
+                  <v-radio
+                    v-for="(item, index) in tempPost"
+                    :key="index"
+                    :label="item.title"
+                    :value="item.postNo"
+                  />
+                </div>
+                <div v-else>
+                  임시저장 목록 없음
+                </div>
+              </v-radio-group>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="red darken-1" text @click="deleteForm">
                 Delete
               </v-btn>
-            </div>
-          </v-col>
-        </v-row>
+              <v-btn color="green darken-1" text @click="dialog = false">
+                Disagree
+              </v-btn>
+              <v-btn color="green darken-1" text @click="getTempPost">
+                Agree
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
-    </code>
+    </v-row>
+    <hr />
+    <editor
+      v-if="!temp"
+      id="editor"
+      @text="emitedData"
+      @edit-img2="emitedImg"
+      :contents="{ title, content }"
+    ></editor>
+    <editor
+      v-else
+      id="editor"
+      @text="emitedData"
+      @edit-img2="emitedImg"
+      :contents="tempBoard"
+    ></editor>
+    <input
+      multiple="multiple"
+      ref="file"
+      type="file"
+      id="file"
+      name="file"
+      accept=".png, .jpg, .jpeg, .gif"
+      @change="onChangeImages"
+      class="my-4"
+    />
+    <div class="mb-3">
+      <v-btn
+        @click="completeUpload"
+        class="btn btn-outline-secondary rounded-pill text-secondary"
+        >작성 완료</v-btn
+      >
+      <v-btn
+        @click="tempUpload"
+        class="btn btn-outline-secondary rounded-pill ml-2 mr-2 text-secondary"
+        >임시저장</v-btn
+      >
+    </div>
+    <div class="card">
+      <v-row>
+        <v-col v-for="(item, idx) in imgUrl" :key="idx">
+          <img
+            :src="item.modPicName"
+            :id="'img' + idx"
+            width="300px"
+            height="300px"
+          />
+          <v-btn color="red darken-1" @click="modiImg(item, idx)">
+            Delete
+          </v-btn>
+        </v-col>
+        <v-col  cols="5" v-for="(imgUrl, index) in imageUrl" :key="index">
+          <div class="text-center">
+            <v-img max-width="800px" max-height="800px" :src="imgUrl"></v-img>
+            <v-btn color="red darken-1" style="color:white;" @click="deleteImg(index)" class="text-center mt-2">
+              Delete
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 <script>

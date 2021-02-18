@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <head> </head>
     <v-text-field
       label="제목"
       @change="getTitle"
