@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.web.blog.model.MemberDto;
+import com.web.blog.model.PostDto;
 
 @Mapper
 public interface MemberMapper {
@@ -52,5 +53,8 @@ public interface MemberMapper {
 
 	/** 인자로 받은 email의 비밀번호를 반환 */
 	public String findPwd(String email);
+
+	/** 게시글 리스트 */
+	public List<PostDto> getPostList(String email) throws SQLException;
 
 }

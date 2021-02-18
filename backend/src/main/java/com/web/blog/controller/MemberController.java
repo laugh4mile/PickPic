@@ -3,6 +3,7 @@ package com.web.blog.controller;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.web.blog.model.MemberDto;
+import com.web.blog.model.PostDto;
 import com.web.blog.model.service.MemberService;
 import com.web.blog.model.service.S3FileUploadService;
 
@@ -100,8 +102,8 @@ public class MemberController {
 
 		// 회원 정보 조회
 		try {
-			MemberDto info = memberService.findUserInfo(email);
-			resultMap.put("info", info);
+			resultMap.put("info", memberService.findUserInfo(email));
+			resultMap.put("postList", memberService.getPostList(email));
 			status = HttpStatus.ACCEPTED;
 		} catch (RuntimeException e) {
 			resultMap.put("message", e.getMessage());

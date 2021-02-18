@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.web.blog.model.MemberDto;
+import com.web.blog.model.PostDto;
 import com.web.blog.model.mapper.MemberMapper;
 
 @Service
@@ -111,5 +112,10 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<PostDto> getPostList(String email) throws Exception {
+		return memberMapper.getPostList(email);
 	}
 }
