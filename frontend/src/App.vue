@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
     <core-app-bar />
 
     <core-drawer />
@@ -11,6 +11,11 @@
 </template>
 
 <script>
+document.oncontextmenu = function (e) {
+  return false;
+}
+document.ondragstart = new Function('return false');
+document.onselectstart = new Function('return false');
 export default {
   name: 'App',
 
