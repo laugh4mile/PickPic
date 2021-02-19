@@ -368,6 +368,7 @@ export default {
             .then((response) => {
               this.userComment = '';
 
+              this.reset = true;
               this.refreshData();
             })
             .catch((error) => {
@@ -392,6 +393,7 @@ export default {
 
             const params = new URLSearchParams();
             params.append('email', this.getUserEmail);
+            this.reset = true;
             this.refreshData();
           })
           .catch((error) => {
@@ -431,12 +433,8 @@ export default {
       axios
         .put(`${SERVER_URL}/comment/like`, params)
         .then((res) => {
-          if (res.data.likeCheck == 'Y') {
-            this.like = false;
-          } else {
-            this.like = true;
-          }
-          this.refreshData();
+          comment.likeCheck = res.data.likeCheck;
+          comment.Comment.likeCnt = res.data.likeCnt;
         })
         .catch((error) => {
           this.$router.push({
