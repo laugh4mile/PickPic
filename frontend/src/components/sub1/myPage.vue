@@ -1,139 +1,77 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-2 col-md-2 selector" width="200">
-        <img
-          :src=imgUrl
-          alt="프로필 이미지"
-        />
-      </div>
-      <div class="col-sm-10 col-md-10">
-        <blockquote>
-          <p>{{ user.name }}</p>
-          <small
-            ><cite title="Source Title">{{ user.email }}</cite></small
+  <div class="container font-ELAND_Choice_M">
+    <div class="row mb-5">
+        <label class="col-sm-2 col-md-2 newbtn selector" width="200">
+          <img
+            id="blah"
+            :src="user.profileImg"
+            onerror="this.src=`https://apfbucket.s3.ap-northeast-2.amazonaws.com/c8c25cb23bdd4aa9a5c4608b7fa243ef.png`"
+            alt="프로필 이미지"
+          />
+          <input id="pic" class="pis" @change="addProfile" type="file" />
+        </label>
+        <div class="col-sm-10 col-md-10">
+          <blockquote style="width:300px;">
+            <p>{{ user.name }}</p>
+            <small
+              ><cite title="Source Title">{{ user.email }}</cite></small
+            >
+            <small
+              ><cite title="Source Title">{{ user.joinDate }}</cite></small
+            >
+            <span v-show="!modify">{{ user.introduce }}</span>
+            <v-text-field
+              color="black"
+              v-show="modify"
+              v-model="user.introduce"
+              type="text"
+              label="자기소개를 수정해주세요"
+              :value="user.introduce"
+            ></v-text-field>
+          </blockquote>
+        </div>
+        <div class="row">
+          <v-btn
+            color="secondary"
+            class="mr-2"
+            outlined
+            v-show="!modify"
+            @click="showmodifyForm"
+            >자기소개수정</v-btn
           >
-          <small
-            ><cite title="Source Title">{{ user.joinDate }}</cite></small
-          >
-          <span v-show="!modify">{{ user.introduce }}</span>
-          <v-text-field
-            color="black"
+          <v-btn
+            color="secondary"
+            class="mr-2"
+            outlined
             v-show="modify"
-            v-model="user.introduce"
-            type="text"
-            label="자기소개를 수정해주세요"
-            :value="user.introduce"
-          ></v-text-field>
-        </blockquote>
-      </div>
-      <v-btn variant="primary" v-show="!modify" @click="showmodifyForm"
-        >자기소개수정</v-btn
-      >
-      <v-btn variant="primary" v-show="modify" @click="modifyIntro"
-        >정보수정</v-btn
-      >
-      <div class="text-center">
-        <v-dialog v-model="dialog1" width="500">
-          <template v-slot:activator="{ on, attrs }" @click="dialog1 = true">
-            <v-btn variant="primary" v-bind="attrs" v-on="on">
-              회원탈퇴
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="headline grey lighten-2">
-              회원탈퇴
-            </v-card-title>
-
-            <v-col cols="12">
-              <span>회원 탈퇴하려면 아래의 문장을 따라 입력하세요</span>
-            </v-col>
-            <v-col cols="12">
-              <span>삭제하겠습니다.</span>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                label="따라 입력*"
-                type="text"
-                v-model="chk"
-                required
-              ></v-text-field>
-            </v-col>
-
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" @click="DeleteUser">
-                탈퇴
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialog2" width="500">
-          <template v-slot:activator="{ on, attrs }" @click="dialog2">
-            <v-btn variant="primary" v-bind="attrs" v-on="on">
-              비밀번호변경
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="headline grey lighten-2">
-              비밀번호 변경
-            </v-card-title>
-
-            <v-col cols="12">
-              <span
-                >비밀번호 변경하려면 기존 비밀번호를 작성해주세요</span
-              >
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                label="기존비밀번호*"
-                type="password"
-                required
-                v-model="pwd"
-                :rules="[pwd === user.pwd || '페스워드가 불일치합니다.']"
-              ></v-text-field>
-              <v-text-field
-                label="새 비밀번호 입력*"
-                type="password"
-                required
-                v-model="pwd1"
-                :rules="pwdRules"
-              ></v-text-field>
-              <v-text-field
-                label="새 비밀번호 확인*"
-                type="password"
-                required
-                v-model="pwd2"
-                :rules="[pwd1 === pwd2 || '페스워드가 불일치합니다.']"
-              ></v-text-field>
-            </v-col>
-
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" @click="modifyPwd">
-                비밀번호 변경
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-        <input type="file" name="photo" id="photo" />
-        <v-btn variant="primary" @click="uploadImg"
-        >이미지업로드</v-btn>
-        <!-- <v-btn variant="primary" @click="downImg"
-        >이미지다운로드</v-btn> -->
+            @click="modifyIntro"
+            >정보수정</v-btn
+          >
+          <div class="text-center">
+            <delete-user-modal />
+            <modify-pwd-modal />
+          </div>
+        </div>
     </div>
-    <v-col cols="12" md="4">
-      <instagram />
-    </v-col>
+    <hr>
+      <div>
+        <div class="font-yg-jalnan">
+        내가 작성한 글
+        </div>
+        <br>
+        <div v-for="(post, index) in posts" :key="index" >
+          <BoardDesign :value="post"/>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import { mapGetters } from "vuex";
+import DeleteUserModal from "./deleteUserModal.vue";
+import ModifyPwdModal from "./modifyPwdModal.vue";
+import BoardDesign from "../sub2/BoardDesign.vue";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
@@ -141,147 +79,112 @@ export default {
     return {
       user: {},
       modify: false,
-      dialog1: false,
-      dialog2: false,
-      chk: "",
-      introduce: "",
       modify: false,
-      pwd: "",
-      pwd1: "",
-      pwd2: "",
-      imgUrl: '',
-
-      pwdRules: [
-        (v) =>
-          /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v) ||
-          "숫자 와 문자 1개 이상씩 사용해야하며 8자리 이상 작성해야합니다.",
-      ],
+      imgSrc: "",
+      posts:{},
     };
   },
   components: {
     NewestPosts: () => import("@/components/NewestPosts"),
     Instagram: () => import("@/components/Instagram"),
     Tags: () => import("@/components/Tags"),
+    DeleteUserModal,
+    ModifyPwdModal,
+    BoardDesign,
   },
   computed: {
     ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
-    dataUrl(){
-      return 'data:image/jpeg;base64m' + btoa(
-        new Uint8Array(this.user.profileImg)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-    }
   },
   created() {
-    console.log("created");
-    console.log(this.$store.getters.getRole);
-    console.log(this.$store.getters.getUserEmail);
     const params = new URLSearchParams();
     params.append("email", this.getUserEmail);
     axios
-      .get("http://localhost:3000/sub/member", { params })
+      .get(`${SERVER_URL}/member`, { params })
       .then((response) => {
-        console.log(response);
         this.user = null;
         this.user = response.data.info;
-        console.log(this.user);
-        console.log(this.user.email)
-        this.imgUrl = `http://localhost:3000/sub/member/download?email=${this.user.email}`
+        this.posts = response.data.postList;
+        this.user.profileImg =
+          "https://apfbucket.s3.ap-northeast-2.amazonaws.com/" +
+          response.data.info.profileImg;
       })
       .catch(() => {
-        // this.$router.push("/Error");
+        this.$router.push({
+          path: "/Error",
+          query: { status: error.response.status },
+        });
       });
-    
   },
   methods: {
-    // downImg: function() {
-    //   const params = new URLSearchParams();
-    //   params.append("email", this.user.email);
-    //   axios.get('http://localhost:3000/sub/member/download', {params})
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch(error => {
-    //     this.$router.push("/Error");
-    //   });
-    // },
-    uploadImg: function() {
-      
-      var frm = new FormData();
-      var photoFile = document.getElementById("photo");
-      frm.append("profileImg", photoFile.files[0]);
-      frm.append("email", this.user.email);
-      axios.post('http://localhost:3000/sub/member/upload', frm,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
+    addProfile: function(input) {
+      if (input.target.files[0]) {
+        if (this.user.profileImg) {
+          const params = new URLSearchParams();
+          params.append("email", this.user.email);
+          axios
+            .get(`${SERVER_URL}/member/delete`, { params })
+            .then((response) => {})
+            .catch((err) => {
+              this.$router.push({
+                path: "/Error",
+                query: { status: error.response.status },
+              });
+            });
         }
-      })
-      .then((response) => {
-        alert('완료');
-        this.$router.push("/");
-        console.log(response);
-      })
-      .catch(error => {
-        this.$router.push("/Error");
-      });
+        var frm = new FormData();
+        var photoFile = input.target.files[0];
+        frm.append("profileImg", photoFile);
+        frm.append("email", this.user.email);
+        axios
+          .post(`${SERVER_URL}/member/upload`, frm, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            this.$alert('프로필 업로드 완료','','success');
+            const params = new URLSearchParams();
+            params.append("email", this.getUserEmail);
+            axios
+              .get(`${SERVER_URL}/member`, { params })
+              .then((response) => {
+                this.user.profileImg =
+                  "https://apfbucket.s3.ap-northeast-2.amazonaws.com/" +
+                  response.data.info.profileImg;
+              })
+              .catch(() => {
+                this.$router.push({
+                  path: "/Error",
+                  query: { status: error.response.status },
+                });
+              });
+          })
+          .catch((error) => {
+            this.$router.push({
+              path: "/Error",
+              query: { status: error.response.status },
+            });
+          });
+      }
     },
     showmodifyForm: function() {
       this.modify = true;
     },
-    DeleteUser: function() {
-      const params = new URLSearchParams();
-      params.append("email", this.user.email);
-      console.log(params);
-      if (this.chk == "삭제하겠습니다.") {
-        axios
-          .delete("http://localhost:3000/sub/member", {
-            data: {
-              email: this.getUserEmail,
-            },
-          })
-          .then((response) => {
-            console.log(response);
-            this.$store
-              .dispatch("LOGOUT")
-              .then(() => this.$router.replace("/").catch(() => {}));
-          })
-          .catch((error) => {
-            this.$router.push("/Error");
-          });
-      } else {
-        alert("문구가 일치하지 않습니다.");
-      }
-    },
     modifyIntro() {
       axios
-        .put("http://localhost:3000/sub/member/intro", {
+        .put(`${SERVER_URL}/member/intro`, {
           email: this.user.email,
           introduce: this.user.introduce,
         })
         .then((response) => {
-          console.log(response);
           this.modify = false;
         })
         .catch((error) => {
-          this.$router.push("/Error");
-        });
-    },
-    modifyPwd() {
-      if (this.pwd == this.user.pwd && this.pwd1 == this.pwd2) {
-        axios
-          .put("http://localhost:3000/sub/member/pwd", {
-            email: this.user.email,
-            pwd: this.pwd2,
-          })
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            this.$router.push("/Error");
+          this.$router.push({
+            path: "/Error",
+            query: { status: error.response.status },
           });
-      } else {
-        alert("내용을 확인해주세요");
-      }
+        });
     },
   },
 };
@@ -310,5 +213,18 @@ small {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+#pic {
+  display: none;
+}
+
+.newbtn {
+  cursor: pointer;
+}
+#blah {
+  max-width: 100px;
+  height: 100px;
+  margin-top: 20px;
 }
 </style>

@@ -6,19 +6,6 @@ public class PostLikeDto {
 	private String email;
 	private String likeCheck;
 
-//	public PostLikeDto() {
-//		super();
-//		// TODO Auto-generated constructor stub
-//	}
-//
-//	public PostLikeDto(int pmLikeNo, int postNo, String email, String likeCheck) {
-//		super();
-//		this.pmLikeNo = pmLikeNo;
-//		this.postNo = postNo;
-//		this.email = email;
-//		this.likeCheck = likeCheck;
-//	}
-
 	public int getPmLikeNo() {
 		return pmLikeNo;
 	}

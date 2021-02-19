@@ -8,87 +8,85 @@ import org.springframework.stereotype.Service;
 
 import com.web.blog.model.CommentDto;
 import com.web.blog.model.CommentLikeDto;
-import com.web.blog.model.CommentParameterDto;
 import com.web.blog.model.mapper.CommentMapper;
 
 @Service
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
 
-	
 	@Autowired
-	CommentMapper dao;
-	
+	CommentMapper commentMapper;
+
 	@Override
 	public CommentDto getOne(int commentNo) throws Exception {
-		return dao.getOne(commentNo);
-	}
-	
-	@Override
-	public List<CommentDto> commentList(int postNo) throws Exception {
-		return dao.commentList(postNo);
+		return commentMapper.getOne(commentNo);
 	}
 
 	@Override
-	public List<CommentDto> infiniteScrollDown(int postNo, int pg) throws Exception {
-		return dao.infiniteScrollDown(postNo, pg);
+	public List<CommentDto> commentList(Map<String, Object> map) throws Exception {
+		System.out.println(map.get("postNo"));
+		System.out.println(map.get("sortBy"));
+		return commentMapper.commentList(map);
+	}
+
+	@Override
+	public List<CommentDto> infiniteScrollDown(Map<String, Object> map) throws Exception {
+		return commentMapper.infiniteScrollDown(map);
 	}
 
 	@Override
 	public boolean commentWrite(CommentDto dto) throws Exception {
-		return dao.commentWrite(dto);
+		return commentMapper.commentWrite(dto);
 	}
 
 	@Override
 	public boolean commentUpdate(CommentDto dto) throws Exception {
-		return dao.commentUpdate(dto);
+		return commentMapper.commentUpdate(dto);
 	}
 
 	@Override
 	public boolean commentDelete(int commentNo) throws Exception {
-		return dao.commentDelete(commentNo);
+		return commentMapper.commentDelete(commentNo);
 	}
 
 	@Override
 	public int likeCount(int commentNo) throws Exception {
-		return dao.likeCount(commentNo);
+		return commentMapper.likeCount(commentNo);
 	}
 
 	@Override
 	public int likeCheck(Map<String, Object> map) throws Exception {
-		return dao.likeCheck(map);
+		return commentMapper.likeCheck(map);
 	}
 
 	@Override
 	public CommentLikeDto likeInfo(Map<String, Object> map) throws Exception {
-		return dao.likeInfo(map);
+		return commentMapper.likeInfo(map);
 	}
 
 	@Override
 	public int insertLike(Map<String, Object> map) throws Exception {
-		return dao.insertLike(map);
+		return commentMapper.insertLike(map);
 	}
 
 	@Override
 	public int like(Map<String, Object> map) throws Exception {
-		return dao.like(map);
+		return commentMapper.like(map);
 	}
 
 	@Override
 	public int unlike(Map<String, Object> map) throws Exception {
-		return dao.unlike(map);
+		return commentMapper.unlike(map);
 	}
 
 	@Override
 	public int likeCntUp(int commentNo) throws Exception {
-		return dao.likeCntUp(commentNo);
+		return commentMapper.likeCntUp(commentNo);
 	}
 
 	@Override
 	public int likeCntDown(int commentNo) throws Exception {
-		return dao.likeCntDown(commentNo);
+		return commentMapper.likeCntDown(commentNo);
 	}
 
 
-
-	
 }

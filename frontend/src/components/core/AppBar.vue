@@ -1,122 +1,70 @@
 <template>
-  <v-app-bar app flat>
+  <v-app-bar app flat color="white">
     <v-app-bar-nav-icon class="hidden-md-and-up" @click="toggleDrawer" />
-
     <v-container class="mx-auto py-0">
       <v-row align="center">
         <v-img
           :src="require('@/assets/logo.png')"
           class="mr-5"
           contain
-          height="48"
-          width="48"
-          max-width="48"
+          height="100%"
+          width="80"
+          max-width="110"
           @click="toHome"
+          style="cursor:pointer"
         />
 
         <v-btn
           v-for="(link, i) in links"
           :key="i"
-          class="hidden-sm-and-down"
+          class="hidden-sm-and-down "
           text
           @click="onClick($event, link)"
         >
-          {{ link.text }}
+          <span class="font-yg-jalnan mx-2">{{ link.text }}</span>
         </v-btn>
-
-        <!-- <v-btn class="hidden-sm-and-down" text @click="boardForm">
-          게시판
-        </v-btn> -->
-
         <template v-if="!getAccessToken">
           <v-spacer />
-          <v-btn text @click="registForm">
+
+          <v-btn
+            text
+            @click="registForm"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan hidden-xs"
+            style="border-width : 3px; font-size : 12px;"
+          >
             회원가입
           </v-btn>
-          <div class="text-center">
-            <v-dialog v-model="dialog" width="400">
-              <template v-slot:activator="{ on }">
-                <v-btn text v-on="on">
-                  로그인
-                </v-btn>
-              </template>
-              <!-- 로그인모달 시작 -->
-              <div class="d-flex justify-content-center h-100 w-100">
-                <div class="card">
-                  <div class="card-header">
-                    <h3>서비스이름</h3>
-                    <!-- <div class="d-flex justify-content-end social_icon">
-                        <span><i class="fab fa-facebook-square"></i></span>
-                        <span><i class="fab fa-google-plus-square"></i></span>
-                        <span><i class="fab fa-twitter-square"></i></span>
-                      </div> -->
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <span
-                        class="badge badge-danger mt-1"
-                        v-if="!availableEmailForm"
-                        >이메일 형식이 다릅니다.</span
-                      >
-                      <div class="input-group form-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"
-                            ><i class="fas fa-user"></i
-                          ></span>
-                        </div>
-                        <input
-                          type="email"
-                          class="form-control"
-                          v-model="user.email"
-                          placeholder="이메일"
-                          @blur="checkDuplicate"
-                        />
-                      </div>
-                      <div class="input-group form-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"
-                            ><i class="fas fa-key"></i
-                          ></span>
-                        </div>
-                        <input
-                          type="password"
-                          class="form-control"
-                          v-model="user.pwd"
-                          placeholder="비밀번호"
-                        />
-                      </div>
-                      <!-- <div class="row align-items-center remember">
-                          <input type="checkbox">Remember Me
-                        </div> -->
-                      <input
-                        type="submit"
-                        @click="login"
-                        value="로그인"
-                        class="btn float-right login_btn"
-                      />
-                    </form>
-                  </div>
-                  <div class="card-footer">
-                    <div class="d-flex justify-content-center links">
-                      계정이 없으신가요?<a href="regist">회원가입</a>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                      <a href="#">비밀번호 찾기</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- 로그인 모달끝 -->
-            </v-dialog>
-          </div>
+          <login-modal/>
         </template>
         <template v-else>
           <v-spacer />
-          <span>{{ getUserName }}님 환영합니다.</span>
-          <v-btn text @click="myPageForm"
+          <span class="font-yg-jalnan hidden-xs">
+            <span style="color: green">{{ getUserName }}</span
+            >님 환영합니다.</span
+          >
+          <v-btn
+            v-if="getRole == 'admin'"
+            text
+            @click="adminPageForm"
+            class="btn btn-outline-secondary rounded-pill ml-2 font-yg-jalnan"
+            style="border-width : 3px;"
+            >관리자페이지</v-btn
+          >
+
+          <v-btn
+            text
+            @click="myPageForm"
+            class="btn btn-outline-secondary rounded-pill ma-6 font-yg-jalnan col-xs-2"
+            style="border-width : 3px; font-size : 12 px;"
             >마이페이지</v-btn
           >
-          <v-btn text @click="logout">로그아웃</v-btn>
+          <v-btn
+            text
+            @click="logout"
+            class="btn btn-outline-secondary rounded-pill font-yg-jalnan col-xs-2"
+            style="border-width : 3px; font-size : 12 px;"
+            >로그아웃</v-btn
+          >
         </template>
       </v-row>
     </v-container>
@@ -125,21 +73,24 @@
 
 <script>
 // Utilities
-import { mapGetters, mapMutations } from "vuex";
-import axios from "axios";
+import { mapGetters, mapMutations } from 'vuex';
+import axios from 'axios';
+import LoginModal from './LoginModal.vue';
 export default {
-  name: "CoreAppBar",
+  name: 'CoreAppBar',
 
   computed: {
     ...mapGetters([
-      "links",
-      "getAccessToken",
-      "getUserEmail",
-      "getUserName",
-      "getRole",
+      'links',
+      'getAccessToken',
+      'getUserEmail',
+      'getUserName',
+      'getRole',
     ]),
   },
-
+  components:{
+    LoginModal,
+  },
   methods: {
     validEmail(email) {
       var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -154,10 +105,10 @@ export default {
         this.availableEmailForm = true;
       }
     },
-    ...mapMutations(["toggleDrawer"]),
+    ...mapMutations(['toggleDrawer']),
     onClick(e, item) {
-      this.$router.push(item.href).catch(error => {
-        if(error.name === "NavigationDuplicated" ){
+      this.$router.push(item.href).catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
           // 같은 경로 클릭시 새로고침 되게
           location.reload();
         }
@@ -165,43 +116,49 @@ export default {
     },
     searchPwd() {
       this.dialog = false;
-      this.$router.push("/searchPwd");
+      this.$router.push('/searchPwd');
     },
     login: function() {
       event.preventDefault();
       this.dialog = false;
       // LOGIN 액션 실행
       // 서버와 통신(axios)을 해 토큰값을 얻어야 하므로 Actions를 호출.
-      this.$store.dispatch("LOGIN", this.user);
+      this.$store.dispatch('LOGIN', this.user);
       console.log(this.$store.getters.getAccessToken);
-      this.user.email = "";
-      this.user.pwd = "";
+      this.user.email = '';
+      this.user.pwd = '';
     },
     logout() {
       this.$store
-        .dispatch("LOGOUT")
-        .then(() => this.$router.replace("/").catch(() => {}));
+        .dispatch('LOGOUT')
+        .then(() => this.$router.replace('/').catch(() => {}));
+      console.log(localStorage);
+      localStorage.clear;
+      console.log(localStorage);
     },
     registForm() {
-      this.$router.push("/regist");
+      this.$router.push('/regist');
     },
     myPageForm() {
-      this.$router.push("/myPage");
+      this.$router.push('/myPage');
+    },
+    adminPageForm() {
+      this.$router.push('/admin');
     },
     toHome() {
       // 같은 경로로 이동시에 충돌 안나게
-      this.$router.push("/").catch(error => {
-        if(error.name === "NavigationDuplicated" ){
-            location.reload();
+      this.$router.push('/').catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
+          location.reload();
         }
       });
       // this.$router.push("/");
     },
     boardForm() {
       // 같은 경로로 이동시에 충돌 안나게
-      this.$router.push("/board").catch(error => {
-        if(error.name === "NavigationDuplicated" ){
-            location.reload();
+      this.$router.push('/board').catch((error) => {
+        if (error.name === 'NavigationDuplicated') {
+          location.reload();
         }
       });
       // this.$router.push("/board");
@@ -211,8 +168,8 @@ export default {
     return {
       dialog: false,
       user: {
-        email: "",
-        pwd: "",
+        email: '',
+        pwd: '',
       },
       availableEmailForm: true,
     };
@@ -220,13 +177,15 @@ export default {
 };
 </script>
 <style scoped>
+@import '../../assets/style.css';
 /* 모달창 스타일 */
 .card {
   height: 350px;
   margin-top: auto;
   margin-bottom: auto;
   width: 400px;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.726);
+  /* border-radius: 5px; */
 }
 .social_icon span {
   font-size: 45px;
@@ -290,5 +249,14 @@ input:focus {
 .links a {
   margin-left: 4px;
 }
+.test {
+  box-shadow: none;
+}
+/* .v-dialog {
+  box-shadow: none;
+} */
+/* .v-dialog--active {
+  box-shadow: none;
+} */
 /* 모달창 스타일 끝 */
 </style>

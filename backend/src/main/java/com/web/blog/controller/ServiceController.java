@@ -1,9 +1,10 @@
 package com.web.blog.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import com.web.blog.model.BasicResponse;
 import com.web.blog.model.service.ETCService;
 import com.web.blog.model.service.ETCServiceImpl;
 
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -24,25 +26,28 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/service/*")
 @CrossOrigin(origins = "*")
 public class ServiceController {
+
 	@Autowired
 	ETCService service;
 
-//	 private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
+
 	@PostMapping("/mail")
 	@ResponseBody
-	public void emailConfirm(@RequestParam String email) throws Exception {
-//			logger.info("post emailConfirm");
-		System.out.println("전달 받은 이메일 : " + email);
+	public void emailConfirm(@RequestParam @ApiParam(value = "로그인 이메일 아이디", required = true) String email)
+			throws Exception {
+		logger.info("emailConfirm - 호출");
+
 		service.sendSimpleMessage(email);
 	}
 
 	@PostMapping("/verifyCode")
 	@ResponseBody
-	public int verifyCode(@RequestParam String code) {
-//			logger.info("Post verifyCode");
+	public int verifyCode(@RequestParam @ApiParam(value = "로그인 이메일 코드", required = true) String code) {
+		logger.info("verifyCode - 호출");
+
 		int result = 0;
-		System.out.println("code : " + code);
-		System.out.println("code match : " + ETCServiceImpl.ePw.equals(code));
+
 		if (ETCServiceImpl.ePw.equals(code)) {
 			result = 1;
 		}

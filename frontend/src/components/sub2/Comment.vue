@@ -3,6 +3,11 @@
 <template>
   <div class="container">
     <div class="card mb-5">
+      <login-modal
+        :btnView="true"
+        :dialog="loginPlz"
+        @loginSuccess="loginPlz = false"
+      />
       <div class="card-body">
         <v-row align="center">
           <v-textarea
@@ -10,16 +15,35 @@
             rows="2"
             v-model="userComment"
           ></v-textarea>
-          <v-btn dark @click="writeComment">작성</v-btn>
+          <v-btn color="secondary" outlined @click="writeComment">작성</v-btn>
         </v-row>
       </div>
     </div>
+    <div class="dropdown pull-right">
+      <button
+        type="button"
+        class="btn dropdown-toggle theme--light primary v-btn--is-elevated"
+        data-toggle="dropdown"
+      >
+        Sort
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" @click="[(reset = true), refreshData('zzz')]"
+          >Time</a
+        >
+        <a class="dropdown-item" @click="[(reset = true), refreshData('like')]"
+          >Like</a
+        >
+      </div>
+    </div>
+    <br /><br /><br />
     <v-row v-for="(comment, index) in comments" :key="index">
       <v-col cols="1">
         <div class="thumbnail">
           <img
             class="img-responsive user-photo"
-            src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"
+            :src="comment.Comment.profileImg"
+            onerror='this.src ="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"'
           />
         </div>
         <!-- /thumbnail -->
@@ -28,34 +52,87 @@
       <v-col cols="11">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <strong>{{ comment.Comment.name}} </strong>
-            <span class="text-muted">{{comment.Comment.uploadDate}}</span>
-            <v-menu transition="slide-y-transition" bottom >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn class="purple mb-3" color="primary" style="float:right" v-bind="attrs" v-on="on">
-                <v-icon>fas fa-list</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, i) in items" :key="i">
+            <strong>{{ comment.Comment.name }} </strong>
+            <span class="text-muted">{{ comment.Comment.uploadDate }}</span>
+            <v-menu transition="slide-y-transition" bottom>
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  :disabled="comment.Comment.email != getUserEmail"
-                  @click="menuclick($event, comment)"
-                  >{{ item }}</v-btn
+                  class="purple mb-3"
+                  color="primary"
+                  style="float:right; height:30px; min-width:30px"
+                  v-bind="attrs"
+                  v-on="on"
+                  v-if="
+                    !(
+                      comment.Comment.email != $store.getters.getUserEmail &&
+                      $store.getters.getRole != 'admin'
+                    )
+                  "
                 >
-              </v-list-item>
-            </v-list>
-          </v-menu>
+                  <v-icon>fas fa-list</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item v-for="(item, i) in items" :key="i">
+                  <v-btn
+                    :disabled="
+                      comment.Comment.email != $store.getters.getUserEmail &&
+                        $store.getters.getRole != 'admin'
+                    "
+                    color="secondary"
+                    outlined
+                    @click="menuclick($event, comment)"
+                    >{{ item }}</v-btn
+                  >
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
+
           <div class="panel-body">
-                      <span v-if="dis != comment.Comment.commentNo">{{comment.Comment.content}}</span>
-                <v-text-field
-                    color="black"
-                    v-model="comment.Comment.content"
-                    v-else
-                    rows="1"
-                    :value="comment.Comment.content"
-                />
+            <span v-if="dis != comment.Comment.commentNo">{{
+              comment.Comment.content
+            }}</span>
+            <v-text-field
+              color="black"
+              v-model="comment.Comment.content"
+              v-else
+              rows="1"
+              :value="comment.Comment.content"
+            />
+            <v-row>
+              <v-spacer />
+              <span style="font-size:13px" class="mr-3 mt-2">
+                좋아요 {{ comment.Comment.likeCnt }}개
+              </span>
+              <!-- <img
+                :src="heart(comment)"
+                @click="heartClick(comment)"
+                width="30px"
+                alt=""
+              /> -->
+              <div v-if="comment.likeCheck == 'Y'">
+                <i
+                  class="fas fa-heart fa-2x mr-2"
+                  style="color:red"
+                  @click="heartClick(comment)"
+                ></i>
+              </div>
+              <div v-else>
+                <i
+                  class="far fa-heart fa-2x mr-2"
+                  style="color:red"
+                  @click="heartClick(comment)"
+                ></i>
+              </div>
+              <!-- <i
+                class="far fa-heart fa-2x"
+                style="color:red"
+                v-if="comment.Comment.likeCheck == 'N'"
+                @click="heartClick(comment)"
+              ></i> -->
+            </v-row>
           </div>
           <!-- /panel-body -->
         </div>
@@ -104,8 +181,17 @@
         </v-row>
       </div>
     </div> -->
-    <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
-      <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+    <infinite-loading
+      @infinite="infiniteHandler"
+      ref="InfiniteLoading"
+      spinner="waveDots"
+    >
+      <div
+        slot="no-more"
+        style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
+      >
+        댓글이 더 없어요 ㅠㅠ
+      </div>
     </infinite-loading>
   </div>
 </template>
@@ -143,172 +229,220 @@
 </style>
 
 <script>
-import axios from "axios";
-import { mapGetters } from "vuex";
-
+import axios from 'axios';
+import { mapGetters } from 'vuex';
+import LoginModal from "../core/LoginModal.vue";
 import InfiniteLoading from 'vue-infinite-loading';
-
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
-      userComment: "",
-      modComment: "",
+      userComment: '',
+      modComment: '',
       comments: {},
-      heartIcon: "",
-      no: "",
+      heartIcon: '',
+      no: '',
       dis: 0,
-      items: ["수정", "삭제"],
-      limit: 1
+      items: ['수정', '삭제'],
+      limit: 1,
+      loginPlz: false,
+      sortBy: '',
+      profileImg: 'sibal',
+      like: false,
+      reset: false,
     };
   },
   components: {
     InfiniteLoading,
+    LoginModal,
   },
   computed: {
-    ...mapGetters(["getAccessToken", "getUserEmail", "getUserName", "getRole"]),
+    ...mapGetters(['getAccessToken', 'getUserEmail', 'getUserName', 'getRole']),
   },
   created() {
     const params = new URLSearchParams();
-    params.append("email", this.getUserEmail);
-    this.refreshData();
+    params.append('email', this.getUserEmail);
+    this.refreshData('uploadDate');
     this.no = this.$route.params.no;
   },
   methods: {
     infiniteHandler($state) {
       const params = new URLSearchParams();
-      params.append("email", this.getUserEmail);
-      params.append("pg", this.limit);
-      console.log('마지막이라고')
+      params.append('email', this.getUserEmail);
+      params.append('pg', this.limit);
+      params.append('sortBy', this.sortBy);
       axios
-      .post("http://localhost:3000/sub/comment/" + this.$route.params.no,
-          params)
+        .post(`${SERVER_URL}/comment/` + this.$route.params.no, params)
         .then((response) => {
+          console.log(response);
           setTimeout(() => {
-            if(response.data.length) {
-              console.log(response.data);
+            if (response.data.length) {
+              for (var i = 0; i < response.data.length; i++) {
+                response.data[i].Comment.profileImg =
+                  'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+                  response.data[i].Comment.profileImg;
+              }
               this.comments = this.comments.concat(response.data);
-              console.log(this.comments)
-              $state.loaded()
-              this.limit += 1
-              // 끝 지정(No more data) - 데이터가 EACH_LEN개 미만이면 
-              if(!response.data) {
-                $state.complete()
+              $state.loaded();
+              this.limit += 1;
+              // 끝 지정(No more data) - 데이터가 EACH_LEN개 미만이면
+              if (!response.data) {
+                $state.complete();
               }
             } else {
               // 끝 지정(No more data)
-              $state.complete()
+              $state.complete();
             }
-          }, 1000)
+          }, 1000);
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
-    refreshData() {
+    refreshData(sortTo) {
+      if(this.reset) {
+        this.$refs.InfiniteLoading.stateChanger.reset();
+        this.reset=false;
+      }
+      this.limit = 1;
+      this.sortBy = sortTo;
       const params = new URLSearchParams();
-      params.append("email", this.getUserEmail);
+      params.append('email', this.getUserEmail);
+      params.append('sortBy', this.sortBy);
+
       axios
-        .get("http://localhost:3000/sub/comment/" + this.$route.params.no, {
+        .get(`${SERVER_URL}/comment/` + this.$route.params.no, {
           params,
         })
         .then((response) => {
-          console.log(response.data);
           this.comments = response.data;
+          console.log(this.comments);
+          // this.comments.profileImg =
+          //   'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+          //   this.comment.profileImg;
+          for (var i = 0; i < this.comments.length; i++) {
+            this.comments[i].Comment.profileImg =
+              'https://apfbucket.s3.ap-northeast-2.amazonaws.com/' +
+              this.comments[i].Comment.profileImg;
+          }
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
     heart(cmt) {
-      if (cmt.likeCheck == "Y") {
-        return require("@/assets/heart.jpg");
-      } else {
-        return require("@/assets/blank heart.png");
-      }
+        if (cmt.likeCheck == 'Y') {
+          this.like = !this.like;
+      // return require('@/assets/heart.jpg');
+        } else {
+          this.like = !this.like;
+          // return require('@/assets/blank heart.png');
+        }
     },
     modifyCommentBtn(event) {
-      console.log(event);
       this.dis = event.currentTarget.id;
     },
     modifyCommentCompleteBtn(event) {
       this.dis = 0;
     },
     writeComment() {
-      console.log(!this.$store.getters.getUserEmail);
-
       if (!this.$store.getters.getUserEmail) {
-        alert("로그인이 필요한 서비스입니다.");
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
+        this.loginPlz = true;
       } else {
         if (!this.userComment) {
-          alert("댓글을 입력해주세요");
+          this.$alert('댓글을 입력해주세요','','warning');
         } else {
           axios
-            .post("http://localhost:3000/sub/comment", {
+            .post(`${SERVER_URL}/comment`, {
               email: this.$store.getters.getUserEmail,
               postNo: this.$route.params.no,
               content: this.userComment,
             })
             .then((response) => {
-              console.log(response);
-              this.userComment = "";
+              this.userComment = '';
 
+              this.reset = true;
               this.refreshData();
             })
             .catch((error) => {
-              alert(error);
+              this.$router.push({
+                path: '/Error',
+                query: { status: error.response.status },
+              });
             });
         }
       }
     },
     menuclick(event, cmt) {
-      if (event.target.innerText == "삭제") {
+      if (event.target.innerText == '삭제') {
         axios
-          .delete("http://localhost:3000/sub/comment", {
+          .delete(`${SERVER_URL}/comment`, {
             data: {
               commentNo: cmt.Comment.commentNo,
             },
           })
           .then((response) => {
-            alert("삭제 완료");
+            this.$alert('삭제 완료','','success');
 
             const params = new URLSearchParams();
-            params.append("email", this.getUserEmail);
+            params.append('email', this.getUserEmail);
+            this.reset = true;
             this.refreshData();
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
-      } else if (event.target.innerText == "수정") {
+      } else if (event.target.innerText == '수정') {
         this.dis = cmt.Comment.commentNo;
-        event.target.innerText = "완료";
-      } else if (event.target.innerText == "완료") {
+        event.target.innerText = '완료';
+      } else if (event.target.innerText == '완료') {
         axios
-          .put("http://localhost:3000/sub/comment", cmt)
+          .put(`${SERVER_URL}/comment`, cmt)
           .then((response) => {
-            event.target.innerText = "수정";
-            alert("수정 완료");
+            event.target.innerText = '수정';
+            this.$alert('수정 완료','','success');
             this.dis = 0;
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
       }
     },
     heartClick(comment) {
-      const params = new URLSearchParams();
-      params.append("email", this.getUserEmail);
-      params.append("commentNo", comment.Comment.commentNo);
+       if (!this.getUserEmail) {
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
+        this.loginPlz = true;
+      }else{
+        const params = new URLSearchParams();
+      params.append('email', this.getUserEmail);
+      params.append('commentNo', comment.Comment.commentNo);
 
       axios
-        .put("http://localhost:3000/sub/comment/like", params)
+        .put(`${SERVER_URL}/comment/like`, params)
         .then((res) => {
-          if (res.data.likeCheck == "Y") {
-          }
-          this.refreshData();
+          comment.likeCheck = res.data.likeCheck;
+          comment.Comment.likeCnt = res.data.likeCnt;
         })
         .catch((error) => {
-          alert(error);
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
+          }
     },
   },
 };

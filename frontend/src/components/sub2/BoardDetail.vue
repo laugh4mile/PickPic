@@ -1,13 +1,12 @@
 <template>
-  <div class="container">
-    <div>
+  <div class="container font-ELAND_Choice_B" v-if="!loading">
+    <div id="wr">
+    <login-modal v-model="loginPlz" :btnView="true" :dialog="loginPlz" @loginSuccess="loginPlz=false"/>
       <v-row>
         <v-col>
-          <h3>{{ this.board.postInfo.title }}</h3>
-          <span style="font-size:12px">{{ board.postInfo.name }}</span>
-          <span style="font-size:12px">
-            좋아요 {{ this.board.postInfo.likeCnt }}</span
-          >
+          <h2>{{ this.board.postInfo.title }}</h2>
+          <br />
+          <span style="font-size:15px">작성자 {{ board.postInfo.name }}</span>
           <br />
           <span style="font-size:12px">{{
             this.board.postInfo.uploadDate
@@ -28,24 +27,80 @@
               @click="heartClick"
             ></i>
           </div>
+          <span class="d-flex justify-content-end" style="font-size:15px">
+            좋아요 {{ this.board.postInfo.likeCnt }}
+          </span>
+          <div v-if="!((board.postInfo.email != $store.getters.getUserEmail) && ($store.getters.getRole != 'admin'))" class="d-flex justify-content-end mt-4">
+            <v-btn
+              :disabled="
+                this.board.postInfo.email != $store.getters.getUserEmail
+              "
+              color="secondary"
+              outlined
+              @click="modifyForm"
+              class="btn-outline-info mr-2 rounded-pill"
+              :contents="this.cont"
+              >수정</v-btn
+            >
+            <v-dialog v-model="dialog1" width="230">
+              <template
+                v-slot:activator="{ on, attrs }"
+                @click="dialog1 = true"
+              >
+                <v-btn
+                  :disabled="
+                    (board.postInfo.email != $store.getters.getUserEmail) && ($store.getters.getRole != 'admin')
+                  "
+
+                  color="secondary"
+                  outlined
+                  class="btn-outline-info mr-2 rounded-pill"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  삭제
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span style="">삭제하시겠습니까?</span>
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="red"
+                    outlined
+                    @click="deleteForm"
+                    class="btn-outline-warn mr-2 rounded-pill"
+                  >
+                    삭제
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    outlined
+                    @click="dialog1 = false"
+                    class="btn-outline mr-2 rounded-pill"
+                  >
+                    취소
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
         </v-col>
       </v-row>
     </div>
     <hr />
-    <div>{{ this.board.postInfo.content }}</div>
-    <vote :no="board.postInfo.postNo" />
+    <div class="contents" v-html="cont"></div>
+    <Vote v-if="isPic" :no="board.postInfo.postNo" @no-pic="isPic = false" />
     <div>
       <v-btn
-        :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="modifyForm"
-        >수정</v-btn
+        color="secondary"
+        outlined
+        @click="toBoard"
+        class="btn-outline mr-2 rounded-pill mb-5"
+        >게시판</v-btn
       >
-      <v-btn
-        :disabled="this.board.postInfo.email != $store.getters.getUserEmail"
-        @click="deleteForm"
-        >삭제</v-btn
-      >
-      <v-btn @click="toBoard">홈으로</v-btn>
     </div>
     <comment />
   </div>
@@ -55,7 +110,9 @@ import Vote from './vote.vue';
 import Comment from './Comment.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
+import LoginModal from "../core/LoginModal.vue";
 
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 export default {
   data() {
     return {
@@ -63,6 +120,12 @@ export default {
       no: '',
       heartIcon: '',
       like: false,
+      dialog1: false,
+      items: ['취소', '삭제'],
+      cont: '',
+      loading: false,
+      isPic: true,
+      loginPlz: false,
     };
   },
   computed: {
@@ -71,18 +134,23 @@ export default {
   components: {
     Vote,
     Comment,
+    LoginModal,
   },
   created() {
+    this.loading = true;
+    this.loginPlz = false;
+
     axios
-      .get('http://localhost:3000/sub/post', {
+      .get(`${SERVER_URL}/post`, {
         params: {
           email: this.$store.getters.getUserEmail,
           postNo: this.$route.params.no,
         },
       })
       .then((response) => {
-        console.log(response.data);
         this.board = response.data;
+        this.cont = this.board.postInfo.content;
+        this.loading = false;
         if (this.board.likeCheck == 'N') {
           this.heartIcon = require('@/assets/blank heart.png');
           this.like = false;
@@ -92,10 +160,18 @@ export default {
         }
       })
       .catch((error) => {
-        console.log(error);
+        this.$router.push({
+          path: '/Error',
+          query: { status: error.response.status },
+        });
       });
   },
   methods: {
+    menuclick(event, cmt) {
+      if (event.target.innerText == '삭제') {
+        this.deleteForm();
+      }
+    },
     toBoard() {
       this.$router.push('/board');
     },
@@ -109,24 +185,24 @@ export default {
     },
     heartClick() {
       if (!this.getUserEmail) {
-        alert('로그인이 필요한 서비스입니다.');
+        this.$alert('로그인이 필요한 서비스입니다.','','warning');
+        this.loginPlz = true;
       } else {
         const params = new URLSearchParams();
         params.append('email', this.$store.getters.getUserEmail);
         params.append('postNo', this.board.postInfo.postNo);
 
         axios
-          .put('http://localhost:3000/sub/post/like', params)
+          .put(`${SERVER_URL}/post/like`, params)
           .then((response) => {
             axios
-              .get('http://localhost:3000/sub/post', {
+              .get(`${SERVER_URL}/post`, {
                 params: {
                   email: this.$store.getters.getUserEmail,
                   postNo: this.$route.params.no,
                 },
               })
               .then((response) => {
-                console.log(response.data);
                 this.board = response.data;
                 if (this.board.likeCheck == 'N') {
                   this.heartIcon = require('@/assets/blank heart.png');
@@ -137,17 +213,23 @@ export default {
                 }
               })
               .catch((error) => {
-                console.log(error);
+                this.$router.push({
+                  path: '/Error',
+                  query: { status: error.response.status },
+                });
               });
           })
           .catch((error) => {
-            alert(error);
+            this.$router.push({
+              path: '/Error',
+              query: { status: error.response.status },
+            });
           });
       }
     },
     deleteForm() {
       axios
-        .delete('http://localhost:3000/sub/post', {
+        .delete(`${SERVER_URL}/post`, {
           params: {
             postNo: this.$route.params.no,
           },
@@ -156,7 +238,10 @@ export default {
           this.$router.push('/board');
         })
         .catch((error) => {
-          console.log(error);
+          this.$router.push({
+            path: '/Error',
+            query: { status: error.response.status },
+          });
         });
     },
   },

@@ -8,10 +8,7 @@
       align="center"
       class="mb-2"
     >
-      <v-col
-        class="d-flex"
-        cols="12"
-      >
+      <v-col class="d-flex" cols="12">
         <v-img
           :src="require(`@/assets/articles/${article.hero}`)"
           class="mr-3"
@@ -34,14 +31,14 @@
 </template>
 
 <script>
-  // Utilities
-  import { mapState } from 'vuex'
+// Utilities
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'NewestPosts',
+export default {
+  name: 'NewestPosts',
 
-    computed: {
-      ...mapState(['articles']),
-    },
-  }
+  computed: {
+    ...mapState(['articles']),
+  },
+};
 </script>

@@ -5,85 +5,117 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
 
 import com.web.blog.model.MemberDto;
+import com.web.blog.model.PostDto;
 import com.web.blog.model.mapper.MemberMapper;
 
 @Service
 public class MemberServiceImpl implements MemberService {
 
 	@Autowired
-	MemberMapper dao;
+	PasswordEncoder passwordEncoder;
 
-	private final String IMAGE_DIR = "c:\\SSAFY\\uploaded\\";
-
-	@Transactional
-	public void saveImg(MemberDto dto) throws IOException, SQLException {
-//		System.out.println("bf" + profileImg);
-//		uploadFile(profileImg);
-//		MemberDto user = dao.findUserInfo(email);
-		System.out.println(dto);
-		dao.setProfile(dto);
-//		user.setProfile("profile/" + profileImg.getOriginalFilename());
-	}
+	@Autowired
+	MemberMapper memberMapper;
 
 	@Override
-	public void uploadFile(MultipartFile file) throws IOException {
-		String originName = file.getOriginalFilename();
-		File dest = new File(IMAGE_DIR + originName);
-//		System.out.println(dest);
-		file.transferTo(dest);
-	}
-
-	@Override
-	public String getFilePath(String email) {
-		return dao.getFilePath(email);
-	}
-
-	@Override
-	public List<MemberDto> getAllMember() {
-		return dao.getAllMember();
-	}
-
-	@Override
-	public MemberDto login(MemberDto dto) throws SQLException {
-		MemberDto answer = dao.login(dto);
-		System.out.println(answer);
-		return answer;
+	public List<MemberDto> getAllMember() throws Exception {
+		return memberMapper.getAllMember();
 	}
 
 	@Override
 	public void join(MemberDto dto) throws Exception {
-		dao.join(dto);
+		String encodePassword = passwordEncoder.encode(dto.getPwd());
+		dto.setPwd(encodePassword);
+		memberMapper.join(dto);
+	}
+	
+	@Override
+	public String getRole(String email) throws Exception {
+		return memberMapper.getRole(email);
 	}
 
 	@Override
-	public boolean delete(String id) throws Exception {
-		return dao.delete(id);
+	public boolean emailCheck(String email) {
+		if (memberMapper.emailCheck(email) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public boolean updateIntro(MemberDto memberDto) throws Exception {
-		if (memberDto == null)
-			return false;
-
-		return dao.updateIntro(memberDto);
-	}
-
-	@Override
-	public boolean updatePwd(MemberDto memberDto) throws Exception {
-		if (memberDto == null)
-			return false;
-
-		return dao.updatePwd(memberDto);
+	public boolean nameCheck(String name) {
+		if (memberMapper.nameCheck(name) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public MemberDto findUserInfo(String email) throws Exception {
-		return dao.findUserInfo(email);
+		return memberMapper.findUserInfo(email);
+	}
+
+	@Override
+	public boolean updateIntro(MemberDto memberDto) throws Exception {
+		if (memberDto == null) {
+			return false;
+		}
+
+		return memberMapper.updateIntro(memberDto);
+	}
+
+	@Override
+	public boolean updatePwd(MemberDto memberDto) throws Exception {
+		if (memberDto == null) {
+			return false;
+		}
+
+		String encodedPassword = memberMapper.findPwd(memberDto.getEmail());
+
+		if (passwordEncoder.matches(memberDto.getPrePwd(), encodedPassword)) {
+			memberDto.setPwd(passwordEncoder.encode(memberDto.getPwd()));
+			return memberMapper.updatePwd(memberDto);
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean delete(String email) throws Exception {
+		return memberMapper.delete(email);
+	}
+
+	@Transactional
+	public void saveImg(MemberDto dto) throws IOException, SQLException {
+		memberMapper.saveImg(dto);
+	}
+
+	@Override
+	public void deleteImg(String email) {
+		memberMapper.deleteImg(email);
+	}
+
+	@Override
+	public MemberDto login(MemberDto dto) throws SQLException {
+		String encodedPassword = memberMapper.findPwd(dto.getEmail());
+
+		if (passwordEncoder.matches(dto.getPwd(), encodedPassword)) {
+			dto.setPwd(dto.getPwd());
+			MemberDto answer = memberMapper.login(dto);
+
+			return answer;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<PostDto> getPostList(String email) throws Exception {
+		return memberMapper.getPostList(email);
 	}
 }
