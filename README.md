@@ -13,7 +13,7 @@
 * [Launch](#launch)
 * [Services](#services)
 
-## Team Member Introduction
+## Team Member Introduction.
 
 *팀장*
 <br>
